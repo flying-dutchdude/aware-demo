@@ -42,7 +42,7 @@ svg{display:block}
 
 /* stage + phone */
 #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 80% at 70% 10%,#0d3a4a 0%,#041a22 55%,#02121a 100%)}
-#phone{position:relative;width:100vw;height:100dvh;overflow:hidden;background:var(--bg);isolation:isolate}
+#phone{position:relative;width:100vw;height:100dvh;overflow:hidden;overflow:clip;background:var(--bg);isolation:isolate}
 #aside{display:none}
 .framed #phone{width:440px;height:min(956px,calc(100vh - 48px));border-radius:64px;flex:none;box-shadow:0 0 0 11px #11161a,0 0 0 12.5px #3a4148,0 40px 90px rgba(0,0,0,.6);--sat:54px;--sab:30px}
 .framed #island{display:block}
@@ -374,6 +374,7 @@ textarea.fb{width:100%;min-height:96px;border-radius:16px;border:.5px solid var(
 #map:not(.zpl) .mkp{display:none}
 .lp-sep{height:.5px;background:var(--line);margin:4px 6px}
 .cc svg{width:15px;height:15px}
+#app,.view#v-now,#modal{overflow:clip}
 
 </style>
 </head>
@@ -1209,6 +1210,7 @@ function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();se
 
 /* ---------- init ---------- */
 document.addEventListener('gesturestart',e=>e.preventDefault());
+['#phone','#app','#v-now','#modal','#stage'].forEach(q=>{const el=$(q);if(el)el.addEventListener('scroll',()=>{if(el.scrollTop||el.scrollLeft){el.scrollTop=0;el.scrollLeft=0}})});
 renderChips();
 const ro=new ResizeObserver(()=>{layoutSheet();setSeg($('#tabbar'),S.tab,'t')});ro.observe($('#phone'));
 addEventListener('resize',frame);
