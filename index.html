@@ -1021,7 +1021,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(t.dataset.alert)openAlert(t.dataset.alert);
  else if(t.dataset.country)openCountry(t.dataset.country);
  else if(t.dataset.dist){const[c,k]=t.dataset.dist.split(':');openDistrict(c,c==='PAR'?+k:k)}});
-function showOnMap(id){const a=alertById(id);if(!a)return;closeAll();go('now');if(a.city&&!a.win.includes(S.win)){S.win=a.win[0];renderChips();refreshOverlays();renderNow()}setDetent(0);setTimeout(()=>flyTo(a.lon,a.lat,a.city?14:5.2),120)}
+function showOnMap(id){const a=alertById(id);if(!a)return;closeAll();go('now');if(a.city&&!a.win.includes(S.win)){S.win=a.win[0];renderChips();refreshOverlays();renderNow()}setDetent(0);setTimeout(()=>flyTo(a.lon,a.lat,a.city?14:5.2),380)}
 
 /* ---------- alerts view ---------- */
 const AF=[['you','For you'],['trip','My trips'],['AMS','Amsterdam'],['PAR','Paris'],['global','Global'],['all','All']];
@@ -1054,7 +1054,7 @@ function renderTrips(){$('#tripsList').innerHTML=TRIPS.map(t=>`<div class="card 
  <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button></div>`).join('')+
  `<div class="sec">Safety</div><button class="btn pri press" id="checkin">${ico('check')}Check in: I’m safe</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins and sharing are simulated in this demo.</p>`}
 document.addEventListener('click',e=>{if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:'Your security team can see you checked in at 15:42 from Zuidas.',tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
- const tb=e.target.closest('[data-trip]');if(tb){const t=TRIPS.find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),120)}});
+ const tb=e.target.closest('[data-trip]');if(tb){const t=TRIPS.find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
 
 /* ---------- modal sheets ---------- */
 const MOD=$('#modal');const stack=[];
@@ -1117,7 +1117,7 @@ function openCountry(cc){const c=COUNTRIES.find(x=>x.cc===cc);if(!c)return;const
  <p class="src">Indices: ${esc(INDEX_SOURCES)}.<br>Overall RiskScore and sub-scores: Manukai assessment, illustrative demo values.</p>`;
  openSheet('Country profile',html)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmap]');if(!b)return;const cc=b.dataset.cmap;const c=COUNTRIES.find(x=>x.cc===cc);closeAll();go('now');setDetent(0);
- const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(c.lon,c.lat,cc==='US'?3.2:5)},120)});
+ const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(c.lon,c.lat,cc==='US'?3.2:5)},380)});
 
 /* ---------- search ---------- */
 const PLACE_SEARCH=[['Amsterdam',4.895,52.37,11.6],['Paris',2.347,48.859,11.8],['Dubai',55.27,25.2,9],['Bahrain',50.55,26.07,8],['Tallinn',24.75,59.44,10],['Benghazi',20.07,32.12,10],['Kyiv',30.52,50.45,9]];
@@ -1129,7 +1129,7 @@ $('#searchBtn').addEventListener('click',()=>{openSheet('Search',`<div class="se
   res.innerHTML=(pl.length?`<div class="sec">Places</div><div class="list">${pl.map(p=>`<button class="arow" data-fly="${p[1]},${p[2]},${p[3]}"><span class="cc">${ico('pin')}</span><div class="m"><b>${esc(p[0])}</b><span>Fly to on map</span></div>${chevSvg}</button>`).join('')}</div>`:'')
   +(cs.length?`<div class="sec">Countries</div><div class="list">${cs.map(cRow).join('')}</div>`:'')+(as.length?`<div class="sec">Alerts</div><div class="list">${as.map(aRow).join('')}</div>`:'')
   +(ds.length?`<div class="sec">Districts</div><div class="list">${ds.slice(0,8).map(d=>{const v=distScore(d.city,d.key);return`<button class="arow" data-dist="${d.city}:${d.key}">${badge(v)}<div class="m"><b>${esc(d.full)}</b><span>${d.city==='PAR'?'Paris':'Amsterdam'}</span></div>${chevSvg}</button>`}).join('')}</div>`:'')||'<p class="lede" style="padding:14px 2px">No results in the demo data.</p>'};
- inp.addEventListener('input',run);res.addEventListener('click',e=>{const b=e.target.closest('[data-sq]');if(b){inp.value=b.dataset.sq;run()}const f=e.target.closest('[data-fly]');if(f){const[lo,la,z]=f.dataset.fly.split(',').map(Number);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(lo,la,z),120)}});run();setTimeout(()=>inp.focus(),350)})});
+ inp.addEventListener('input',run);res.addEventListener('click',e=>{const b=e.target.closest('[data-sq]');if(b){inp.value=b.dataset.sq;run()}const f=e.target.closest('[data-fly]');if(f){const[lo,la,z]=f.dataset.fly.split(',').map(Number);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(lo,la,z),380)}});run();setTimeout(()=>inp.focus(),350)})});
 
 /* ---------- profile sheet ---------- */
 function profileHtml(){return`<div class="hero"><div class="circle glass" style="width:64px;height:64px">${ico('person')}</div><div><h2>Your profile</h2><div class="sub">Personalises every RiskScore you see</div></div></div>
@@ -1183,7 +1183,7 @@ function simulate(){const a=alertById('paris-bastille');if(!simDone){a.score=6.3
 
 /* ---------- tabs ---------- */
 function go(tab){S.tab=tab;$$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+tab));setSeg($('#tabbar'),tab,'t');$('#tabbar').classList.remove('mini');$('#searchBtn').classList.remove('mini');
- if(tab==='now')requestAnimationFrame(()=>{if(MAP)MAP.resize();layoutSheet()})}
+ if(tab==='now'){if(MAP)MAP.resize();layoutSheet();requestAnimationFrame(()=>{if(MAP)MAP.resize()})}}
 $('#tabbar').addEventListener('click',e=>{const b=e.target.closest('button');if(b){closeAll();go(b.dataset.t)}});
 $$('.view .scroll').forEach(sc=>{let ly=0;sc.addEventListener('scroll',()=>{const y=sc.scrollTop;const top=sc.parentElement.querySelector('.ptop');if(top)top.classList.toggle('scrolled',y>40);
  const mini=y>ly+4&&y>60?true:y<ly-4?false:null;if(mini!==null){$('#tabbar').classList.toggle('mini',mini);$('#searchBtn').classList.toggle('mini',mini)}ly=y},{passive:true})});
