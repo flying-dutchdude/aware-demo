@@ -380,6 +380,9 @@ textarea.fb{width:100%;min-height:96px;border-radius:16px;border:.5px solid var(
 #map.zmid .mk.city .r{border-width:3px}
 #map.zmid .mk.city .r svg,#map.zmid .mk.city .s{display:none}
 #map.zmid .mk.city .f{inset:-5px}
+html.standalone,html.standalone body{height:var(--appH)}
+html.standalone #stage{bottom:auto;height:var(--appH)}
+html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
 
 </style>
 </head>
@@ -911,7 +914,8 @@ const alertById=id=>ALERTS.find(a=>a.id===id);
 const visibleOnMap=a=>!a.noMap&&(!a.city||a.win.includes(S.win));
 
 /* ---------- frame ---------- */
-function frame(){$('#stage').classList.toggle('framed',innerWidth>=700&&innerHeight>=520);if(MAP)MAP.resize();layoutSheet()}
+function standaloneFix(){const sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;if(!sa)return;const h=Math.max(innerHeight,(screen.width<screen.height?screen.height:screen.width)>innerHeight&&innerWidth<screen.width+1?(innerWidth<innerHeight?screen.height:screen.width):innerHeight);document.documentElement.classList.add('standalone');document.documentElement.style.setProperty('--appH',h+'px')}
+function frame(){standaloneFix();$('#stage').classList.toggle('framed',innerWidth>=700&&innerHeight>=520);if(MAP)MAP.resize();layoutSheet()}
 
 /* ---------- map ---------- */
 let MAP=null,COUNTRY_GEO=null,MAPREADY=false;const MARKERS=[];
