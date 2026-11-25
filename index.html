@@ -1549,7 +1549,7 @@ function openCountry(cc){const c=COUNTRIES.find(x=>x.cc===cc);if(!c)return;const
  <p class="src">Indices: ${esc(INDEX_SOURCES)}.<br>Overall RiskScore and sub-scores: Manukai assessment, illustrative demo values.</p>`;
  openSheet('Country profile',html)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmap]');if(!b)return;const cc=b.dataset.cmap;const c=COUNTRIES.find(x=>x.cc===cc);closeAll();go('now');setDetent(0);
- const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(c.lon,c.lat,cc==='US'?3.2:5)},380)});
+ const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(cc==='RU'?90:c.lon,cc==='RU'?60:c.lat,({US:3.2,RU:2.2,CN:3}[cc]||5))},380)});
 
 /* ---------- search ---------- */
 const PLACE_SEARCH=[['Dubai',55.27,25.2,9],['Bahrain',50.55,26.07,8],['Tallinn',24.75,59.44,10],['Benghazi',20.07,32.12,10],['Kyiv',30.52,50.45,9]];
