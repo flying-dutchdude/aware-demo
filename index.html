@@ -375,6 +375,11 @@ textarea.fb{width:100%;min-height:96px;border-radius:16px;border:.5px solid var(
 .lp-sep{height:.5px;background:var(--line);margin:4px 6px}
 .cc svg{width:15px;height:15px}
 #app,.view#v-now,#modal{overflow:clip}
+#stage:not(.framed) #phone{position:fixed;inset:0;width:auto;height:auto}
+#map.zmid .mk.city{width:18px;height:18px}
+#map.zmid .mk.city .r{border-width:3px}
+#map.zmid .mk.city .r svg,#map.zmid .mk.city .s{display:none}
+#map.zmid .mk.city .f{inset:-5px}
 
 </style>
 </head>
@@ -962,7 +967,7 @@ function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
  PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
  const y=markerEl('mky','<i class="p"></i><i class="c"></i>');MARKERS.push(new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP))}
-function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8)}
+function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2)}
 
 /* context: what is under the map centre */
 let CTX=null;
