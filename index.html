@@ -392,6 +392,21 @@ html.standalone,html.standalone body{height:var(--appH)}
 html.standalone #stage{bottom:auto;height:var(--appH)}
 html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
 
+/* iOS 26+: an opaque fixed bar at the top edge makes iOS paint a solid status bar (and chin) instead of a blur */
+#topband{display:none}
+#stage:not(.framed) #topband{display:block;position:fixed;top:0;left:0;right:0;height:max(1px,env(safe-area-inset-top));background:#0b2530;z-index:95;pointer-events:none}
+#stage:not(.framed) #topband::after{content:"";position:absolute;left:0;right:0;top:100%;height:22px;background:linear-gradient(#0b2530,rgba(11,37,48,0))}
+#chin{display:none}
+#stage:not(.framed) #chin{display:block;position:absolute;left:0;right:0;bottom:0;height:calc(var(--sab) + 30px);background:linear-gradient(rgba(11,37,48,0),#0b2530 85%);z-index:45;pointer-events:none}
+html,body{background:#0b2530}
+/* collapsible legend */
+.legend{padding:0;width:30px;height:30px;border-radius:15px;justify-content:center;align-items:center;cursor:pointer;transition:bottom .5s var(--spring),width .35s var(--spring),height .35s var(--spring),border-radius .35s}
+.legend .li{font:italic 700 15px/1 Georgia,serif;color:var(--ink2)}
+.legend .lx{display:none}
+.legend.open{width:auto;height:auto;padding:7px 12px;border-radius:16px;align-items:flex-start}
+.legend.open .li{display:none}
+.legend.open .lx{display:flex;flex-direction:column;gap:3px}
+
 </style>
 </head>
 <body>
@@ -403,7 +418,7 @@ html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
   <p>Interactive demo designed for iPhone 17 Pro Max. Open this link on your phone and add it to your Home Screen for the full app experience, or use it here with mouse and trackpad.</p>
   <span class="tag">Demo data · illustrative forecasts</span>
  </div>
- <div id="phone">
+ <div id="topband"></div><div id="phone">
   <div id="sabProbe" style="position:absolute;left:0;bottom:0;width:1px;height:var(--sab);visibility:hidden;pointer-events:none"></div>
   <div id="island"></div>
   <div id="sbar"><span>15:42</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="#fff"><path d="M8 2.5c2.3 0 4.4.9 6 2.4l1.2-1.3A10.3 10.3 0 0 0 8 .7 10.3 10.3 0 0 0 .8 3.6L2 4.9a8.6 8.6 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.6 6.6 0 0 0 8 4.3c-1.8 0-3.4.7-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zM8 9.6l1.9-2a2.9 2.9 0 0 0-3.8 0z"/></svg><svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="rgba(255,255,255,.45)"/><rect x="2" y="2" width="17" height="9" rx="2" fill="#fff"/><rect x="24.5" y="4.5" width="1.6" height="4" rx=".8" fill="rgba(255,255,255,.45)"/></svg></span></div>
@@ -418,8 +433,8 @@ html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
     <div class="tchips" id="tchips"></div>
     <div class="mctl glass" id="mctl"><button id="layerBtn" aria-label="Map layers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 9l9 5 9-5-9-5zM3 13.5l9 5 9-5"/></svg></button><button id="locBtn" aria-label="Go to my location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4 4 11l7 2 2 7 7-16z"/></svg></button></div>
     <div class="layerpop glass reg" id="layerPop"><button data-l="all" class="on">All risks</button><button data-l="crime">Crime</button><button data-l="unrest">Civil unrest</button><div class="lp-sep"></div><button data-cl class="on">Country risk</button></div>
-    <div class="legend glass" id="legend"><div class="lr"><span>RiskScore</span><span>0</span><span class="bar"></span><span>10</span></div><div class="attr">© OpenFreeMap · © OpenMapTiles · © OpenStreetMap contributors</div></div>
-    <div id="bsheet" class="glass reg"><div class="grab"><i></i></div><div id="bbody"></div></div>
+    <div class="legend glass press" id="legend" role="button" aria-label="Map legend and credits"><span class="li">i</span><div class="lx"><div class="lr"><span>RiskScore</span><span>0</span><span class="bar"></span><span>10</span></div><div class="attr">© OpenFreeMap · © OpenMapTiles · © OpenStreetMap contributors</div></div></div>
+    <div id="chin"></div><div id="bsheet" class="glass reg"><div class="grab"><i></i></div><div id="bbody"></div></div>
    </section>
    <section class="view" id="v-alerts">
     <div class="ptop"><div class="row"><span class="mini">Alerts</span><span style="flex:1"></span><button class="glass circle press avatarBtn" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.8 4.2-5.7 7.5-5.7s6.1 1.9 7.5 5.7"/></svg></button></div></div>
@@ -1361,6 +1376,7 @@ function contextAt(lng,lat,z){if(z>=9){for(const city of CITY_KEYS)for(const d o
  return{type:'w',title:z<3?'World':'This area',sub:inView.length+' alert'+(inView.length===1?'':'s')+' in view',v:inView.length?Math.max(...inView.map(sA)):null}}
 function onMove(){if(!MAP)return;const c=MAP.getCenter();CTX=contextAt(c.lng,c.lat,MAP.getZoom());const el=$('#ctxBtn');
  el.innerHTML=`<span class="t"><b>${esc(CTX.title)}</b><small>${esc(CTX.sub)}</small></span>${CTX.v!=null?`<span class="sc" style="background:${col(CTX.v)}">${f1(CTX.v)}</span>`:''}`;renderInView()}
+$('#legend').addEventListener('click',e=>{e.stopPropagation();$('#legend').classList.toggle('open')});
 $('#ctxBtn').addEventListener('click',()=>{if(!CTX)return;if(CTX.type==='d')openDistrict(CTX.city,CTX.key);else if(CTX.type==='c')openCountry(CTX.cc);else{setDetent(1)}});
 function onMapClick(e){if(!MAPREADY)return;const z=MAP.getZoom();
  if(z>=9){const f=MAP.queryRenderedFeatures(e.point,{layers:['d-fill']})[0];if(f){const p=f.properties;selectDistrict(p.fid);openDistrict(p.city,keyOf(p.city,p.key));return}}
@@ -1560,14 +1576,16 @@ $$('.avatarBtn').forEach(b=>b.addEventListener('click',()=>openSheet('Profile',p
 
 /* ---------- demo + feedback ---------- */
 let fbLog=store.get('feedback',[]);
+function dispInfo(){const cs=getComputedStyle($('#sabProbe'));const sat=getComputedStyle(document.documentElement).getPropertyValue('--sat');const t=document.createElement('div');t.style.cssText='position:fixed;top:0;height:env(safe-area-inset-top);visibility:hidden';document.body.appendChild(t);const st=t.offsetHeight;t.remove();const sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;return`Display: ${innerWidth}×${innerHeight} · screen ${screen.width}×${screen.height} · safe ${st}/${$('#sabProbe').offsetHeight} · ${sa?'home screen':'browser'} · app ${$('#phone').offsetHeight}`}
 function demoHtml(){return`<img src="${LOGO_FULL}" alt="Manukai" style="width:220px;margin:6px 0 16px">
- <h2 style="font:700 24px/1.15 var(--disp);margin:0 0 6px">Aware · interactive demo</h2><p class="p" style="color:var(--ink2)">Personal predictive threat intelligence for people on location. Zoom from the world into Amsterdam or Paris, scrub the time windows, change your profile, and open alerts, districts and countries.</p>
+ <h2 style="font:700 24px/1.15 var(--disp);margin:0 0 6px">Aware · interactive demo</h2><p class="p" style="color:var(--ink2)">Personal predictive threat intelligence for people on location. Zoom from the world into Amsterdam, Paris, London, Brussels, New York or Frankfurt, scrub the time windows, change your profile, and open alerts, districts and countries.</p>
  <button class="btn pri press" id="simBtn">${ico('bell')}Simulate a live forecast alert</button>
  <button class="btn sec press" data-fb="General">${ico('msg')}Give feedback</button>
  <button class="btn sec press" id="restartBtn">Restart onboarding</button>
  <div class="sec">Feedback collected on this device<a id="copyFb">${fbLog.length?'Copy all':''}</a></div>
  <div class="card">${fbLog.length?fbLog.slice(-6).reverse().map(f=>`<div class="log"><b>${'★'.repeat(f.stars||0)}</b> ${esc(f.ctx)}${f.tags.length?' · '+esc(f.tags.join(', ')):''}<br>${esc(f.text||'')}${f.who?' · '+esc(f.who):''}</div>`).join(''):'<div class="log" style="border:0">No feedback yet.</div>'}</div>
- <p class="disc">Demo data. Alerts, RiskScores, confidence levels and forecasts are illustrative and do not describe real intelligence products. Context draws on public reporting up to 25 Nov 2026. Country indices: ${esc(INDEX_SOURCES)}. Map: OpenFreeMap, © OpenMapTiles, data © OpenStreetMap contributors. District boundaries: Ville de Paris and Gemeente Amsterdam open data. Country shapes: Natural Earth via world-atlas.</p>`}
+ <p class="disc" id="dispInfo">${dispInfo()}</p>
+ <p class="disc">Demo data. Alerts, RiskScores, confidence levels and forecasts are illustrative and do not describe real intelligence products. Context draws on public reporting up to 25 Nov 2026. Country indices: ${esc(INDEX_SOURCES)}. Map: OpenFreeMap, © OpenMapTiles, data © OpenStreetMap contributors. District boundaries: Ville de Paris and Gemeente Amsterdam open data; London, Brussels, New York and Frankfurt from OpenStreetMap. Country shapes: Natural Earth via world-atlas.</p>`}
 $('#brandBtn').addEventListener('click',()=>openSheet('Manukai',demoHtml(),sh=>{
  $('#simBtn',sh).addEventListener('click',()=>{closeAll();setTimeout(simulate,900)});
  $('#restartBtn',sh).addEventListener('click',()=>{closeAll();P.done=false;saveP();showOnb(0)});
