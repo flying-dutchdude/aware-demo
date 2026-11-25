@@ -407,6 +407,8 @@ html,body{background:#0b2530}
 .legend.open .li{display:none}
 .legend.open .lx{display:flex;flex-direction:column;gap:3px}
 
+#map.zcity .mkc{display:none}
+
 </style>
 </head>
 <body>
@@ -1350,9 +1352,12 @@ function addOverlays(){const before=firstSymbol();const font=labelFont();const[d
  MAP.addLayer({id:'d-lab',type:'symbol',source:'dlabels',minzoom:10.3,layout:{'text-field':['step',['zoom'],['format',['get','sv'],{'font-scale':1.2,'text-color':['get','col']}],11.6,['format',['get','sv'],{'font-scale':1.2,'text-color':['get','col']},'\n',{},['get','name'],{'font-scale':0.82}]],'text-font':font,'text-size':['interpolate',['linear'],['zoom'],10.3,12,15,15],'text-padding':1,'text-max-width':9,'symbol-sort-key':['*',-1,['get','v']]},paint:{'text-color':'#e3f4f9','text-halo-color':'#041b23','text-halo-width':1.6}});
  buildMarkers();
  loadCountries()}
+/* rings that cross the antimeridian (Russia, Fiji) draw stripes across the map: make them continuous */
+function fixAnti(g){const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates;polys.forEach(p=>p.forEach(r=>{let jump=false;for(let i=1;i<r.length;i++)if(Math.abs(r[i][0]-r[i-1][0])>180){jump=true;break}
+ if(jump||r.some(c=>c[0]<=-179.9)&&r.some(c=>c[0]>0)){r.forEach(c=>{if(c[0]<0)c[0]+=360})}}))}
 async function loadCountries(){try{if(!window.topojson)return;const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json');const topo=await r.json();const fc=topojson.feature(topo,topo.objects.countries);
  const want=Object.fromEntries(Object.entries(ISO).map(([k,v])=>[v,k]));
- COUNTRY_GEO=fc.features.filter(f=>want[f.id]).map(f=>{const cc=want[f.id];let mnx=999,mny=999,mxx=-999,mxy=-999;const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;polys.forEach(p=>p[0].forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y);mxx=Math.max(mxx,x);mxy=Math.max(mxy,y)}));return{cc,geometry:f.geometry,polys,bb:[mnx,mny,mxx,mxy]}});
+ COUNTRY_GEO=fc.features.filter(f=>want[f.id]).map(f=>{const cc=want[f.id];fixAnti(f.geometry);let mnx=999,mny=999,mxx=-999,mxy=-999;const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;polys.forEach(p=>p[0].forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y);mxx=Math.max(mxx,x);mxy=Math.max(mxy,y)}));return{cc,geometry:f.geometry,polys,bb:[mnx,mny,mxx,mxy]}});
  if(MAPREADY)MAP.getSource('countries').setData(countryFC());onMove()}catch(e){}}
 function refreshOverlays(){if(!MAPREADY)return;const[dF,dL]=distFC();MAP.getSource('districts').setData(dF);MAP.getSource('dlabels').setData(dL);MAP.getSource('countries').setData(countryFC());buildMarkers();onMove()}
 
@@ -1366,7 +1371,7 @@ function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
  PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
  const y=markerEl('mky','<i class="p"></i><i class="c"></i>');MARKERS.push(new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP))}
-function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2)}
+function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zcity',z<6.5);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2)}
 
 /* context: what is under the map centre */
 let CTX=null;
