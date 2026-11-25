@@ -258,7 +258,15 @@ svg{display:block}
 #mapsvg .place.lbl text{display:inline}
 
 /* trips */
-.trip .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.trip .top{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;color:inherit;font:inherit;background:none;border:0;padding:0;cursor:pointer}
+.trip .top>div:first-child{flex:1;min-width:0}
+.trip .tchev{display:grid;place-items:center;width:22px;height:22px;color:var(--ink3);transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.trip .tchev svg{width:14px;height:14px;transform:rotate(90deg)}
+.trip.open .tchev{transform:rotate(180deg)}
+.trip .tbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.3,.9,.3,1),opacity .3s;opacity:0}
+.trip.open .tbody{grid-template-rows:1fr;opacity:1}
+.trip .tin{overflow:hidden;min-height:0}
+.trip+.trip{margin-top:12px}
 .trip h3{margin:0;font:700 24px/1.1 var(--disp)}
 .trip .when{color:var(--ink2);font-size:13.5px;margin-top:4px}
 .brief{margin:12px 0 4px;padding:12px;border-radius:18px;background:linear-gradient(180deg,rgba(255,74,121,.12),rgba(255,74,121,.04));border:.5px solid rgba(255,74,121,.3);font-size:14px;line-height:1.45}
@@ -421,11 +429,11 @@ html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
     <div class="ptop"><div class="row"><span class="mini">Countries</span><span style="flex:1"></span><button class="glass circle press avatarBtn" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.8 4.2-5.7 7.5-5.7s6.1 1.9 7.5 5.7"/></svg></button></div></div>
     <div class="scroll" style="position:absolute;inset:0"><div class="page">
      <h1 class="big">Countries</h1>
-     <p class="lede">Risk beyond the travel advice: security, crime, stability, democracy and rights. Tap a country.</p>
+     <p class="lede">Risk beyond the travel advice: security, crime, stability, democracy and rights. Tap a country or city.</p>
      <div id="wmini"></div>
-     <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cq" placeholder="Search the 18 demo countries" autocomplete="off"></div>
+     <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cq" placeholder="Search the 34 demo countries" autocomplete="off"></div>
      <div class="chips" id="countrySort"><button class="chip on" data-cs="risk">Highest risk</button><button class="chip" data-cs="az">A–Z</button></div>
-     <div class="list" id="countriesList"></div>
+     <div id="citiesList"></div><div class="list" id="countriesList"></div>
      <p class="src">Overall scores are Manukai assessments (illustrative). Indices from Freedom House, EIU, IEP, Transparency International and ILGA-Europe.</p>
     </div></div>
    </section>
@@ -757,6 +765,236 @@ const COUNTRIES = [
 
 const INDEX_SOURCES = 'Freedom House, Freedom in the World 2026 · EIU Democracy Index 2025 · Global Peace Index 2026 (IEP) · Transparency International CPI 2025 · ILGA-Europe Rainbow Map 2026';
 
+/* v3 additions: more countries, city reports, extra alerts */
+COUNTRIES.push(
+ {cc:'BE', mk:'s', name:'Belgium', region:'Western Europe', lon:4.35, lat:50.85, score:3.2, trend:'up', s:[4.6,3.8,3.4,1.6,0.8,1.2,1.4,0.8],
+  fh:95, eiu:[7.77,'Flawed democracy'], gpi:21, cpi:69, rb:85, lgbt:'Same-sex marriage since 2003; Rainbow Map 4th in Europe.', emer:'112 · 101 police',
+  sit:'Stable democracy hosting the EU and NATO. Drug-gang shootings in several Brussels municipalities have become a recurring security issue, and large demonstrations in the EU quarter are common. The terrorism threat persists after past attacks in Brussels.',
+  keys:['Shootings concentrated in Anderlecht, Molenbeek and Saint-Gilles; metro stations can close during manhunts','Pickpocketing at Brussels-Midi, Centraal and Nord stations','National strike days disrupt rail and airports','Strong legal protection for LGBTQ+ people']},
+ {cc:'CA', mk:'t', name:'Canada', region:'North America', lon:-75.70, lat:45.42, score:2.3, trend:'flat', s:[3.0,3.4,2.4,1.2,1.4,4.6,2.0,1.2],
+  fh:97, eiu:[9.08,'Full democracy'], gpi:14, cpi:75, rb:null, lgbt:'Same-sex marriage since 2005; strong protections.', emer:'911',
+  sit:'Very stable democracy with low violent crime. The main risks are natural: wildfires in summer and severe winter weather. Trade tension with the United States has been high since 2025.',
+  keys:['Wildfire smoke and evacuation orders in summer','Severe winter weather disrupts air and road travel','Healthcare is costly for visitors: carry insurance','Car theft is common in Toronto and Montreal']},
+ {cc:'UA', mk:'u', name:'Ukraine', region:'Eastern Europe', lon:30.52, lat:50.45, score:8.6, trend:'flat', s:[6.0,5.0,4.0,9.6,6.0,2.0,6.0,4.6],
+  fh:51, eiu:[4.79,'Hybrid regime'], gpi:160, cpi:36, rb:19, lgbt:'Legal; no recognition of same-sex couples.', emer:'112 · 102 police · 103 ambulance',
+  sit:'Full-scale war with Russia continues. Missile and drone strikes reach every region, including Kyiv and Lviv, and target energy infrastructure. Airspace remains closed to commercial flights.',
+  keys:['Travel only with a security plan and shelter access','Air-raid alerts several times a day in many cities','Martial law and night-time curfews in force','Rail is the main way in, via Poland or Moldova']},
+ {cc:'RU', mk:'v', name:'Russia', region:'Eastern Europe', lon:37.62, lat:55.75, score:8.0, trend:'flat', s:[5.6,4.4,3.0,8.0,4.0,3.0,9.0,9.4],
+  fh:12, eiu:[2.03,'Authoritarian'], gpi:163, cpi:22, rb:2, lgbt:'The ‘international LGBT movement’ is designated extremist (2023).', emer:'112',
+  sit:'Authoritarian state at war with Ukraine. Foreigners face a real risk of arbitrary detention and politically motivated charges. Ukrainian drone strikes reach Moscow and other cities, and airports close frequently.',
+  keys:['Risk of arbitrary detention of foreign nationals','Western bank cards do not work','Devices may be inspected: travel with clean devices','Airport closures during drone attacks are frequent']},
+ {cc:'PL', mk:'w', name:'Poland', region:'Central Europe', lon:21.01, lat:52.23, score:3.0, trend:'up', s:[3.2,2.6,2.8,4.4,1.6,1.4,2.4,3.8],
+  fh:82, eiu:[7.65,'Flawed democracy'], gpi:22, cpi:52, rb:22, lgbt:'Legal; limited recognition of same-sex couples.', emer:'112',
+  sit:'Stable NATO frontline state. Russian-directed sabotage, including the November 2025 blast on the Warsaw–Lublin railway, and drone incursions keep hybrid risk elevated. Street crime is low.',
+  keys:['Avoid the Belarus border zone','Sabotage attempts target rail and energy infrastructure','Low street crime in Warsaw and Kraków','Security services report daily probing of critical infrastructure']},
+ {cc:'BY', mk:'x', name:'Belarus', region:'Eastern Europe', lon:27.56, lat:53.90, score:7.4, trend:'flat', s:[3.0,2.6,4.0,6.4,3.4,1.6,9.2,8.6],
+  fh:7, eiu:[1.99,'Authoritarian'], gpi:115, cpi:31, rb:7, lgbt:'Legal, but strong official hostility.', emer:'112 · 102 police',
+  sit:'Authoritarian state closely aligned with Russia, which uses its territory for military activity. Foreigners have been detained on political grounds. Land borders with Poland and the Baltic states are heavily restricted.',
+  keys:['Arbitrary detention and exit bans possible','Strict surveillance of communications','Many land crossings with the EU closed','Western sanctions limit payments and flights']},
+ {cc:'EE', mk:'y', name:'Estonia', region:'Baltic states', lon:24.75, lat:59.44, score:2.9, trend:'up', s:[2.4,2.0,1.6,5.0,1.2,1.0,2.0,2.2],
+  fh:96, eiu:[8.07,'Full democracy'], gpi:25, cpi:76, rb:46, lgbt:'Same-sex marriage since 2024.', emer:'112',
+  sit:'Stable, highly digital democracy on NATO’s frontline. Russia’s hybrid campaign has intensified: an attempted arson at a drone maker was attributed to the GRU, and all border crossings with Russia close from 1 December.',
+  keys:['No crossings into Russia from 1 Dec 2026','GNSS jamming affects flights in the region','Very low crime','Defence-sector staff may be targeted for approaches']},
+ {cc:'LV', mk:'z', name:'Latvia', region:'Baltic states', lon:24.11, lat:56.95, score:2.9, trend:'flat', s:[2.2,2.6,1.8,4.6,1.8,1.0,2.0,4.0],
+  fh:89, eiu:[7.73,'Flawed democracy'], gpi:19, cpi:60, rb:30, lgbt:'Civil partnerships since 2024.', emer:'112',
+  sit:'Stable NATO member bordering Russia and Belarus. Hybrid pressure includes GNSS interference and migration pushed across the Belarus border. Crime is low.',
+  keys:['Avoid the Belarus border zone','GNSS interference over the Baltic','Petty theft in Old Riga nightlife','Drink-spiking scams in some bars']},
+ {cc:'LT', mk:'A', name:'Lithuania', region:'Baltic states', lon:25.28, lat:54.69, score:2.9, trend:'flat', s:[2.2,2.4,1.8,4.8,1.6,1.0,2.0,4.4],
+  fh:90, eiu:[7.55,'Flawed democracy'], gpi:24, cpi:65, rb:24, lgbt:'Legal; limited recognition of same-sex couples.', emer:'112',
+  sit:'Stable NATO member hosting a German brigade and bordering Belarus and Kaliningrad. Smuggling balloons from Belarus have repeatedly forced Vilnius airport to close.',
+  keys:['Vilnius airport can close at short notice','Avoid Belarus border areas','Low crime in Vilnius','GNSS interference in the region']},
+ {cc:'FI', mk:'B', name:'Finland', region:'Nordics', lon:24.94, lat:60.17, score:1.9, trend:'flat', s:[1.8,1.4,1.2,3.6,0.8,1.6,1.4,1.0],
+  fh:100, eiu:[9.37,'Full democracy'], gpi:9, cpi:88, rb:70, lgbt:'Same-sex marriage since 2017.', emer:'112',
+  sit:'Very stable democracy and NATO member since 2023. The land border with Russia has been closed since 2023. Low crime and excellent public services.',
+  keys:['Russian border crossings closed','Severe cold and long darkness in winter','GNSS interference in eastern airspace','Very low corruption']},
+ {cc:'NO', mk:'C', name:'Norway', region:'Nordics', lon:10.75, lat:59.91, score:1.8, trend:'flat', s:[2.4,1.4,1.0,2.4,0.8,2.2,1.2,1.0],
+  fh:99, eiu:[9.81,'Full democracy'], gpi:33, cpi:81, rb:69, lgbt:'Same-sex marriage since 2009.', emer:'112 police · 113 medical',
+  sit:'Very stable, high-trust society. The main risks are weather and remote terrain. Drone sightings near energy and military sites have been reported.',
+  keys:['Fast-changing weather in mountains and at sea','Long distances: plan transport carefully','Very high costs','Offshore and energy sites are sensitive']},
+ {cc:'SE', mk:'D', name:'Sweden', region:'Nordics', lon:18.07, lat:59.33, score:2.6, trend:'flat', s:[4.0,3.4,1.6,2.4,0.8,1.0,1.4,1.0],
+  fh:99, eiu:[9.35,'Full democracy'], gpi:40, cpi:80, rb:68, lgbt:'Same-sex marriage since 2009.', emer:'112',
+  sit:'Stable democracy, but gang violence with shootings and explosions remains a serious domestic problem. The terrorism threat has been elevated since 2023.',
+  keys:['Gang shootings and bombings in parts of Stockholm, Gothenburg and Malmö','Risk to visitors is low but stay alert','Almost entirely cashless','Strong rule of law']},
+ {cc:'IE', mk:'E', name:'Ireland', region:'Western Europe', lon:-6.26, lat:53.35, score:1.9, trend:'flat', s:[2.0,2.4,2.0,1.0,0.8,1.0,1.2,1.2],
+  fh:98, eiu:[9.33,'Full democracy'], gpi:5, cpi:76, rb:61, lgbt:'Same-sex marriage since 2015 (by referendum).', emer:'112 · 999',
+  sit:'Stable democracy with low violent crime. Anti-immigration protests have occasionally turned violent in Dublin, notably in 2023 and 2025.',
+  keys:['Petty theft in Dublin city centre','Occasional protest-related disorder','Strong rule of law','Very high accommodation costs in Dublin']},
+ {cc:'CH', mk:'F', name:'Switzerland', region:'Western Europe', lon:8.54, lat:47.37, score:1.6, trend:'flat', s:[2.0,1.8,1.2,1.0,0.6,2.6,1.0,1.8],
+  fh:96, eiu:[9.32,'Full democracy'], gpi:3, cpi:80, rb:50, lgbt:'Same-sex marriage since 2022.', emer:'112 · 117 police · 144 ambulance',
+  sit:'Highly stable and safe. The main risks are alpine hazards and occasional pickpocketing in cities.',
+  keys:['Avalanche and rockfall risk in the Alps','Pickpocketing at Zurich and Geneva stations','Very high costs','Large international meetings bring security zones (Davos, Geneva)']},
+ {cc:'IT', mk:'G', name:'Italy', region:'Southern Europe', lon:12.50, lat:41.90, score:3.2, trend:'flat', s:[3.6,3.8,3.2,1.2,1.2,4.6,2.0,3.0],
+  fh:87, eiu:[7.58,'Flawed democracy'], gpi:35, cpi:53, rb:24, lgbt:'Civil unions since 2016; no same-sex marriage.', emer:'112',
+  sit:'Stable democracy with frequent national transport strikes. Pickpocketing is common in Rome, Milan, Florence and Naples. Seismic and volcanic risk is real in the south.',
+  keys:['Regular transport strike days: check notices','Pickpockets on metros and near major sights','Earthquake and volcanic risk (Campi Flegrei, Etna)','Summer heat and wildfires']},
+ {cc:'CN', mk:'H', name:'China', region:'East Asia', lon:116.40, lat:39.90, score:6.0, trend:'flat', s:[3.0,1.6,3.0,4.8,2.4,4.4,9.6,6.8],
+  fh:9, eiu:[2.24,'Authoritarian'], gpi:118, cpi:43, rb:null, lgbt:'Legal; no recognition of same-sex couples; activism restricted.', emer:'110 police · 120 ambulance',
+  sit:'Authoritarian state with very low street crime but pervasive surveillance. Exit bans and detention of foreign nationals in commercial or political disputes are real risks. Tension over Taiwan is high.',
+  keys:['Expect device and communications monitoring: use clean devices','Exit bans can be imposed in business disputes','VPN use is restricted','Air pollution peaks in northern winters']}
+);
+const ISO_EXTRA=({BE:'056',CA:'124',UA:'804',RU:'643',PL:'616',BY:'112',EE:'233',LV:'428',LT:'440',FI:'246',NO:'578',SE:'752',IE:'372',CH:'756',IT:'380',CN:'156'});
+
+/* New city districts: name -> [crime, unrest, nightBoost, note] */
+const CITY_META = {
+ LON:{
+  'Westminster':[6.4,5.0,1.0,'West End theft and phone snatching; Whitehall and Parliament Square host most large protests.'],
+  'City of London':[3.6,3.0,0.4,'Financial district, quiet at weekends. Occasional protest activity at banks and insurers.'],
+  'Camden':[5.6,2.6,1.0,'Camden Town and King’s Cross: theft, drug dealing and late-night disorder.'],
+  'Kensington and Chelsea':[4.2,2.4,0.6,'Affluent; watch and phone robberies target visitors.'],
+  'Tower Hamlets':[5.4,2.8,0.8,'Mixed: Canary Wharf is low risk, other areas see street robbery and knife crime.'],
+  'Hackney':[5.2,2.2,1.0,'Nightlife in Shoreditch and Dalston; phone theft and robbery after dark.'],
+  'Southwark':[5.0,2.2,0.8,'London Bridge and Borough: theft in crowds; knife crime in parts of the borough.'],
+  'Lambeth':[5.4,2.6,0.9,'Waterloo and Brixton: theft, drug-related crime and night-time violence.'],
+  'Newham':[5.2,1.8,0.7,'Stratford: theft around the station and shopping centre.'],
+  'Islington':[5.0,1.8,0.8,'Upper Street nightlife; phone snatching.'],
+  'Haringey':[5.2,1.8,0.7,'Tottenham: higher violent crime; match-day crowds.'],
+  'Lewisham':[4.6,1.6,0.6,'Residential, moderate risk.'],
+  'Greenwich':[4.0,1.6,0.5,'Visitor areas low risk; O2 event crowds.'],
+  'Hammersmith and Fulham':[4.2,1.6,0.6,'Residential; football and concert crowds.'],
+  'Wandsworth':[3.8,1.6,0.6,'Residential, lower risk.'],
+  'Brent':[4.8,1.8,0.6,'Wembley event days bring crowds and congestion.'],
+  'Ealing':[4.0,1.4,0.5,'Residential.'],
+  'Croydon':[5.2,1.6,0.7,'Town-centre knife crime and robbery.'],
+  'Waltham Forest':[4.4,1.4,0.5,'Residential.'],
+  'Barking and Dagenham':[4.6,1.4,0.5,'Residential.'],
+  'Enfield':[4.4,1.4,0.5,'Residential.'],
+  'Barnet':[3.4,1.4,0.4,'Residential, lower risk.'],
+  'Harrow':[3.0,1.2,0.4,'Residential, lower risk.'],
+  'Hillingdon':[3.6,1.2,0.4,'Heathrow: theft from travellers and luggage.'],
+  'Hounslow':[4.0,1.2,0.5,'Heathrow approaches; residential.'],
+  'Richmond upon Thames':[2.4,1.0,0.3,'Low risk.'],
+  'Kingston upon Thames':[2.6,1.0,0.4,'Low risk.'],
+  'Merton':[3.0,1.0,0.4,'Wimbledon; low risk.'],
+  'Sutton':[2.6,1.0,0.3,'Low risk.'],
+  'Bromley':[3.0,1.0,0.4,'Low risk.'],
+  'Bexley':[2.8,1.0,0.3,'Low risk.'],
+  'Havering':[3.4,1.0,0.4,'Residential.'],
+  'Redbridge':[3.8,1.2,0.4,'Residential.']
+ },
+ BRU:{
+  'Brussels City':[5.4,4.4,0.9,'Centre, Bourse and North station: theft and street dealing; EU summits and national marches bring protests.'],
+  'Anderlecht':[6.4,2.6,1.0,'Repeated drug-gang shootings; shots fired at a police station in August 2026.'],
+  'Molenbeek-Saint-Jean':[6.2,2.4,1.0,'Drug-related shootings; the mayor has called for federal intervention.'],
+  'Saint-Gilles':[6.0,2.4,1.0,'Shootings on three consecutive days in August 2026; Midi station theft.'],
+  'Schaerbeek':[5.4,2.2,0.8,'Street crime and dealing around Brabant and North station.'],
+  'Saint-Josse-ten-Noode':[5.6,2.2,0.8,'Dense area near North station; theft and dealing.'],
+  'Forest':[4.6,1.8,0.6,'Residential; some drug-related incidents.'],
+  'Ixelles':[4.2,2.4,0.8,'Nightlife at Flagey and Matonge; theft.'],
+  'Etterbeek':[3.6,3.6,0.5,'Edge of the EU quarter; demonstrations near Schuman.'],
+  'Koekelberg':[4.0,1.6,0.5,'Residential.'],
+  'Jette':[3.8,1.4,0.5,'Residential.'],
+  'Ganshoren':[2.6,1.2,0.4,'Residential, low risk.'],
+  'Berchem-Sainte-Agathe':[2.6,1.2,0.4,'Residential, low risk.'],
+  'Evere':[3.4,2.2,0.4,'NATO headquarters; occasional demonstrations.'],
+  'Uccle':[2.6,1.2,0.4,'Affluent and low risk.'],
+  'Woluwe-Saint-Lambert':[2.6,1.2,0.4,'Residential, low risk.'],
+  'Woluwe-Saint-Pierre':[2.2,1.2,0.3,'Affluent and low risk.'],
+  'Auderghem':[2.4,1.0,0.3,'Residential, low risk.'],
+  'Watermael-Boitsfort':[2.0,1.0,0.3,'Green and very low risk.']
+ },
+ NYC:{
+  'Midtown':[4.8,3.8,0.6,'Times Square and Grand Central: theft, scams and frequent demonstrations.'],
+  'Theater District':[4.8,2.6,0.8,'Crowds around Times Square: pickpocketing and aggressive street sellers.'],
+  "Hell's Kitchen":[4.4,2.0,0.8,'Port Authority area: theft and street disorder.'],
+  'Chelsea':[3.6,2.0,0.6,'Nightlife; moderate risk.'],
+  'Flatiron District':[3.4,2.2,0.5,'Union Square protests nearby.'],
+  'Gramercy':[3.0,1.6,0.4,'Residential.'],
+  'Murray Hill':[3.0,1.6,0.5,'Residential, bars.'],
+  'Kips Bay':[3.2,1.6,0.5,'Residential, hospitals.'],
+  'Stuyvesant Town':[3.2,1.6,0.4,'Residential.'],
+  'East Village':[4.0,2.0,0.9,'Nightlife; theft after dark.'],
+  'Greenwich Village':[3.6,3.4,0.7,'Washington Square: protests and late-night crowds.'],
+  'West Village':[3.0,1.8,0.7,'Low risk; busy at night.'],
+  'SoHo':[3.8,2.2,0.5,'Shoplifting and bag theft in shopping streets.'],
+  'NoHo':[3.2,1.8,0.5,'Low risk.'],
+  'Nolita':[3.2,1.6,0.5,'Low risk.'],
+  'Little Italy':[3.4,1.6,0.5,'Tourist crowds.'],
+  'Chinatown':[3.8,1.8,0.5,'Busy streets; occasional assaults.'],
+  'Lower East Side':[4.2,2.0,0.9,'Nightlife; late-evening incidents.'],
+  'Two Bridges':[4.0,1.6,0.6,'Residential.'],
+  'Civic Center':[3.8,4.0,0.4,'City Hall, courts and federal buildings: regular protests.'],
+  'Financial District':[3.2,3.0,0.4,'Quiet at night; occasional protests on Wall Street.'],
+  'Tribeca':[2.8,1.6,0.4,'Low risk.'],
+  'Battery Park City':[2.4,1.4,0.3,'Low risk.'],
+  'Upper West Side':[3.0,1.6,0.4,'Residential, low risk.'],
+  'Upper East Side':[2.8,1.6,0.4,'Residential, low risk.'],
+  'Central Park':[3.4,2.0,1.6,'Safe by day; avoid isolated paths after dark.'],
+  'Morningside Heights':[3.6,3.4,0.5,'Columbia University: campus protests.'],
+  'Harlem':[5.0,2.0,0.8,'Higher violent crime in parts; a 14-year-old was shot here on 9 Nov.'],
+  'East Harlem':[5.6,1.8,0.8,'Higher violent crime; double murder on 9 Nov 2026.'],
+  'Washington Heights':[4.6,1.8,0.6,'Residential; moderate.'],
+  'Inwood':[4.0,1.4,0.5,'Residential.'],
+  'Bronx':[6.0,2.0,0.8,'Highest violent crime of the five boroughs, though falling 12% this year.'],
+  'Brooklyn':[4.8,2.2,0.7,'Varies widely: Downtown and Williamsburg low, parts of east Brooklyn high.'],
+  'Queens':[4.0,1.6,0.5,'JFK and LaGuardia; residential, moderate.'],
+  'Staten Island':[3.0,1.2,0.4,'Low risk.']
+ },
+ FRA:{
+  'Bahnhofsviertel':[7.2,3.0,1.2,'Open drug scene: 311 people with severe addiction counted in March 2026. Robberies, knife crime and a night-time weapons ban zone.'],
+  'Innenstadt':[5.4,3.6,1.0,'Zeil shopping and night scene; Hauptwache demonstrations.'],
+  'Altstadt':[4.2,3.4,0.6,'Römer and Paulsplatz: tourist crowds and rallies.'],
+  'Gallus':[5.0,1.8,0.8,'Next to the station district; spill-over street crime.'],
+  'Gutleutviertel':[4.6,1.6,0.7,'Riverside next to the main station; night-time incidents.'],
+  'Sachsenhausen-Nord':[4.6,1.8,1.2,'Alt-Sachsenhausen pub quarter: late-night fights.'],
+  'Ostend':[4.0,3.4,0.6,'European Central Bank: periodic protests.'],
+  'Westend-Süd':[3.0,1.8,0.4,'Banking district, low risk.'],
+  'Westend-Nord':[2.6,1.4,0.3,'Residential, low risk.'],
+  'Nordend-West':[3.0,1.6,0.5,'Residential, cafés.'],
+  'Nordend-Ost':[3.2,1.6,0.5,'Residential.'],
+  'Bornheim':[3.4,1.6,0.6,'Berger Strasse nightlife.'],
+  'Bockenheim':[3.6,2.2,0.6,'University area; student protests.'],
+  'Flughafen':[3.4,1.6,0.3,'Frankfurt Airport: luggage theft and strike-day disruption.'],
+  'Höchst':[4.4,1.6,0.6,'Old town around the station; moderate street crime.'],
+  'Griesheim':[4.2,1.4,0.5,'Residential, moderate.'],
+  'Fechenheim':[3.8,1.4,0.5,'Industrial and residential.']
+ }
+};
+const CITY_DEFAULT = [2.8,1.2,0.4,'Residential, low risk.'];
+
+const CITY_INFO = {
+ AMS:{name:'Amsterdam', cc:'NL', lon:4.8950, lat:52.3600, z:11.6, sum:'Low overall risk. Crime concentrates in the old centre at night (Wallen, Damrak) and organised-crime explosions hit residential districts. Large demonstrations on Museumplein and the Dam are frequent and peaceful.', keys:['Pickpocketing at Centraal, on Damrak and on trams','Never buy from street dealers on the Wallen','Cyclists and bike lanes are the most common hazard']},
+ PAR:{name:'Paris', cc:'FR', lon:2.3470, lat:48.8590, z:11.8, sum:'Rolling strikes and youth-led protests against the 2027 budget dominate this autumn. Theft from visitors is the main crime risk, highest around major stations and sights. The north-east has a persistent crack scene.', keys:['Check strike calendars before rail or metro travel','Theft hotspots: Gare du Nord, Châtelet, Louvre, Montmartre','Stay away from the head of marches']},
+ LON:{name:'London', cc:'GB', lon:-0.1100, lat:51.5050, z:10.4, sum:'Generally safe for visitors. Phone snatching and theft in the West End are the most common risks, while knife crime concentrates in parts of inner and east London. Large Saturday protests regularly fill Westminster under Met conditions.', keys:['Keep phones away from the kerb: snatches by riders are common','Westminster road closures on Saturday march days','Use licensed black cabs or booked minicabs at night']},
+ BRU:{name:'Brussels', cc:'BE', lon:4.3570, lat:50.8460, z:11.6, sum:'Drug-gang shootings recur in Anderlecht, Molenbeek and Saint-Gilles, sometimes closing metro stations during manhunts. The EU quarter and the centre are generally safe, with theft around the main stations.', keys:['Metro stations can close at short notice during police operations','Theft at Midi, Centraal and Nord stations','Demonstrations in the EU quarter disrupt traffic']},
+ NYC:{name:'New York', cc:'US', lon:-73.9800, lat:40.7450, z:11.2, sum:'Shootings and murders are at record lows citywide, but violent crime on the subway has risen. Theft and scams concentrate around Times Square; upper Manhattan and the Bronx see more violent crime.', keys:['At night, ride in busy subway cars near the conductor','Ignore costumed characters and street sellers in Times Square','Central Park after dark: stay on busy paths']},
+ FRA:{name:'Frankfurt', cc:'DE', lon:8.6750, lat:50.1100, z:11.8, sum:'Low risk in most districts, but the Bahnhofsviertel next to the main station has one of Germany’s most visible open drug scenes, with robberies and a night-time weapons ban zone. Nightlife at the Zeil and Alt-Sachsenhausen sees late incidents.', keys:['Do not linger in the Bahnhofsviertel at night','Weapons ban zone applies at night around the station','Theft at the airport and station at peak times']}
+};
+
+ALERTS.push(
+ {id:'lon-protest', city:'LON', title:'Saturday protest marches in Westminster', cat:'unrest', place:'Whitehall, London', lon:-0.1262, lat:51.5040, win:['sat'], score:4.8, trend:'flat', conf:60, status:'Forecast', when:'Sat 28 Nov · 12:00–18:00', upd:'1 h ago', tags:[],
+  summary:'Large Palestine marches with counter-protests are held regularly on Saturdays in central London under Met conditions. Our model expects another march this weekend. Most are peaceful, with arrests concentrated where marches and counter-protests meet.',
+  drivers:['Recurring Saturday pattern (10 Oct: organisers estimated 250,000)','Mass arrests at protests against the Palestine Action ban','Met warns it will arrest people giving logistical support to those protests (30 Oct)'],
+  advice:['Avoid Whitehall, Parliament Square and Waterloo Bridge on Saturday afternoon','Expect bus diversions and closed Tube exits around Westminster'],
+  sources:'Metropolitan Police conditions notices · UK media · Manukai pattern model'},
+ {id:'lon-phone', city:'LON', title:'Phone snatching in the West End', cat:'crime', place:'West End, London', lon:-0.1340, lat:51.5130, win:['now','tonight','thu','sat','sun'], score:5.6, trend:'flat', conf:84, status:'Ongoing', when:'Daily · peak evenings', upd:'today', tags:['night'],
+  summary:'Thieves on bikes and e-scooters snatch phones from pedestrians, especially on busy pavements in Westminster and Camden. It is the most likely crime a business visitor will experience in London.',
+  drivers:['Highest theft concentration in Westminster','Fast getaway on bikes and scooters','Peaks in the evening and around stations'],
+  advice:['Step back from the kerb to use your phone','Use a phone strap or keep it in a zipped pocket'],
+  sources:'Metropolitan Police crime data · Manukai crime model'},
+ {id:'bru-shootings', city:'BRU', title:'Drug-gang shootings in south and west Brussels', cat:'crime', place:'Anderlecht · Molenbeek · Saint-Gilles', lon:4.3300, lat:50.8420, win:['now','tonight','thu','sat','sun'], score:6.2, trend:'flat', conf:78, status:'Ongoing', when:'Recurring · mostly at night', upd:'today', tags:['night'],
+  summary:'Brussels sees repeated spates of shootings linked to drug gangs. In August 2026 there were shootings on three consecutive days in Saint-Gilles, incidents in Molenbeek and shots fired at a police station in Anderlecht. Victims are mostly rivals, but metro stations have been closed during manhunts.',
+  drivers:['Six shooting incidents in a few days in late August 2026','Spread between Anderlecht, Molenbeek and Saint-Gilles','Police say exploited young recruits are paid to shoot'],
+  advice:['Avoid lingering around Clemenceau, Peterbos and Midi at night','Follow STIB notices: stations can close during police operations'],
+  sources:'VRT NWS · The Brussels Times · Manukai crime model'},
+ {id:'nyc-subway', city:'NYC', title:'Violent crime on the subway is rising', cat:'crime', place:'NYC subway system', lon:-73.9870, lat:40.7553, win:['now','tonight','thu','sat','sun'], score:4.8, trend:'up', conf:76, status:'Ongoing', when:'Highest late evening and night', upd:'today', tags:['night'],
+  summary:'NYPD figures show record-low shootings and murders citywide through October 2026, but major crime on the subway has risen. Most incidents are assaults and robberies on platforms and in near-empty cars.',
+  drivers:['Record-low shootings citywide (NYPD, 9 Nov)','Subway major crime up while overall crime falls','Late-night ridership is thin'],
+  advice:['At night, use busy cars and stand back from the platform edge','Use ride-hail for late journeys to outer boroughs'],
+  sources:'NYPD figures reported 9 Nov 2026 · Manukai crime model'},
+ {id:'fra-bhf', city:'FRA', title:'Open drug scene and robberies by the main station', cat:'crime', place:'Bahnhofsviertel, Frankfurt', lon:8.6700, lat:50.1080, win:['now','tonight','thu','sat','sun'], score:6.6, trend:'up', conf:82, status:'Ongoing', when:'Daily · worst after dark', upd:'today', tags:['night','trip'],
+  summary:'The Bahnhofsviertel next to Frankfurt Hauptbahnhof has one of Germany’s most visible open drug scenes. The number of people with severe addiction counted there rose by almost 60% to 311 in March 2026. The city and state launched an emergency programme with a new police station and more surveillance.',
+  drivers:['311 people with severe addiction counted (March 2026), up from 195','Night-time weapons ban zone and video surveillance','Construction works concentrate the scene on fewer streets'],
+  advice:['Leave the station by the north side and avoid Niddastrasse and Taunusstrasse at night','Keep bags closed and do not engage with sellers'],
+  sources:'hessenschau · Hessian state government · Manukai crime model'},
+ {id:'pl-sabotage', title:'Russian-directed sabotage against infrastructure', cat:'hybrid', place:'Poland', cc:'PL', lon:21.01, lat:52.23, score:5.4, trend:'flat', conf:72, status:'Ongoing', when:'Persistent', upd:'today', tags:['defence'],
+  summary:'Poland attributes the November 2025 explosion on the Warsaw–Lublin railway, a key route for aid to Ukraine, to people working for Russian intelligence. Its security service reports dozens of daily attempts to probe energy, transport and digital infrastructure.',
+  drivers:['Rail sabotage near Mika (Nov 2025)','Daily probing of critical infrastructure (ABW, Feb 2026)','Sabotage campaign also active in Estonia and Germany'],
+  advice:['Defence and logistics staff: report suspicious approaches','Expect rail disruption after incidents'],
+  sources:'NPR · Kyiv Independent · Manukai pattern model'}
+);
+EVENTS.push({alert:'lon-protest', city:'LON', win:'sat', d:{'Westminster':5.6,'Lambeth':3.6,'City of London':3.4}});
+CITIES.push({k:'LON',name:'London',lon:-0.1100,lat:51.5050},{k:'BRU',name:'Brussels',lon:4.3570,lat:50.8460},{k:'NYC',name:'New York',lon:-73.9800,lat:40.7450},{k:'FRA',name:'Frankfurt',lon:8.6750,lat:50.1100});
+
 const GEO_PARIS=`1|444,238|411,194 421,204 501,233 488,269 476,289 448,263 417,252 383,235 399,202 399,197 411,194
 2|469,204|503,227 501,233 484,227 421,204 411,194 458,181 514,197 503,227
 3|537,236|552,208 564,235 570,279 544,270 525,253 498,241 514,197 552,208
@@ -816,7 +1054,140 @@ Singel|411,316 406,310 409,287 419,268 429,255
 Prinsengracht|408,251 392,280 390,322 406,340 432,345 452,339
 Amstel|452,339 445,320 435,316 425,317
 Amstel|446,674 447,669 440,660 439,653 459,632 467,621 467,616 459,598 462,582 460,573 469,567 472,561 470,558 447,546 434,544 431,541 429,533 433,519 441,503 439,494 440,488 459,484 462,480 468,462 481,456 491,446 484,427 482,414 473,393 464,379 454,345`;
-const GEO_WORLD=`~34#3~3#~#~#6~11#19~38#2~13#13~13#3~#2~43#3~#~3#~3#~#2~#4~#2~10#17~37#2~12#21~#2~26#~10f2~15#~2#7~4#2~2#8~10#13~#~23#2~13#~5#3~#28~#10~2#~10#~8f12#~#9~2#3~2#~2#~#3~#2~3#4~8#13~22#9~12#3~#2~#47~#8~5f12#29~4#5~5#10~24#14~#~#12~#53~2#2~3f13#26~#~3#6~7#6~9#4~13#5~2#4~#~#70~8f12#25~9#2~#~7#4~25#5~2#79~7f7~f5#23~8#4~11#3~24#6~2#67~2#~#4~13f4~8f2#20~8#4~2#~35#6~3#59~5#~3#~20f~11f#21~7#7~28c2~5#~#2~3#58~9#4~16f~16#24~2#10~25c3~5#~5#58~10#3~34#24~2#11~23#2~c2~2a2d3#65~6#~37#36~26c2~#2d4#63~#~45#~#11f3#13~#~3#2~26b5d3#63~#~46f19#8f#2~5#~25b4#66~2#~46f21#4f3~#2~30b4#3~#8~2#~#5~2#42~50f21#2f4~30#4b3~3#2~2#5~6#4~2#41~3p2~46f26~32#4~4#~2#2~#3e~e7#3~2#38~5p~47f24~33#5~8#~#2~e9#3~2#32~4#~6p~48f23~35#2~4#3~#~6e6#5~2#34~2#2~3p2~50f22~35#8~7#~3#~#42~3#~2p4~51f19~36#10~12#19o3#20~5p2~55g5f12~36#14~#2k2~k2j#19o3#21~63g6f2~7f~35#17k5#7~#11o4#7o#13~62g~g5f~8f~33#19k5~#7~2#8o7#2o#o2#12~64g~g5~42#19k5~2#7~i~5#2o9#2o#13~67g4~7#2~32#20k6~#7i2#2~5o9#2o#11~2#~66g4~4g2~4#~29#28~#9~6o9~2#8~74g4~2g2~8#~27#27~2#8~7o6~5#2r2#2~#~75g4#2~36#27~2#6~10o4~6#2r3#2~6#~73#4~33#29~#4~12o3~9r4#~6#~75#2~34#10m2#m2#14~#~14o3~9#r#4~5#~76#~4#4~26#10m5#15~2#2~12o2~9#~2#2~8#~75#~#~#8~23#8m5#19~13o~#~8r~2#~88#10~23#7m5#19~15#~21#~78#12b~21#2~#~4m#13l#6~24#~#2~5#2~82#7h2#3bh~30#12l4#2~26#~#~4#3~81#5h10~30#12l3#2~27#2~4#4~#~79#5h12~27#13l4~29#2~3#4~6#2~73#5h15~25#14l~31#2~2#3~#2~3#~#~#3~68#5h18~24#14~32#~8#~7#4~67#3h20~23#14~33#3~13#5~4#~62#2h19~24#14~38#~3#~7#2~#~6#~60#4h#h14~26#13~122#7h12~25#14~4#~40#3~3#~70#8h11~25#14~4#~37#6~3#2~10#~60#7h9~26#13~3#3~36#8~2#2~72#6h9~26#12~4#3~36#12~72#6h9~27#11~4#2~34#17~7#~62#7h6~29#7n2#2~4#2~33#18~70#8h3~31#6n3#~5#~34#19~69#8h3~32#2n5#~41#20~67#8h3~33n6#n~41#20~67#8h3~34n6~43#19~67#9h~35n5~44#4~5#9~68#7~87#~10#6~11#~56#9~98#5~12#~55#6~118#2~54#4~#~103#2~12#2~56#4~105#~11#2~56#4~117#2~57#4~175#4~68#~107#3~178#3~178#2~124`;
+const GEO_WORLD=`~34t3~3t~t~t6~11#19~38v2~13v13~13v3~v2~43t3~t~3t~3t~t2~t4~t2~10#17~37v2~12v21~v2~26v~10f2~15t~2t7~4t2~2t8~10#13~#~23C2~13v~5v3~v28~v10~2v~10v~8f12t~t9~2t3~2t~2t~t3~t2~3t4~8#13~22CBC2Bv4~12v3~v2~v47~v8~5f12t29~4t5~5#10~24CD4B3v6~v~v12~v53~2v2~3f13t26~t~3t6~7#6~9#4~13CD4~2B2v2~v~v70~8f12t25~9t2~t~7#4~25C2D3~2B5v74~7f7~f5t23~8t4~11#3~24C3D3~2B3v64~2v~v4~13f4~8f2t20~8t4~2t~35C3D3~3y2v57~5v~3v~20f~11ft21~7t7~28c2~5#~D2~3z3v55~9v4~16f~16t24~2t10~25c3~5#~5vA2x2v19#v33~10v3~34t24~2t11~23E2~c2~2a2d3w5x4v15#8v21H3v9~6v~37t36~26c2~s2d4#w4u6v7#2v#v2#11v7#2v9H4v6~v~45t~t11f3t13~t~3t2~26b5d3#4u9v3#35H7v5~v~46f19t8ft2~5t~25b4F2#10u4v5#18H3#15H7v2~2v~46f21t4f3~t2~30b4G3~#8~2v~v5~2#14H7#10H9v2~50f21t2f4~30#4b3~3G2~2#5~6#2v2~2#14H8#7H11v~3p2~46f26~32#4~4G~2G2~#3e~e7#3~2#11H25#2~5p~47f24~33#5~8G~#2~e9#3~2#10H22~4#~6p~48f23~35#2~4#3~G~6e6#5~2#11H23~2#2~3p2~50f22~35#8~7#~3#~#21H21~3#~2p4~51f19~36#10~12#19o3H20~5p2~55g5f12~36#14~#2k2~k2j#19o3H21~63g6f2~7f~35#17k5#7~#11o4#2H5oH13~62g~g5f~8f~33#19k5~#7~2#8o7#2o#o2#H11~64g~g5~42#19k5~2#7~i~5#2o9#2o#2H11~67g4~7#2~32#20k6~#7i2#2~5o9#2o#3H2#H5~2#~66g4~4g2~4#~29#28~#9~6o9~2#8~74g4~2g2~8#~27#27~2#8~7o6~5#2r2#2~H~75g4#2~36#27~2#6~10o4~6#2r3#2~6#~73#4~33#29~#4~12o3~9r4#~6#~75#2~34#10m2#m2#14~#~14o3~9#r#4~5#~76#~4#4~26#10m5#15~2#2~12o2~9#~2#2~8#~75#~#~#8~23#8m5#19~13o~#~8r~2#~88#10~23#7m5#19~15#~21#~78#12b~21#2~#~4m#13l#6~24#~#2~5#2~82#7h2#3bh~30#12l4#2~26#~#~4#3~81#5h10~30#12l3#2~27#2~4#4~#~79#5h12~27#13l4~29#2~3#4~6#2~73#5h15~25#14l~31#2~2#3~#2~3#~#~#3~68#5h18~24#14~32#~8#~7#4~67#3h20~23#14~33#3~13#5~4#~62#2h19~24#14~38#~3#~7#2~#~6#~60#4h#h14~26#13~122#7h12~25#14~4#~40#3~3#~70#8h11~25#14~4#~37#6~3#2~10#~60#7h9~26#13~3#3~36#8~2#2~72#6h9~26#12~4#3~36#12~72#6h9~27#11~4#2~34#17~7#~62#7h6~29#7n2#2~4#2~33#18~70#8h3~31#6n3#~5#~34#19~69#8h3~32#2n5#~41#20~67#8h3~33n6#n~41#20~67#8h3~34n6~43#19~67#9h~35n5~44#4~5#9~68#7~87#~10#6~11#~56#9~98#5~12#~55#6~118#2~54#4~#~103#2~12#2~56#4~105#~11#2~56#4~117#2~57#4~175#4~68#~107#3~178#3~178#2~124`;
+const GEO_LON=`Barking and Dagenham|1660,515288 -74,-168 -315,74 -258,-50 -57,26 -36,97 -157,32 -74,122 236,75 10,-38 254,115 1,58 103,33 23,54 -24,45 43,37 -59,16 -12,51 202,128 46,-104 -44,-203 151,-72 232,39 -25,-42 76,-86 -242,-239
+Barnet|-2522,515880 -518,435 -5,48 308,24 105,61 58,-30 68,143 217,39 24,-28 186,57 -33,41 113,32 89,-63 89,47 -38,-58 311,-73 30,-101 226,-131 -153,-168 57,-53 -46,-14 -11,-87 -69,-27 -46,80 -57,-77 45,-115 -86,-29 -85,-140 -150,-38 -101,-93 -141,-10 -219,174 -142,-36 -50,106 63,48 -39,36
+Bexley|1218,514138 -183,18 -289,166 82,111 46,-1 -17,133 -71,28 43,5 -7,68 161,88 137,-23 65,58 57,-21 -40,346 84,19 365,-91 65,-65 19,-104 100,-62 341,-7 -95,-96 21,-82 -128,-48 57,2 2,-37 -305,-111 -85,-146 -85,23 -47,-105 35,-19 -55,-61 38,-37 -311,51
+Brent|-2905,515357 -170,-26 28,68 -31,60 -278,108 73,58 -14,46 75,26 -45,91 219,83 224,-20 -80,85 232,68 189,-160 -61,-29 31,-111 179,16 419,-357 -51,-86 -63,52 -123,-15 -8,-35 -418,74 -227,-69 -89,33 103,16 -35,53 -79,-29
+Bromley|938,513202 -88,-42 -21,-103 83,-89 -59,-39 -268,-35 -77,46 -84,-13 4,85 -99,63 -179,-157 -66,186 19,57 -37,-4 -120,371 -184,126 -30,140 -102,-24 5,115 -170,64 32,31 -27,35 -76,-24 -76,44 -46,92 -83,47 89,89 204,-38 214,32 176,-121 379,154 111,-66 15,110 -65,-13 -64,51 55,71 120,-48 163,-149 167,74 323,-179 243,4 208,-82 97,-138 -149,-3 57,-142 -106,-273 -57,-65 -185,-1 33,-105 -38,-39 -241,-95
+Camden|-1285,515132 -187,118 -55,125 -261,23 -100,-53 -247,207 141,10 101,93 194,73 275,-35 15,-91 138,-127 45,-168 65,-8 108,-114 -232,-53
+City of London|-758,515158 31,-56 -68,-24 -321,30 -22,73 170,52 106,-46 77,28 27,-57
+Ealing|-2531,515023 -23,-74 -146,-7 -107,86 -179,-27 10,-52 -83,13 -61,-42 -39,39 -346,32 -213,-86 -59,61 -94,-19 -198,50 135,74 172,217 -357,53 -76,61 242,24 -34,54 211,70 300,47 196,-44 208,-99 -3,-123 249,55 47,-36 -115,-33 37,-25 167,5 112,56 107,-19 -56,-88 76,-179 -80,-44
+Enfield|-355,516128 12,-38 -72,-34 -973,46 -57,53 153,168 -226,131 -30,101 -311,73 223,196 1,57 141,-26 445,63 429,-88 509,-21 21,-205 -43,-208 -222,-268
+Greenwich|-179,514695 -50,56 79,67 -30,14 200,53 -43,116 31,44 208,-105 364,1 187,19 153,130 285,20 37,-342 -57,21 -65,-58 -137,23 -161,-88 7,-68 -43,-5 71,-28 17,-133 -257,-195 -218,173 -183,17 3,63 -68,10 47,7 -84,60 -23,92 92,80 -362,-44
+Hackney|-765,515246 -68,-48 -17,64 -104,30 -16,38 104,43 28,93 74,-2 -31,53 -109,25 -13,60 -128,45 84,60 -18,29 367,42 141,-152 179,-14 117,-78 10,-101 -170,13 -113,-88 -177,-3 -115,-53 -25,-56
+Hammersmith and Fulham|-2108,514674 -111,65 -67,149 -164,3 5,88 -48,-10 -58,74 94,4 -70,200 63,81 179,-24 2,-93 125,-120 16,-84 301,-235 47,4 -70,-112 -244,10
+Haringey|-672,515763 -307,-27 18,-29 -88,-60 -147,108 -228,-64 -289,33 55,109 86,29 -46,113 54,78 50,-79 92,58 -12,56 81,24 938,-56 -107,-115 -1,-66 -149,-112
+Harrow|-3378,515571 -98,26 -290,-62 -258,485 -17,112 658,163 216,110 120,-38 7,-52 368,-311 -232,-68 80,-85 -224,20 -219,-83 45,-91 -156,-126
+Havering|1699,515641 -80,-25 -151,72 30,9 -28,60 40,198 -34,13 -2,157 -92,110 307,-21 552,103 400,-228 -101,-73 159,-20 14,-106 190,-247 227,15 22,-79 126,-69 62,-105 -687,-84 -16,-142 -99,0 -49,108 -82,-67 42,-32 -78,5 49,-113 -160,-21 39,-65 -149,-29 -54,-67 -216,-20 -94,175 -199,69 59,151 256,254 -76,86 25,42 -152,-14
+Hillingdon|-4107,514982 -62,-157 57,-126 -224,-82 -15,-48 -89,-36 -663,145 271,388 -91,105 33,120 -65,94 189,195 -82,88 8,83 -156,171 42,265 -48,34 11,85 75,2 344,-185 167,78 364,-69 17,-112 104,-137 142,-336 -209,-67 34,-54 -244,-40 435,-98 3,-34 -177,-184 -171,-88
+Hounslow|-3955,514234 -104,-7 -132,97 -209,-18 2,40 -79,4 14,50 -102,-19 -10,110 -40,-1 28,73 147,-30 89,36 15,48 224,82 -57,126 76,178 222,-56 94,19 59,-61 211,86 348,-32 39,-39 61,42 83,-13 -10,52 179,27 117,-88 136,9 23,65 86,-35 -1,-92 -121,-167 -98,2 -138,134 -125,19 -293,-169 -48,-136 -462,4 -147,-80 96,-69 113,-9 -210,-129 25,-80 -101,27
+Islington|-925,515214 -128,-29 -108,114 -65,8 -45,168 -138,127 -15,89 228,64 279,-153 13,-60 114,-29 26,-49 -74,2 -28,-93 -104,-43 120,-68 -12,-75 -63,27
+Kensington and Chelsea|-1784,514793 -55,-19 -303,233 -16,84 -125,120 -2,93 225,-45 68,-113 113,-44 83,-124 211,44 26,-126 59,-41 -284,-62
+Kingston upon Thames|-3275,513440 -30,44 107,115 25,125 99,60 -103,153 86,73 31,202 -78,80 31,30 158,-58 42,26 41,-88 326,170 93,-328 -28,-68 86,-116 -62,-60 -161,-4 -243,-153 -185,-213 -17,-76 -133,-74 -114,-1 29,161
+Lambeth|-835,514242 50,-42 -342,32 -152,-112 -202,9 102,82 -5,94 30,-1 -47,64 41,51 -76,-1 13,92 -54,13 -35,136 165,75 186,339 96,-23 -49,-86 83,-49 -54,-57 45,-49 -44,-6 124,-104 29,22 30,-59 -114,-140 180,-280
+Lewisham|338,514240 -87,50 -379,-154 -176,121 -214,-32 -233,63 116,87 17,103 156,21 46,51 -107,142 -17,188 216,50 75,-73 -15,-42 93,-11 -57,-61 77,-63 10,46 324,13 -92,-80 10,-68 97,-84 -47,-7 68,-10 -3,-63 73,-11 -35,-59 123,-23 12,-87 -51,-7
+Merton|-1254,513983 -165,-90 -234,-13 -96,54 -136,-79 -213,28 -86,-81 -163,103 -50,-12 -78,83 28,68 -95,253 229,84 412,33 -10,-84 53,1 38,-84 416,-55 -64,-67 192,-2 -47,-54 69,-86
+Newham|-79,515231 -133,138 51,56 -30,91 249,-10 173,63 230,-21 -42,67 84,25 175,-109 -11,-127 61,-111 192,-37 48,-104 -130,-34 -138,-125 -456,-10 -147,84 -24,76 -46,-34 13,44 -126,48 98,109 -92,-38 1,-41
+Redbridge|419,515615 42,-67 -208,-7 -108,62 46,96 -71,234 94,187 -126,71 57,-2 66,101 198,-133 128,26 -56,-50 247,-86 161,2 59,59 -25,28 270,18 168,82 113,-111 7,-135 -217,-123 12,-51 59,-16 -43,-37 1,-99 -103,-33 15,-46 -72,-12 -14,-47 -401,-90 -56,131 32,-126 -58,132 -133,67 -84,-25
+Richmond upon Thames|-3466,514056 -132,64 -183,-41 -116,28 30,94 -62,32 75,-26 -25,80 210,129 -113,9 -96,69 147,80 333,19 65,-40 77,27 39,74 179,-124 -278,-117 56,-102 74,-20 -84,43 -28,86 272,103 -170,122 18,65 276,153 96,-24 165,-137 125,33 27,98 76,49 133,-31 46,-143 -87,20 -11,-88 -197,12 -51,-49 -11,-54 118,-57 46,-73 -439,-217 -41,88 -42,-26 -158,58 -38,-39 85,-68 -29,-198 -110,-91 -79,-8 -188,138
+Southwark|-803,514220 -211,300 113,141 -30,60 -29,-22 -124,104 44,6 -45,49 54,57 -83,49 55,56 -30,64 278,-25 102,-34 -26,-20 391,59 20,-134 -216,-50 17,-188 107,-142 -46,-51 -156,-21 -17,-103 -168,-155
+Sutton|-1445,513260 -121,-45 -76,45 11,42 -99,-2 -244,136 -157,-81 -10,-51 -69,-5 -88,66 120,91 -91,170 -185,42 12,167 95,70 166,-103 83,81 213,-28 136,79 96,-54 323,23 117,-256 -34,-59 78,-130 -114,16 -163,-54 -29,-32 34,-81 -52,-19 48,-28
+Tower Hamlets|-547,515048 -246,30 66,24 -67,86 21,85 148,82 177,3 116,88 167,-13 -47,-64 137,-107 -16,-65 124,-46 -11,-46 46,33 24,-54 -149,-33 -33,-39 57,-114 -99,-38 -125,46 -42,183 -151,6 -97,-47
+Waltham Forest|181,515581 34,-32 -120,-37 -266,2 -107,94 -193,18 -151,165 99,84 18,92 163,124 -10,42 198,222 31,107 350,-51 24,-38 -66,-144 -97,-38 126,-71 -94,-194 71,-227 -49,-86 39,-32
+Wandsworth|-1389,514258 10,-47 -67,-34 -374,70 -38,84 -53,-1 10,84 -610,-88 -29,46 124,59 -175,118 11,54 51,49 197,-12 21,88 370,-130 -7,31 134,43 94,129 457,44 -89,-116 -160,-70 35,-136 54,-13 -13,-92 76,2 -41,-52 48,-65 -36,-45
+Westminster|-1500,514855 -59,41 -26,126 -211,-44 -83,124 -113,44 -24,81 -139,40 1,46 125,16 63,-52 51,86 113,33 275,-21 55,-125 179,-115 177,17 0,-44 -108,-48 -61,-179 -215,-26
+Croydon|-72,513337 -72,-39 -77,83 -158,6 -124,-61 24,-74 -34,-28 -276,-26 -123,-183 -237,-91 -29,-53 -65,-3 -130,140 -180,5 9,90 -75,93 164,39 -38,53 52,19 -34,81 33,35 159,51 114,-16 -78,130 37,45 -78,224 -56,51 102,68 -79,116 194,140 340,-34 -19,-41 78,-30 46,-92 76,-44 76,24 27,-35 -32,-31 170,-64 -5,-115 102,24 30,-140 188,-133 79,-218 -101,34`;
+const GEO_BRU=`Saint-Gilles|43400,508402 -40,-13 -63,-74 -38,-10 88,-25 98,-69 91,-6 3,20 45,24 1,24 -15,9 13,37 -28,34 -72,-25 -53,2 -30,72
+Forest|43479,508143 -101,9 -30,-22 25,-19 -18,-26 -105,-30 -33,-48 -99,-32 -69,13 -28,50 44,86 42,18 -27,30 23,9 5,19 73,23 78,82 88,-25 98,-69 91,-5 -33,-49 -30,4 6,-18
+Ixelles|43796,508368 -50,-9 15,8 -10,14 9,17 -32,8 -7,-13 -34,7 -126,-42 43,-43 51,-11 9,-10 -17,-18 58,-36 86,-102 38,18 46,-102 30,-32 33,-14 32,10 2,69 -49,34 57,12 -38,40 29,-10 0,9 42,1 20,30 -72,54 -65,-32 -96,76 24,28 -34,11 6,28
+Etterbeek|44001,508437 -12,10 -29,-13 -27,-55 -130,21 -13,-60 34,-11 -24,-28 96,-76 74,37 23,-13 129,56 -17,4 -7,30 -47,37 25,13 -65,17 -10,31
+Uccle|43681,508149 -13,20 -33,-11 -57,6 -3,-17 -134,-7 -63,12 -30,-22 25,-19 -18,-26 -105,-30 -33,-48 -99,-32 59,-25 15,-78 27,-40 94,-77 95,-19 63,19 166,-41 5,15 -11,4 179,-40 17,-6 2,-50 297,86 -156,159 -1,11 69,28 -5,15 -22,5 -3,23 -254,33 25,13 -51,21 -10,36 12,15 -32,12 -17,55
+Anderlecht|42846,508453 -9,-46 -21,-6 13,-22 -77,10 -20,-2 -13,-25 -155,-13 -20,-25 13,-20 -9,-34 -110,-74 11,-19 49,18 15,-23 50,2 38,-63 129,11 63,-46 149,6 58,48 96,0 11,13 -27,29 23,9 5,19 73,23 79,84 43,13 57,69 41,14 -22,62 -19,-1 -4,17 -30,-9 -19,-32 -204,63 -74,-22 -32,11 1,-18 -55,-1 -19,22 -20,-4 26,-38 -84,0
+Molenbeek-Saint-Jean|42898,508559 -67,-22 51,-54 -42,-2 3,-27 87,-1 -26,38 20,4 19,-22 55,1 -1,18 32,-11 74,22 204,-63 28,38 39,7 93,105 -10,6 27,33 -67,21 19,41 -31,23 -81,-69 53,-50 -49,-24 -73,-2 13,42 -46,14 -61,-13 -55,35 -47,-5 6,-21 -30,-8 17,-11 -30,0 19,-22 -84,-26 -59,5
+Koekelberg|43141,508671 -49,-2 -22,-27 52,0 39,-30 61,13 46,-14 -13,-42 73,2 49,24 -81,81 -45,-10 10,-9 -13,-6 -107,20
+Ganshoren|42982,508821 0,-31 -67,-37 130,-62 216,-34 -55,65 28,5 -30,25 7,25 -18,8 4,17 -215,19
+Jette|43252,508667 44,9 28,-31 81,69 -21,50 11,2 -2,52 -23,52 -70,-19 -25,38 23,16 -37,6 15,23 -37,7 -301,-51 4,-24 29,-16 11,-29 215,-19 -4,-17 18,-8 -7,-25 30,-25 -28,-5 46,-55
+Schaerbeek|43725,508716 -73,-21 0,14 -15,4 -26,-25 -39,-85 154,-36 96,-49 36,-3 72,-43 30,-38 29,13 12,-10 107,54 -8,16 21,10 -14,14 23,10 -130,98 -116,172 -136,-56 -23,-39
+Saint-Josse-ten-Noode|43572,508603 -20,-41 132,-36 12,-55 57,5 88,38 -115,53 -154,36
+Auderghem|44703,507898 120,32 -351,153 56,2 51,19 -60,-15 -41,24 98,50 -48,41 -62,23 -38,-3 -22,-18 -103,56 -123,-46 -63,10 -73,44 -51,-21 -32,8 73,-58 -26,-28 -37,1 0,-9 -29,10 38,-40 83,17 1,-26 80,8 37,-8 13,-18 91,-6 -2,-48 13,-15 139,-61 76,12 42,-68 150,-22
+Watermael-Boitsfort|44126,507723 206,58 14,-16 357,133 -150,22 -42,68 -76,-12 -139,61 -13,15 2,48 -91,6 -13,18 -37,8 -80,-8 -1,26 -140,-29 49,-34 -3,-70 41,-42 1,-34 28,-16 -70,-32 1,-11 156,-159
+Brussels City|43681,508149 17,-55 32,-12 -12,-15 10,-36 51,-21 -25,-13 255,-34 -40,55 -31,-10 -33,14 -30,32 -46,102 -38,-18 -86,102 -58,36 17,18 -9,10 -51,11 -50,42 133,43 34,-7 7,13 32,-8 -9,-17 10,-14 -15,-8 54,12 3,29 130,-21 28,54 -7,14 -103,70 -98,-41 -57,-5 -12,55 -132,36 59,126 26,25 15,-4 0,-14 73,21 23,39 136,56 -11,9 147,39 53,-37 34,-52 36,13 34,-30 80,-32 31,42 -15,12 98,13 -99,111 6,17 50,31 -69,38 19,15 -48,30 -105,40 17,45 -107,24 -44,-7 -42,-30 -64,1 -55,-85 -38,-10 -18,-38 -134,42 -224,12 -114,-17 -164,-74 130,5 8,-4 -15,-23 37,-6 -23,-16 25,-37 70,18 23,-52 2,-52 -11,-2 18,-49 34,-24 -19,-41 67,-21 -27,-33 10,-6 -93,-105 -19,4 5,-25 19,1 51,-135 54,-2 68,28 20,-19 45,-72 29,-15 4,-19 22,-1 -8,-20 32,-18 11,-39 -26,-4
+Berchem-Sainte-Agathe|42858,508711 -65,-54 10,-58 81,-23 18,-23 55,1 84,26 -19,22 30,0 -17,11 30,8 -6,21 14,15 68,14 -40,20 -63,3 -123,59 -57,-42
+Evere|44104,508774 39,9 34,-30 82,-32 -50,-44 57,-48 -46,-59 -102,-50 -11,11 23,10 -130,98 -127,181 147,39 53,-37 31,-48
+Woluwe-Saint-Lambert|44579,508528 -98,14 -38,33 7,6 -59,23 -17,-19 -76,27 12,13 -44,4 -46,-59 -102,-50 -18,-13 8,-16 -107,-54 10,-31 97,-25 225,18 7,-21 15,-2 -10,-29 47,-9 5,19 -16,3 4,10 163,29 -67,30 115,25 -22,24 44,10 -6,31 -33,9
+Woluwe-Saint-Pierre|44044,508270 73,-44 61,-10 125,46 103,-56 22,18 41,2 78,-42 220,20 -110,151 25,19 -14,28 3,44 -19,-3 -27,46 -51,-11 22,-24 -25,-13 -90,-12 67,-30 -163,-29 -4,-10 16,-3 -5,-19 -47,9 10,29 -28,24 -266,-16 -10,-8 47,-37 7,-30 17,-4 -78,-35`;
+const GEO_NYC=`Staten Island|-740822,406483 105,-33 -13,-147 50,-15 -49,12 6,-54 201,-248 -212,-215 -635,-490 -36,57 125,57 -27,56 -645,-363 -124,18 -100,-85 -292,-72 -63,39 -4,117 137,84 -82,230 173,125 187,28 74,309 71,75 -53,115 20,221 62,70 146,79 272,-82 706,112
+Queens|-738205,408010 241,-53 36,-69 159,76 118,-226 204,-172 -104,109 43,154 495,-321 13,-116 -77,-114 -226,-56 51,-702 -162,-51 14,-118 -148,127 62,-124 -164,-60 -58,-94 -84,73 -60,-72 43,-65 -105,-60 -94,43 182,183 -155,8 73,33 -304,148 -11,103 110,12 -122,-5 4,-121 -78,36 7,82 -43,-117 -42,144 28,-170 -136,-14 1,73 -138,69 75,56 -132,313 -276,-129 -254,271 -33,129 48,14 -255,138 73,54 -240,-41 277,312 -15,69 265,140 140,-53 -67,-53 109,19 22,-87 216,139 -47,-66 175,-86 -77,-54 121,-74 116,66 -87,8 -14,155 -103,32 58,85 158,45 50,-100 124,125
+Brooklyn|-739544,407391 252,-117 46,-82 -87,-82 97,63 271,-350 281,124 127,-308 -76,-70 61,-132 -84,-49 -137,158 113,-165 -64,-14 -166,127 139,-134 -66,-84 -121,-51 -217,89 210,-100 68,-99 -101,-60 -90,119 72,-116 -121,-18 -6,109 -52,-72 106,-61 249,40 43,-255 -158,-33 -35,109 -125,-16 -36,127 -151,52 160,-148 -106,-36 8,55 -46,-25 -40,63 13,-80 198,-51 -420,12 209,-17 15,-51 -710,-66 -99,100 260,21 -142,14 61,56 -63,-22 20,70 -376,158 -56,113 28,190 233,212 160,36 7,72 -181,-68 -24,68 28,-67 62,42 -85,32 -5,73 183,105 64,143 163,16 26,-64 62,9 -51,72 71,-43 2,136 94,76 -44,94 79,51
+Bronx|-738729,409044 134,-39 84,99 127,-163 454,-107 -100,-142 -54,20 53,-54 102,135 85,-9 12,-77 -82,-26 -89,-200 -45,135 -103,15 28,-89 -48,-29 54,-46 -65,-24 83,-161 -41,-40 70,12 96,-96 -96,7 19,-36 145,-83 -256,92 -212,-76 -23,334 -3,-197 -62,-92 -92,36 73,-94 -284,112 84,-93 -42,-66 -228,67 -166,-103 -159,61 -55,325 264,406 -182,31 134,349 386,-94
+Battery Park City|-740138,407137 -27,-90 23,-46 -51,60 11,17 4,50 12,-6 3,12 -14,-3 10,55 43,5 -14,-54
+Central Park|-739497,407971 -233,-328 -85,37 231,324 87,-33
+Chelsea|-739935,407522 56,-23 -63,-89 44,-18 -19,-40 -179,81 -25,2 32,4 -7,14 -22,-2 1,9 22,-2 -20,12 23,-2 -22,8 23,2 -21,9 16,12 -12,5 17,-1 -16,8 17,-5 5,13 -17,6 17,-5 -15,9 16,-5 28,47 121,-49
+Chinatown|-740000,407180 22,-12 13,22 73,-23 -9,-33 -79,-7 -24,17 5,22 -36,8 16,20 19,-14
+Civic Center|-739980,407127 2,-7 -56,-8 -20,10 -32,-8 51,60 36,-8 -5,-22 24,-17
+East Harlem|-739338,408195 -5,-99 53,-85 -8,-62 -60,-38 -13,-17 9,-6 -9,4 -27,-39 -38,-26 -122,52 112,153 16,-6 18,25 -16,6 88,121 2,17
+East Village|-739907,407348 191,-80 -20,-82 -190,55 18,56 -21,4 22,47
+Financial District|-740138,407137 52,-23 32,8 63,-42 -21,-11 6,-15 -8,-5 -19,7 3,-8 -16,0 11,-10 -19,5 11,-13 -18,10 6,-16 -13,12 -25,-16 15,-5 -5,-8 -13,12 -16,-4 4,-13 -3,7 -20,-11 -31,28 -3,21 27,90
+Flatiron District|-739834,407414 -18,-26 -17,7 -8,-12 -65,27 28,38 80,-34
+Gramercy|-739785,407369 -41,-55 -91,38 19,40 21,-9 8,12 22,0 62,-26
+Greenwich Village|-739915,407317 -53,-63 -61,29 61,91 61,-26 -8,-31
+Harlem|-739346,408281 6,-103 -88,-121 16,-6 -18,-25 -16,6 -45,-61 -105,41 14,19 0,25 39,54 -67,77 -11,-6 33,34 -8,15 11,-12 6,10 -17,9 23,34 28,8 43,64 156,-62
+Hell's Kitchen|-739907,407560 -28,-38 -121,49 6,13 -20,8 31,2 16,21 -23,10 24,-8 7,9 -21,12 26,-4 -22,13 33,-13 7,8 -27,7 -2,10 32,-13 6,10 -33,14 35,-11 7,9 -32,14 34,-11 7,10 -32,14 26,-8 5,7 -22,14 25,-10 4,17 10,0 -22,11 27,-2 -23,11 143,-61 -83,-114
+Inwood|-739223,408556 -24,60 -29,-26 -55,8 -24,-9 -23,9 54,78 13,51 46,49 41,-8 -2,-24 13,-13 15,5 -11,19 20,-9 4,-14 9,13 -3,-6 54,-2 21,-22 -21,-50 -19,-23 -15,1 5,-12 -41,-43 -21,13 -3,-9 15,-10 -19,-26
+Kips Bay|-739717,407430 -8,-72 -20,3 16,-10 -118,44 50,69 80,-34
+Little Italy|-739944,407195 -4,-10 -17,5 -13,-22 -22,12 23,28 33,-13
+Lower East Side|-739749,407152 -31,-46 -139,-11 -7,37 25,2 9,33 -56,18 22,56 190,-55 -13,-34
+Midtown|-739622,407545 -57,-65 -114,48 -37,-51 33,-13 -37,-50 -80,34 35,51 -56,23 28,38 57,-24 59,81 -56,25 27,42 232,-102 -34,-37
+Morningside Heights|-739596,408012 -114,47 100,128 67,-77 -39,-54 0,-25 -14,-19
+Murray Hill|-739679,407480 -38,-50 -113,47 37,51 114,-48
+NoHo|-739926,407241 -42,13 39,47 21,-4 -18,-56
+Nolita|-739926,407241 -18,-46 -33,13 23,42 28,-9
+SoHo|-740029,407283 75,-33 -46,-70 -111,77 -9,-14 3,16 -35,5 37,0 8,34 78,-15
+Stuyvesant Town|-739744,407351 10,-38 19,-20 -1,-25 -110,46 41,55 41,-18
+Theater District|-739850,407536 -57,24 60,82 56,-25 -59,-81
+Tribeca|-740019,407194 -67,-80 -52,23 14,54 -40,13 34,-1 -26,13 31,-1 14,42 92,-63
+Two Bridges|-739919,407095 -72,-15 -42,32 107,20 7,-37
+Upper East Side|-739436,407827 16,-65 -9,-15 -159,-165 -142,61 172,236 122,-52
+Upper West Side|-739584,408004 -240,-330 -138,64 23,-6 16,19 34,46 -27,-1 27,3 34,55 -7,7 -9,-9 10,10 7,-8 -4,8 11,3 -12,0 13,1 136,193 126,-55
+Washington Heights|-739223,408556 -74,-104 -52,-100 3,-71 -156,62 41,96 -9,65 51,35 41,59 23,-9 24,9 55,-8 29,26 24,-60
+West Village|-740088,407424 120,-50 -61,-91 -78,15 -1,-16 -36,3 4,22 28,-2 3,25 -31,1 31,2 -11,10 12,0 4,49 -23,15 31,-1 -25,12 26,-3 7,9`;
+const GEO_FRA=`Altstadt|86774,501067 -25,25 44,36 85,20 -1,-63 -103,-18
+Bahnhofsviertel|86620,501088 -14,7 79,37 62,-77 -53,-30 -74,63
+Niederrad|86606,500892 -95,-11 -12,-26 49,-66 -35,-20 -197,-2 -30,120 252,72 101,-40 -33,-27
+Hausen|86176,501404 95,7 91,-36 -19,-31 -32,4 22,-24 -39,-35 -68,9 -8,-22 -29,0 27,43 -39,49 -1,36
+Riederwald|87257,501230 -15,44 50,30 128,14 -17,-27 28,-22 -12,-16 -125,-46 -37,23
+Nied|85937,501134 7,-40 58,-24 -150,-40 -9,-55 -94,-59 -119,62 -123,7 80,54 69,3 19,48 262,44
+Innenstadt|86868,501201 89,-44 -13,-80 -67,8 1,63 -15,-1 -70,-19 -44,-36 19,-28 -21,-9 -62,77 25,36 158,33
+Westend-Süd|86607,501231 149,-22 34,-30 -80,-11 -13,-29 -91,-44 -58,29 -40,-31 -74,-3 -1,51 26,-1 43,61 38,-2 -11,56 33,14 22,-37 23,-1
+Westend-Nord|86711,501370 45,-161 -172,23 -22,37 15,33 45,11 -9,50 91,24 7,-17
+Nordend-West|86972,501369 -83,-184 -21,16 -78,-22 -34,30 -42,152 130,5 4,22 89,12 -9,22 33,7 29,-20 -18,-40
+Nordend-Ost|86978,501192 -24,-32 -65,25 94,207 81,-54 -23,-60 -48,-28 29,-26 -44,-32
+Ostend|87476,501212 -20,-58 -261,-87 -251,10 10,83 87,75 147,-18 69,13 37,-23 140,54 29,-11 -20,-8 33,-30
+Bornheim|87057,501229 -35,-5 -29,26 48,28 23,60 -81,54 7,17 57,31 42,-49 146,-45 22,-116 -200,-1
+Gutleutviertel|86217,500909 -2,23 115,-3 65,36 -49,6 227,88 9,-23 70,27 42,-38 -129,-62 -253,-73 -93,-2 -2,21
+Gallus|86606,501095 45,-35 -69,-24 -9,23 -100,-37 -127,-51 49,-6 -98,-42 -82,9 -89,135 132,32 250,-6 40,31 58,-29
+Bockenheim|86422,501369 191,-6 9,-48 -45,-13 -54,-55 17,-48 -38,2 -43,-61 -26,1 1,-50 -176,8 -128,-45 -84,7 -53,80 216,68 8,82 77,-2 39,35 -22,24 39,1 4,37 68,-17
+Sachsenhausen-Nord|87182,501024 -40,-12 3,-18 -84,-5 -69,33 -44,-4 -258,-133 -152,74 284,122 352,-18 8,-39
+Oberrad|87279,501066 140,-23 27,-25 -56,-8 7,-79 -146,14 -28,-40 -61,-9 -20,116 40,12 -8,39 82,21 23,-18
+Flughafen|85891,500706 235,-7 -200,-397 -2,-125 -117,-2 -46,-23 -59,101 -74,13 -427,-58 -37,64 31,7 -29,52 48,9 -17,29 338,127 -36,55 -1,117 393,38
+Sachsenhausen-Süd|87054,500990 91,4 17,-98 61,9 28,40 146,-14 -7,79 56,8 57,-52 -15,-24 -68,-20 -98,-100 21,-63 -83,-29 44,-24 -32,-39 -48,-16 26,-34 -598,-63 -406,-3 -142,-103 -40,-57 -76,31 138,277 294,9 128,81 -49,66 16,30 82,-4 42,38 51,-34 267,135 97,-30
+Schwanheim|85818,500893 468,-6 30,-120 197,2 -77,-55 -74,-13 -594,7 -270,-40 -62,43 -8,42 -103,34 -68,51 225,135 72,21 264,-101
+Griesheim|86080,501055 66,0 15,-53 49,-51 9,-63 -369,-1 -101,29 94,59 9,55 150,40 -58,24 -13,47 53,14 65,-98 31,-2
+Heddernheim|86433,501677 41,-5 61,-60 -25,-42 -105,-75 -126,-4 -16,53 58,23 -6,33 29,8 -10,53 99,16
+Rödelheim|85973,501411 75,-91 77,4 57,39 34,-44 -27,-43 29,0 -5,-63 -112,-52 -108,-20 -89,145 -65,22 -31,36 165,67
+Berkersheim|86875,501659 -14,56 41,9 48,42 -9,16 59,29 90,-22 29,-64 111,-90 -112,-21 -32,32 -106,-24 -13,30 -87,-10 -5,17
+Praunheim|86272,501533 7,-42 80,1 -8,-68 -46,-27 -129,7 -5,-65 -123,-19 -75,91 -40,-13 89,164 209,-30 -10,43 94,25 6,-33 -49,-34
+Eschersheim|86567,501740 85,-36 -21,-30 142,-90 -103,-45 6,-56 -41,21 -69,-19 -106,44 69,65 -30,80 68,66
+Ginnheim|86592,501391 -3,-19 -79,-10 -191,42 39,35 1,53 46,3 59,44 35,-23 -11,-12 46,6 32,-25 30,13 32,-57 -36,-50
+Niederursel|86142,501766 99,-37 62,40 59,-61 114,61 47,-56 -20,-65 -38,27 -131,-14 10,-53 -123,-33 10,-43 -333,60 -19,90 42,-9 48,59 55,-16 76,47 -46,45 132,38 -44,-80
+Dornbusch|86768,501570 -20,-32 41,-65 -18,-61 64,8 9,-54 -130,-5 -10,26 -148,-25 33,10 37,57 -30,69 80,-15 -6,56 75,44 23,-13
+Bonames|86630,501767 -94,55 43,52 117,3 94,-47 -76,-52 -84,-11
+Eckenheim|86750,501544 23,40 -53,32 49,25 49,-40 -4,-31 97,-57 16,-56 34,-28 -33,-7 9,-22 -89,-12 -13,32 -61,-14 -3,53 18,14 -32,24 -7,47
+Preungesheim|86954,501434 -43,79 -97,57 4,31 -37,30 95,24 91,-3 13,-30 106,24 18,-13 25,-46 -42,-19 15,-40 -44,-35 -11,-53 -57,-31 -36,25
+Seckbach|87045,501443 13,50 44,35 -15,40 42,19 -11,27 66,20 175,-4 58,-54 43,-89 -49,-38 69,-91 -60,-40 -93,0 -78,-40 -23,76 -137,37 -44,52
+Nieder-Erlenbach|86903,502005 -92,113 44,34 14,-13 46,27 143,25 54,31 -19,49 99,-19 51,-55 105,-42 2,-42 -42,-5 -1,-72 -166,-92 -86,-26 -152,87
+Fechenheim|87800,501383 -83,-37 -28,-49 109,-125 12,-41 -18,-26 -103,-26 -146,71 -87,4 24,68 -77,69 34,52 386,96 26,-45 -49,-11
+Nieder-Eschbach|86819,502125 -4,-27 88,-93 -193,-140 -131,9 -145,150 73,45 35,-4 41,30 13,-12 95,87 128,-45
+Höchst|85514,501096 64,40 90,-48 -12,-46 -101,-20 -145,-103 -137,-59 -52,-50 -71,43 -11,35 62,52 190,79 -13,27 65,27 -12,10 33,18 -11,12 30,35 49,5 -18,-57
+Sindlingen|85142,500868 79,-58 121,80 -117,-91 46,-129 -67,-52 -190,136 5,59 -71,31 -1,17 40,6 -12,12 221,57 -57,-48 3,-20
+Zeilsheim|84800,501102 161,-42 62,17 97,-62 50,-8 -14,-35 89,-10 -356,-118 -19,18 9,21 -151,115 82,55 -51,34 41,15
+Unterliederbach|85518,501201 -2,-50 -33,-3 -30,-35 11,-12 -33,-18 12,-10 -65,-27 13,-27 -146,-57 -89,10 14,35 -50,8 -124,76 83,75 45,9 12,45 84,-10 110,-57 189,70 -1,-22
+Frankfurter Berg|86546,501736 176,41 115,-38 39,-84 -129,-18 -27,-23 -89,60 21,30 -106,32
+Sossenheim|85860,501299 44,-13 80,-131 -279,-69 -67,5 -60,45 -63,-42 17,48 -16,9 3,72 289,121 52,-45
+Kalbach-Riedberg|86316,501759 -13,10 -62,-40 -99,37 44,80 150,100 51,71 66,-9 109,-102 15,-46 -41,-38 89,-55 -66,-18 -36,-36 -47,56 -114,-61 -46,51
+Harheim|86770,501755 -56,23 76,52 -79,36 192,139 207,-120 -34,-47 -31,9 -25,-42 -67,-14 -3,-25 -66,-54 -114,43
+Bergen-Enkheim|87480,501358 -69,91 49,38 -43,89 -58,54 271,98 -3,62 159,14 5,-33 109,-9 40,-36 23,19 33,-14 5,-37 -57,-26 6,-29 -45,-4 2,-46 -73,-4 -11,-146 -343,-81`;
 const LOGO_FULL='data:image/png;base64,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';const LOGO_APP='data:image/png;base64,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';const LOGO_BIRD='data:image/png;base64,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';
 
 {
@@ -896,11 +1267,20 @@ GEO_PARIS.split('###')[0].trim().split('\n').forEach(l=>{const[n,c,pts]=l.split(
  PD[num]={key:num,city:'PAR',code:num===1?'1er':num+'e',name:row[1],full:(num===1?'1er':num+'e')+' · '+row[1],c:row[2],u:row[3],n:row[4],note:row[5],ring:parsePts(pts).map(parLL),ctr:parLL(c.split(',').map(Number))}});
 GEO_AMS.trim().split('\n').forEach(l=>{const[code,full,sd,c,pts]=l.split('|');const r=AMS_D[code];
  AD[code]={key:code,city:'AMS',code:sd,name:r[0],full,c:r[1],u:r[2],n:r[3],note:r[4],ring:parsePts(pts).map(amsLL),ctr:amsLL(c.split(',').map(Number))}});
-const DIST=city=>city==='PAR'?PD:AD;
+const CD={AMS:AD,PAR:PD};
+function decodeRing(str){const t=str.trim().split(' ').map(p=>p.split(',').map(Number));let x=0,y=0;return t.map(([a,b],i)=>{x+=a;y+=b;return[+(x/1e4).toFixed(5),+(y/1e4).toFixed(5)]})}
+function ringCtr(r){let A=0,cx=0,cy=0;for(let i=0,j=r.length-1;i<r.length;j=i++){const f=r[j][0]*r[i][1]-r[i][0]*r[j][1];A+=f;cx+=(r[j][0]+r[i][0])*f;cy+=(r[j][1]+r[i][1])*f}if(Math.abs(A)<1e-12){const n=r.length;return[r.reduce((s,p)=>s+p[0],0)/n,r.reduce((s,p)=>s+p[1],0)/n]}return[+(cx/(3*A)).toFixed(5),+(cy/(3*A)).toFixed(5)]}
+[['LON',GEO_LON],['BRU',GEO_BRU],['NYC',GEO_NYC],['FRA',GEO_FRA]].forEach(([city,G])=>{const D=CD[city]={};G.trim().split('\n').forEach(l=>{const i=l.indexOf('|');const name=l.slice(0,i);const ring=decodeRing(l.slice(i+1));const m=CITY_META[city][name]||CITY_DEFAULT;D[name]={key:name,city,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}})});
+const DIST=city=>CD[city]||{};
+const CITY_KEYS=Object.keys(CD);
+const keyOf=(city,k)=>city==='PAR'?+k:k;
+const cityName=k=>CITY_INFO[k]?CITY_INFO[k].name:k;
+const distLabel=d=>d.city==='PAR'?d.code+' '+d.name:d.name;
+function cityScore(k,win=S.win){const v=Object.keys(DIST(k)).map(x=>distScore(k,keyOf(k,x),win));return{max:Math.max(...v),avg:v.reduce((a,b)=>a+b,0)/v.length}}
 const WCELLS=(()=>{const out=[];let i=0;GEO_WORLD.trim().replace(/([^0-9])(\d*)/g,(m,ch,n)=>{const k=n?+n:1;for(let j=0;j<k;j++){if(ch!=='~')out.push([i%180,Math.floor(i/180),ch]);i++}return''});return out})();
 const wx=lon=>(lon+180)*3, wy=lat=>(76-lat)*3;
 const CBYMK={};COUNTRIES.forEach(c=>CBYMK[c.mk]=c);
-const ISO={NL:'528',FR:'250',GB:'826',DE:'276',TR:'792',US:'840',MX:'484',BR:'076',AE:'784',IL:'376',EG:'818',KE:'404',NG:'566',ZA:'710',IN:'356',JP:'392',SG:'702',TH:'764'};
+const ISO={NL:'528',FR:'250',GB:'826',DE:'276',TR:'792',US:'840',MX:'484',BR:'076',AE:'784',IL:'376',EG:'818',KE:'404',NG:'566',ZA:'710',IN:'356',JP:'392',SG:'702',TH:'764',...ISO_EXTRA};
 function inRing(x,y,r){let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const[xi,yi]=r[i],[xj,yj]=r[j];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c}return c}
 
 /* ---------- state ---------- */
@@ -939,8 +1319,8 @@ function restyle(){const st=MAP.getStyle();if(!st)return;const set=(id,p,v)=>{tr
   if(/place|water_name/.test(id)){try{MAP.setLayoutProperty(id,'text-field',['coalesce',['get','name_en'],['get','name:en'],['get','name:latin'],['get','name']])}catch(e){}}}}}
 function labelFont(){const st=MAP.getStyle();for(const l of st.layers){if(l.type==='symbol'&&l.layout&&Array.isArray(l.layout['text-font']))return l.layout['text-font']}return['Noto Sans Regular']}
 function firstSymbol(){const st=MAP.getStyle();const l=st.layers.find(x=>x.type==='symbol');return l?l.id:undefined}
-function distFC(){const f=[],lab=[];let id=1;['AMS','PAR'].forEach(city=>Object.values(DIST(city)).forEach(d=>{const v=distScore(city,d.key);const ring=d.ring.slice();const a=ring[0],b=ring[ring.length-1];if(a[0]!==b[0]||a[1]!==b[1])ring.push(a);
- const p={fid:id,city,key:String(d.key),v,col:col(v),name:city==='PAR'?d.code+' '+d.name:d.name,sv:f1(v)};f.push({type:'Feature',id,properties:p,geometry:{type:'Polygon',coordinates:[ring]}});lab.push({type:'Feature',properties:p,geometry:{type:'Point',coordinates:d.ctr}});id++}));
+function distFC(){const f=[],lab=[];let id=1;CITY_KEYS.forEach(city=>Object.values(DIST(city)).forEach(d=>{const v=distScore(city,d.key);const ring=d.ring.slice();const a=ring[0],b=ring[ring.length-1];if(a[0]!==b[0]||a[1]!==b[1])ring.push(a);
+ const p={fid:id,city,key:String(d.key),v,col:col(v),name:distLabel(d),sv:f1(v)};f.push({type:'Feature',id,properties:p,geometry:{type:'Polygon',coordinates:[ring]}});lab.push({type:'Feature',properties:p,geometry:{type:'Point',coordinates:d.ctr}});id++}));
  return[{type:'FeatureCollection',features:f},{type:'FeatureCollection',features:lab}]}
 function countryFC(){if(!COUNTRY_GEO)return{type:'FeatureCollection',features:[]};return{type:'FeatureCollection',features:COUNTRY_GEO.map(g=>{const c=COUNTRIES.find(x=>x.cc===g.cc);const v=sC(c);return{type:'Feature',properties:{cc:c.cc,v,col:col(v)},geometry:g.geometry}})}}
 function addOverlays(){const before=firstSymbol();const font=labelFont();const[dF,dL]=distFC();
@@ -963,11 +1343,11 @@ function refreshOverlays(){if(!MAPREADY)return;const[dF,dL]=distFC();MAP.getSour
 
 function markerEl(cls,html,onClick){const el=document.createElement('div');el.className=cls;el.innerHTML=html;if(onClick)el.addEventListener('click',e=>{e.stopPropagation();onClick()});return el}
 function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
- ALERTS.filter(visibleOnMap).forEach(a=>{const s=sA(a);const cls='mk'+(a.city?' city':'')+(['NL','FR'].includes(a.cc)&&!a.city?' ctry':'');
+ ALERTS.filter(visibleOnMap).forEach(a=>{const s=sA(a);const cls='mk'+(a.city?' city':'')+(!a.city&&CITY_KEYS.some(k=>CITY_INFO[k].cc===a.cc)?' ctry':'');
   const el=markerEl(cls,`${a.status==='Forecast'?'<i class="f"></i>':''}<div class="r" style="border-color:${col(s)}">${ico(CATS[a.cat].icon)}</div><span class="s" style="background:${col(s)}">${f1(s)}</span>`,()=>openAlert(a.id));
   el.setAttribute('aria-label',a.title);MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([a.lon,a.lat]).addTo(MAP))});
- CITIES.forEach(c=>{const list=ALERTS.filter(a=>a.city===c.k&&visibleOnMap(a));const mx=Math.max(...Object.keys(DIST(c.k)).map(k=>distScore(c.k,isNaN(+k)?k:+k)));
-  const el=markerEl('mkc glass',`<span class="s" style="background:${col(mx)}">${f1(mx)}</span><div><b>${c.name}</b><br><span>${list.length} alert${list.length===1?'':'s'} · ${esc(winLabel(S.win))}</span></div>`,()=>MAP.flyTo({center:[c.lon,c.lat],zoom:11.6,duration:1600}));
+ CITIES.forEach(c=>{const list=ALERTS.filter(a=>a.city===c.k&&visibleOnMap(a));const mx=cityScore(c.k).max;
+  const el=markerEl('mkc glass',`<span class="s" style="background:${col(mx)}">${f1(mx)}</span><div><b>${c.name}</b><br><span>${list.length} alert${list.length===1?'':'s'} · ${esc(winLabel(S.win))}</span></div>`,()=>{if(MAP.getZoom()>=8.5)openCity(c.k);else MAP.flyTo({center:[c.lon,c.lat],zoom:CITY_INFO[c.k].z,duration:1600})});
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
  PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
  const y=markerEl('mky','<i class="p"></i><i class="c"></i>');MARKERS.push(new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP))}
@@ -975,7 +1355,7 @@ function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zl
 
 /* context: what is under the map centre */
 let CTX=null;
-function contextAt(lng,lat,z){if(z>=9){for(const city of['AMS','PAR'])for(const d of Object.values(DIST(city)))if(inRing(lng,lat,d.ring))return{type:'d',city,key:d.key,title:d.full,sub:(city==='PAR'?'Paris':'Amsterdam')+' · '+winLabel(S.win),v:distScore(city,d.key)}}
+function contextAt(lng,lat,z){if(z>=9){for(const city of CITY_KEYS)for(const d of Object.values(DIST(city)))if(inRing(lng,lat,d.ring))return{type:'d',city,key:d.key,title:d.full,sub:cityName(city)+' · '+winLabel(S.win),v:distScore(city,d.key)}}
  if(COUNTRY_GEO&&z>=2.5){for(const g of COUNTRY_GEO){const[a,b,c,d]=g.bb;if(lng<a||lng>c||lat<b||lat>d)continue;if(g.polys.some(p=>inRing(lng,lat,p[0])&&!p.slice(1).some(h=>inRing(lng,lat,h)))){const C=COUNTRIES.find(x=>x.cc===g.cc);return{type:'c',cc:C.cc,title:C.name,sub:'Country profile · '+C.eiu[1],v:sC(C)}}}}
  const inView=ALERTS.filter(a=>!a.noMap&&MAP.getBounds().contains([a.lon,a.lat]));
  return{type:'w',title:z<3?'World':'This area',sub:inView.length+' alert'+(inView.length===1?'':'s')+' in view',v:inView.length?Math.max(...inView.map(sA)):null}}
@@ -983,7 +1363,7 @@ function onMove(){if(!MAP)return;const c=MAP.getCenter();CTX=contextAt(c.lng,c.l
  el.innerHTML=`<span class="t"><b>${esc(CTX.title)}</b><small>${esc(CTX.sub)}</small></span>${CTX.v!=null?`<span class="sc" style="background:${col(CTX.v)}">${f1(CTX.v)}</span>`:''}`;renderInView()}
 $('#ctxBtn').addEventListener('click',()=>{if(!CTX)return;if(CTX.type==='d')openDistrict(CTX.city,CTX.key);else if(CTX.type==='c')openCountry(CTX.cc);else{setDetent(1)}});
 function onMapClick(e){if(!MAPREADY)return;const z=MAP.getZoom();
- if(z>=9){const f=MAP.queryRenderedFeatures(e.point,{layers:['d-fill']})[0];if(f){const p=f.properties;selectDistrict(p.fid);openDistrict(p.city,p.city==='PAR'?+p.key:p.key);return}}
+ if(z>=9){const f=MAP.queryRenderedFeatures(e.point,{layers:['d-fill']})[0];if(f){const p=f.properties;selectDistrict(p.fid);openDistrict(p.city,keyOf(p.city,p.key));return}}
  if(z<7&&S.cLayer){const f=MAP.queryRenderedFeatures(e.point,{layers:['c-fill']})[0];if(f){openCountry(f.properties.cc);return}}}
 function selectDistrict(fid){if(MAPREADY)MAP.setFilter('d-sel',['==',['get','fid'],fid==null?-1:fid])}
 function flyTo(lon,lat,z){if(!MAP)return;MAP.flyTo({center:[lon,lat],zoom:z,duration:1800,essential:true})}
@@ -1018,24 +1398,25 @@ function renderNow(){const v=distScore('AMS','GK12');const ton=distScore('AMS','
  let h=`<div class="here" id="bhead">${ring(v,64)}<div><h3>Zuidas, Amsterdam</h3><p>You are here. ${band(v)} · ${S.win==='now'?'stable for the next 24 h':esc(winLabel(S.win))+' forecast'}. Nothing forecast within 2 km.</p></div></div>`;
  h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast"><button class="fbox press" data-gowin="tonight" data-ll="4.8975,52.3700,14"><div class="t"><i></i>Tonight · Centrum</div><div class="s" style="color:${col(ton)}">${f1(ton)}</div><div class="d">Nightlife violence and street dealing peak</div></button>${fbox(alertById('paris-bastille'),'Thu · your trip')}${fbox(alertById('paris-sat'),'Sat · your trip')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
  h+=`<div class="sec"><span id="ivTitle">In view</span><a data-tab="alerts">All alerts</a></div><div class="list" id="inView"></div>`;
- h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${TRIPS.map(t=>`<button class="arow" data-tab="trips">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
+ h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${TRIPS.map(t=>`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
  $('#bbody').innerHTML=h;renderInView()}
 function renderInView(){const el=$('#inView');if(!el)return;let list;
  if(MAP&&MAPREADY){const b=MAP.getBounds();list=ALERTS.filter(a=>visibleOnMap(a)&&b.contains([a.lon,a.lat]))}else list=ALERTS.filter(a=>a.city==='AMS'||a.cc==='NL');
  list.sort((a,b)=>sA(b)-sA(a));$('#ivTitle').textContent=list.length?`In view · ${list.length}`:'In view';
  el.innerHTML=list.slice(0,8).map(aRow).join('')||`<p class="lede" style="padding:14px;margin:0">No alerts in this part of the map for ${esc(winLabel(S.win).toLowerCase())}. Zoom out or change the time window.</p>`}
-document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-alert],[data-go],[data-gowin],[data-country],[data-dist]');if(!t)return;
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-alert],[data-go],[data-gowin],[data-country],[data-dist],[data-city]');if(!t)return;
  if(t.dataset.gowin){S.win=t.dataset.gowin;renderChips();refreshOverlays();renderNow();const[lo,la,z]=t.dataset.ll.split(',').map(Number);setDetent(0);flyTo(lo,la,z);return}
  if(t.dataset.go){showOnMap(t.dataset.go);return}
- if(t.dataset.tab){closeAll();go(t.dataset.tab);return}
+ if(t.dataset.tab){if(t.dataset.tripsel){S.tripOpen=t.dataset.tripsel;renderTrips()}closeAll();go(t.dataset.tab);return}
  if(t.dataset.alert)openAlert(t.dataset.alert);
  else if(t.dataset.country)openCountry(t.dataset.country);
- else if(t.dataset.dist){const[c,k]=t.dataset.dist.split(':');openDistrict(c,c==='PAR'?+k:k)}});
+ else if(t.dataset.dist){const[c,k]=t.dataset.dist.split(':');openDistrict(c,keyOf(c,k))}
+ else if(t.dataset.city)openCity(t.dataset.city)});
 function showOnMap(id){const a=alertById(id);if(!a)return;closeAll();go('now');if(a.city&&!a.win.includes(S.win)){S.win=a.win[0];renderChips();refreshOverlays();renderNow()}setDetent(0);setTimeout(()=>flyTo(a.lon,a.lat,a.city?14:5.2),380)}
 
 /* ---------- alerts view ---------- */
-const AF=[['you','For you'],['trip','My trips'],['AMS','Amsterdam'],['PAR','Paris'],['global','Global'],['all','All']];
-function filtA(f){return ALERTS.filter(a=>f==='you'?forYou(a):f==='trip'?(a.tags.includes('trip')||a.tags.includes('trip2')):f==='AMS'?(a.city==='AMS'||a.cc==='NL'):f==='PAR'?(a.city==='PAR'||a.cc==='FR'):f==='global'?!a.city:true).sort((a,b)=>sA(b)-sA(a))}
+const AF=[['you','For you'],['trip','My trips'],['city','Cities'],['global','Global'],['all','All']];
+function filtA(f){return ALERTS.filter(a=>f==='you'?forYou(a):f==='trip'?(a.tags.includes('trip')||a.tags.includes('trip2')):f==='city'?!!a.city:f==='global'?!a.city:true).sort((a,b)=>sA(b)-sA(a))}
 function renderAlerts(){const all=filtA(S.alertFilter);const shown=S.alertFilter==='you'?all.filter(a=>sA(a)>=P.thr):all;const hidden=all.length-shown.length;
  $('#alertsPage').innerHTML=`<h1 class="big">Alerts</h1><p class="lede">${shown.length} ${S.alertFilter==='you'?'for you at RiskScore '+f1(P.thr)+'+':'alerts'} · updated 15:42</p>
  <div class="chips">${AF.map(([k,l])=>`<button class="chip${S.alertFilter===k?' on':''}" data-af="${k}">${l}</button>`).join('')}</div>
@@ -1048,22 +1429,23 @@ $('#alertsPage').addEventListener('click',e=>{const b=e.target.closest('[data-af
 /* ---------- countries view ---------- */
 function cRow(c){const s=sC(c);return`<button class="arow" data-country="${c.cc}"><span class="cc">${c.cc}</span><div class="m"><b>${esc(c.name)}</b><span>${esc(c.eiu[1])} · ${esc(c.region)}</span></div>${badge(s)}${chevSvg}</button>`}
 function worldMini(){let g='';WCELLS.forEach(([c,r,ch])=>{const C=CBYMK[ch];if(r<4||r>58)return;g+=`<circle cx="${c*6+3}" cy="${r*6+3}" r="2.2" fill="${C?col(sC(C)):'#24515f'}"${C?` data-country="${C.cc}"`:''}/>`});
- COUNTRIES.filter(c=>['NL','SG','IL'].includes(c.cc)).forEach(c=>g+=`<circle cx="${wx(c.lon)}" cy="${wy(c.lat)}" r="5" fill="${col(sC(c))}" stroke="#06212c" stroke-width="1.5" data-country="${c.cc}"/>`);
+ COUNTRIES.filter(c=>['NL','SG','IL','BE','CH','EE','LV','LT'].includes(c.cc)).forEach(c=>g+=`<circle cx="${wx(c.lon)}" cy="${wy(c.lat)}" r="5" fill="${col(sC(c))}" stroke="#06212c" stroke-width="1.5" data-country="${c.cc}"/>`);
  return`<div class="wmap"><svg viewBox="120 24 900 330">${g}</svg></div>`}
 function renderCountries(){const q=S.countryQ.trim().toLowerCase();let list=COUNTRIES.filter(c=>!q||c.name.toLowerCase().includes(q)||c.cc.toLowerCase()===q);
  list.sort(S.countrySort==='risk'?(a,b)=>sC(b)-sC(a):(a,b)=>a.name.localeCompare(b.name));
  $('#countriesList').innerHTML=list.map(cRow).join('')||'<p class="lede" style="padding:14px">No match in the demo set.</p>';
- $$('#countrySort .chip').forEach(b=>b.classList.toggle('on',b.dataset.cs===S.countrySort));$('#wmini').innerHTML=worldMini()}
+ $$('#countrySort .chip').forEach(b=>b.classList.toggle('on',b.dataset.cs===S.countrySort));$('#wmini').innerHTML=worldMini();$('#citiesList').innerHTML=q?'':`<div class="sec">City reports</div><div class="list">${CITY_KEYS.map(cityRow).join('')}</div><div class="sec">Countries</div>`}
 $('#cq').addEventListener('input',e=>{S.countryQ=e.target.value;renderCountries()});
 $('#countrySort').addEventListener('click',e=>{const b=e.target.closest('[data-cs]');if(b){S.countrySort=b.dataset.cs;renderCountries()}});
 
 /* ---------- trips view ---------- */
-function renderTrips(){$('#tripsList').innerHTML=TRIPS.map(t=>`<div class="card trip"><div class="top"><div><h3>${esc(t.title)}</h3><div class="when">${esc(t.purpose)} · ${esc(t.dates)}</div></div>${ring(t.score,62,'trip')}</div>
- <div class="brief"><b>${ico('spark')}Forecast briefing</b>${esc(t.brief)}</div>
+function renderTrips(){$('#tripsList').innerHTML=TRIPS.map(t=>`<div class="card trip${S.tripOpen===t.id?' open':''}" data-tid="${t.id}"><button class="top" data-topen="${t.id}" aria-expanded="${S.tripOpen===t.id}"><div><h3>${esc(t.title)}</h3><div class="when">${esc(t.purpose)} · ${esc(t.dates)}</div></div>${ring(t.score,62,'trip')}<span class="tchev">${chevSvg}</span></button>
+ <div class="tbody"><div class="tin"><div class="brief"><b>${ico('spark')}Forecast briefing</b>${esc(t.brief)}</div>
  <div class="tl">${t.items.map(it=>{const ref=typeof it.ref==='string'?`data-alert="${it.ref}"`:it.ref?`data-dist="${it.ref.city}:${it.ref.d}"`:'';return`<button class="it" ${ref}><span class="dot" style="background:${col(it.score)}"></span><div><div class="tt">${esc(it.t)}</div><div class="ti">${esc(it.title)}</div><div class="tn">${esc(it.note)}</div></div><div class="sc" style="color:${col(it.score)}">${f1(it.score)}</div></button>`}).join('')}</div>
- <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button></div>`).join('')+
+ <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button></div></div></div>`).join('')+
  `<div class="sec">Safety</div><button class="btn pri press" id="checkin">${ico('check')}Check in: I’m safe</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins and sharing are simulated in this demo.</p>`}
-document.addEventListener('click',e=>{if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:'Your security team can see you checked in at 15:42 from Zuidas.',tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
+document.addEventListener('click',e=>{const to=e.target.closest('[data-topen]');if(to){const id=to.dataset.topen;S.tripOpen=S.tripOpen===id?null:id;$$('#tripsList .trip').forEach(c=>{const o=c.dataset.tid===S.tripOpen;c.classList.toggle('open',o);$('.top',c).setAttribute('aria-expanded',o)});if(S.tripOpen)setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${S.tripOpen}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'nearest'})},320);return}
+ if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:'Your security team can see you checked in at 15:42 from Zuidas.',tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
  const tb=e.target.closest('[data-trip]');if(tb){const t=TRIPS.find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
 
 /* ---------- modal sheets ---------- */
@@ -1097,18 +1479,37 @@ function openDistrict(city,key){const d=DIST(city)[key];const v=distScore(city,k
  const base=distScore(city,key,'now','crime');const tod=[['Morning',base-0.6],['Afternoon',base],['Evening',base+d.n*0.6],['Night',base+d.n+(P.solo?0.4:0)]].map(([l,x])=>[l,clamp(x,0,10)]);
  const evs=EVENTS.filter(e=>e.city===city&&e.d[key]!=null).map(e=>alertById(e.alert));
  const adv=v>=6?['Keep valuables out of sight and your phone in hand only when needed','Prefer taxis or ride-hail after dark','Avoid crowds and gatherings during forecast events']:v>=4?['Normal precautions plus extra care with phones and bags','Check the forecast before evenings out']:['Normal precautions'];
- const html=`<div class="hero">${ring(v,84,band(v))}<div><h2>${esc(d.full)}</h2><div class="sub">${city==='PAR'?'Paris':'Amsterdam'} · ${esc(winLabel(S.win))}${S.layer!=='all'?' · '+(S.layer==='crime'?'crime layer':'unrest layer'):''}</div></div></div>
+ const html=`<div class="hero">${ring(v,84,band(v))}<div><h2>${esc(d.full)}</h2><div class="sub">${esc(cityName(city))} · ${esc(winLabel(S.win))}${S.layer!=='all'?' · '+(S.layer==='crime'?'crime layer':'unrest layer'):''}</div></div></div>
  <div class="kv"><div><small>Crime</small><b style="color:${col(c)}">${f1(c)}</b></div><div><small>Civil unrest</small><b style="color:${col(u)}">${f1(u)}</b></div><div><small>Night uplift</small><b>+${f1(d.n)}</b></div></div>
  <p class="p">${esc(d.note)}</p>
  <div class="sec">Crime through the day</div><div class="card"><div class="tod">${tod.map(([l,x])=>`<div><em>${f1(x)}</em><i style="height:${(x/10*70+6).toFixed(0)}px;background:${col(x)}"></i>${l}</div>`).join('')}</div></div>
  ${evs.length?`<div class="sec">Forecast events here</div><div class="list">${evs.map(aRow).join('')}</div>`:''}
  <div class="sec">Advice</div><div class="card"><ul class="ul adv">${adv.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
- <div style="margin-top:16px"><button class="btn sec press" data-fb="District: ${esc(d.full)}">${ico('msg')}Feedback on this view</button></div>
- <p class="src">Based on official crime statistics, city safety reporting and the Manukai crime and unrest models. District scores are illustrative. Boundaries: Ville de Paris and Gemeente Amsterdam open data.</p>`;
- openSheet(city==='PAR'?'Arrondissement':'District',html)}
+ <div style="margin-top:16px"><button class="btn sec press" data-city="${city}">${ico('pin')}${esc(cityName(city))} city report</button><button class="btn sec press" data-fb="District: ${esc(d.full)}">${ico('msg')}Feedback on this view</button></div>
+ <p class="src">Based on official crime statistics, city safety reporting and the Manukai crime and unrest models. District scores are illustrative. Boundaries: ${esc(BOUNDS[city])}.</p>`;
+ openSheet(city==='PAR'?'Arrondissement':city==='LON'?'Borough':city==='NYC'?(/^(Bronx|Brooklyn|Queens|Staten Island)$/.test(d.name)?'Borough':'Neighbourhood'):city==='BRU'?'Municipality':'District',html)}
+const BOUNDS={PAR:'Ville de Paris open data',AMS:'Gemeente Amsterdam open data',LON:'OpenStreetMap contributors',BRU:'OpenStreetMap contributors',NYC:'OpenStreetMap contributors',FRA:'OpenStreetMap contributors'};
+function cityOverall(k,win=S.win){const s=cityScore(k,win);return clamp(s.avg+(s.max-s.avg)*0.45,0,10)}
+function cityRow(k){const v=cityOverall(k);const n=Object.keys(DIST(k)).length;const na=ALERTS.filter(a=>a.city===k).length;return`<button class="arow" data-city="${k}">${badge(v)}<div class="m"><b>${esc(cityName(k))}</b><span>City report · ${n} areas · ${na} alert${na===1?'':'s'}</span></div>${chevSvg}</button>`}
+function openCity(k){const I=CITY_INFO[k];if(!I)return;const v=cityOverall(k);const sc=cityScore(k);
+ const ds=Object.values(DIST(k)).map(d=>({d,v:distScore(k,d.key)})).sort((a,b)=>b.v-a.v);
+ const al=ALERTS.filter(a=>a.city===k).sort((a,b)=>sA(b)-sA(a));const C=COUNTRIES.find(c=>c.cc===I.cc);
+ const dRow=({d,v})=>`<button class="arow" data-dist="${k}:${d.key}">${badge(v)}<div class="m"><b>${esc(distLabel(d))}</b><span>${esc(d.note)}</span></div>${chevSvg}</button>`;
+ const html=`<div class="hero">${ring(v,84,band(v))}<div><h2>${esc(I.name)}</h2><div class="sub">City report · ${esc(winLabel(S.win))}${C?' · '+esc(C.name):''}</div></div></div>
+ <div class="kv"><div><small>Highest area</small><b style="color:${col(sc.max)}">${f1(sc.max)}</b></div><div><small>City average</small><b style="color:${col(sc.avg)}">${f1(sc.avg)}</b></div><div><small>Alerts</small><b>${al.length}</b></div></div>
+ <div class="sec" style="margin-top:6px">Assessment</div><p class="p">${esc(I.sum)}</p>
+ <div class="sec">Key advice</div><div class="card"><ul class="ul adv">${I.keys.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+ ${al.length?`<div class="sec">Current alerts</div><div class="list">${al.map(aRow).join('')}</div>`:''}
+ <div class="sec">Highest-risk areas</div><div class="list">${ds.slice(0,5).map(dRow).join('')}</div>
+ <div class="sec">Lowest-risk areas</div><div class="list">${ds.slice(-3).reverse().map(dRow).join('')}</div>
+ <div style="margin-top:16px"><button class="btn pri press" data-cfly="${k}">${ico('map')}Show on map</button>${C?`<button class="btn sec press" data-country="${C.cc}">${esc(C.name)} country profile</button>`:''}<button class="btn sec press" data-fb="City: ${esc(I.name)}">${ico('msg')}Feedback on this report</button></div>
+ <p class="src">City RiskScore weighs the average and the highest-risk areas for the selected time window. Based on police and city reporting and the Manukai crime and unrest models. Scores are illustrative demo values.</p>`;
+ openSheet('City report',html)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cfly]');if(!b)return;const I=CITY_INFO[b.dataset.cfly];closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(I.lon,I.lat,I.z),380)});
+
 
 function openCountry(cc){const c=COUNTRIES.find(x=>x.cc===cc);if(!c)return;const o=adjC(c);
- const al=ALERTS.filter(a=>a.cc===cc||(cc==='FR'&&a.city==='PAR')||(cc==='NL'&&a.city==='AMS')).sort((a,b)=>sA(b)-sA(a));
+ const al=ALERTS.filter(a=>a.cc===cc||(a.city&&CITY_INFO[a.city].cc===cc)).sort((a,b)=>sA(b)-sA(a));
  const lg=c.rb!=null?c.rb+'%':/prosecuted/i.test(c.lgbt)?'Prosecuted':/criminalised/i.test(c.lgbt)?'Criminalised':'Legal';
  const idx=[['Freedom House',c.fh+'/100',c.fh,'Freedom in the World 2026: political rights and civil liberties'],
   ['Democracy Index',c.eiu[0].toFixed(2)+' · '+c.eiu[1],c.eiu[0]*10,'EIU Democracy Index 2025, 0–10'],
@@ -1130,15 +1531,15 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-cmap]');if
  const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(c.lon,c.lat,cc==='US'?3.2:5)},380)});
 
 /* ---------- search ---------- */
-const PLACE_SEARCH=[['Amsterdam',4.895,52.37,11.6],['Paris',2.347,48.859,11.8],['Dubai',55.27,25.2,9],['Bahrain',50.55,26.07,8],['Tallinn',24.75,59.44,10],['Benghazi',20.07,32.12,10],['Kyiv',30.52,50.45,9]];
+const PLACE_SEARCH=[['Dubai',55.27,25.2,9],['Bahrain',50.55,26.07,8],['Tallinn',24.75,59.44,10],['Benghazi',20.07,32.12,10],['Kyiv',30.52,50.45,9]];
 $('#searchBtn').addEventListener('click',()=>{openSheet('Search',`<div class="search">${ico('search')}<input id="sq" placeholder="Places, countries, districts, alerts" autocomplete="off" enterkeyhint="search"></div><div id="sres"></div>`,sh=>{const inp=$('#sq',sh);const res=$('#sres',sh);
- const run=()=>{const q=inp.value.trim().toLowerCase();if(!q){res.innerHTML=`<div class="sec">Try</div><div class="chips" style="margin:0">${['Paris','Wallen','Gulf','Türkiye','Bastille','Kenya'].map(x=>`<button class="chip" data-sq="${x}">${x}</button>`).join('')}</div>`;return}
+ const run=()=>{const q=inp.value.trim().toLowerCase();if(!q){res.innerHTML=`<div class="sec">Try</div><div class="chips" style="margin:0">${['London','Brussels','New York','Frankfurt','Wallen','Bastille','Russia','China'].map(x=>`<button class="chip" data-sq="${x}">${x}</button>`).join('')}</div>`;return}
   const pl=PLACE_SEARCH.filter(p=>p[0].toLowerCase().includes(q));
   const cs=COUNTRIES.filter(c=>c.name.toLowerCase().includes(q));const as=ALERTS.filter(a=>(a.title+' '+a.place).toLowerCase().includes(q));
-  const ds=[...Object.values(PD),...Object.values(AD)].filter(d=>(d.full+' '+d.note).toLowerCase().includes(q));
-  res.innerHTML=(pl.length?`<div class="sec">Places</div><div class="list">${pl.map(p=>`<button class="arow" data-fly="${p[1]},${p[2]},${p[3]}"><span class="cc">${ico('pin')}</span><div class="m"><b>${esc(p[0])}</b><span>Fly to on map</span></div>${chevSvg}</button>`).join('')}</div>`:'')
+  const cs2=CITY_KEYS.filter(k=>cityName(k).toLowerCase().includes(q));const ds=CITY_KEYS.flatMap(k=>Object.values(DIST(k))).filter(d=>(d.full+' '+d.note).toLowerCase().includes(q));
+  res.innerHTML=(cs2.length?`<div class="sec">City reports</div><div class="list">${cs2.map(cityRow).join('')}</div>`:'')+(pl.length?`<div class="sec">Places</div><div class="list">${pl.map(p=>`<button class="arow" data-fly="${p[1]},${p[2]},${p[3]}"><span class="cc">${ico('pin')}</span><div class="m"><b>${esc(p[0])}</b><span>Fly to on map</span></div>${chevSvg}</button>`).join('')}</div>`:'')
   +(cs.length?`<div class="sec">Countries</div><div class="list">${cs.map(cRow).join('')}</div>`:'')+(as.length?`<div class="sec">Alerts</div><div class="list">${as.map(aRow).join('')}</div>`:'')
-  +(ds.length?`<div class="sec">Districts</div><div class="list">${ds.slice(0,8).map(d=>{const v=distScore(d.city,d.key);return`<button class="arow" data-dist="${d.city}:${d.key}">${badge(v)}<div class="m"><b>${esc(d.full)}</b><span>${d.city==='PAR'?'Paris':'Amsterdam'}</span></div>${chevSvg}</button>`}).join('')}</div>`:'')||'<p class="lede" style="padding:14px 2px">No results in the demo data.</p>'};
+  +(ds.length?`<div class="sec">Districts</div><div class="list">${ds.slice(0,8).map(d=>{const v=distScore(d.city,d.key);return`<button class="arow" data-dist="${d.city}:${d.key}">${badge(v)}<div class="m"><b>${esc(d.full)}</b><span>${esc(cityName(d.city))}</span></div>${chevSvg}</button>`}).join('')}</div>`:'')||'<p class="lede" style="padding:14px 2px">No results in the demo data.</p>'};
  inp.addEventListener('input',run);res.addEventListener('click',e=>{const b=e.target.closest('[data-sq]');if(b){inp.value=b.dataset.sq;run()}const f=e.target.closest('[data-fly]');if(f){const[lo,la,z]=f.dataset.fly.split(',').map(Number);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(lo,la,z),380)}});run();setTimeout(()=>inp.focus(),350)})});
 
 /* ---------- profile sheet ---------- */
