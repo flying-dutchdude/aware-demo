@@ -1401,7 +1401,7 @@ GEO_AMS.trim().split('\n').forEach(l=>{const[code,full,sd,c,pts]=l.split('|');co
 const CD={AMS:AD,PAR:PD};
 function decodeRing(str){const t=str.trim().split(' ').map(p=>p.split(',').map(Number));let x=0,y=0;return t.map(([a,b],i)=>{x+=a;y+=b;return[+(x/1e4).toFixed(5),+(y/1e4).toFixed(5)]})}
 function ringCtr(r){let A=0,cx=0,cy=0;for(let i=0,j=r.length-1;i<r.length;j=i++){const f=r[j][0]*r[i][1]-r[i][0]*r[j][1];A+=f;cx+=(r[j][0]+r[i][0])*f;cy+=(r[j][1]+r[i][1])*f}if(Math.abs(A)<1e-12){const n=r.length;return[r.reduce((s,p)=>s+p[0],0)/n,r.reduce((s,p)=>s+p[1],0)/n]}return[+(cx/(3*A)).toFixed(5),+(cy/(3*A)).toFixed(5)]}
-[['LON',GEO_LON],['BRU',GEO_BRU],['NYC',GEO_NYC],['FRA',GEO_FRA]].forEach(([city,G])=>{const D=CD[city]={};G.trim().split('\n').forEach(l=>{const i=l.indexOf('|');const name=l.slice(0,i);const ring=decodeRing(l.slice(i+1));const m=CITY_META[city][name]||CITY_DEFAULT;D[name]={key:name,city,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}})});
+[['LON',GEO_LON],['BRU',GEO_BRU],['NYC',GEO_NYC],['FRA',GEO_FRA]].forEach(([city,G])=>{const D=CD[city]={};G.trim().split('\n').forEach(l=>{const i=l.indexOf('|');const name=l.slice(0,i);const ring=decodeRing(l.slice(i+1));const m=CITY_META[city][name]||CITY_DEFAULT;D[name]={def:!CITY_META[city][name],key:name,city,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}})});
 const DIST=city=>CD[city]||{};
 const CITY_KEYS=Object.keys(CD);
 const keyOf=(city,k)=>city==='PAR'?+k:k;
@@ -1451,7 +1451,7 @@ function restyle(){const st=MAP.getStyle();if(!st)return;const set=(id,p,v)=>{tr
 function labelFont(){const st=MAP.getStyle();for(const l of st.layers){if(l.type==='symbol'&&l.layout&&Array.isArray(l.layout['text-font']))return l.layout['text-font']}return['Noto Sans Regular']}
 function firstSymbol(){const st=MAP.getStyle();const l=st.layers.find(x=>x.type==='symbol');return l?l.id:undefined}
 function distFC(){const f=[],lab=[];let id=1;CITY_KEYS.forEach(city=>Object.values(DIST(city)).forEach(d=>{const v=distScore(city,d.key);const ring=d.ring.slice();const a=ring[0],b=ring[ring.length-1];if(a[0]!==b[0]||a[1]!==b[1])ring.push(a);
- const p={fid:id,city,key:String(d.key),v,col:col(v),name:distLabel(d),sv:f1(v)};f.push({type:'Feature',id,properties:p,geometry:{type:'Polygon',coordinates:[ring]}});lab.push({type:'Feature',properties:p,geometry:{type:'Point',coordinates:d.ctr}});id++}));
+ const p={fid:id,city,key:String(d.key),v,col:col(v),name:distLabel(d),sv:f1(v),def:d.def?1:0};f.push({type:'Feature',id,properties:p,geometry:{type:'Polygon',coordinates:[ring]}});lab.push({type:'Feature',properties:p,geometry:{type:'Point',coordinates:d.ctr}});id++}));
  return[{type:'FeatureCollection',features:f},{type:'FeatureCollection',features:lab}]}
 function countryFC(){if(!COUNTRY_GEO)return{type:'FeatureCollection',features:[]};return{type:'FeatureCollection',features:COUNTRY_GEO.map(g=>{const c=COUNTRIES.find(x=>x.cc===g.cc);const v=sC(c);return{type:'Feature',properties:{cc:c.cc,v,col:col(v)},geometry:g.geometry}})}}
 function addOverlays(){const before=firstSymbol();const font=labelFont();const[dF,dL]=distFC();
@@ -1485,7 +1485,8 @@ function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
  PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
  const y=markerEl('mky','<i class="p"></i><i class="c"></i>');YOU_MK=new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP);MARKERS.push(YOU_MK)}
-function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zcity',z<6.5);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2)}
+function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zcity',z<6.5);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2);if(MAPREADY&&MAP.getLayer('d-lab')){const lo=z<13.2;if(lo!==LAB_LO){LAB_LO=lo;MAP.setFilter('d-lab',lo?['!=',['get','def'],1]:null)}}}
+let LAB_LO=null;
 
 /* context: what is under the map centre */
 let CTX=null;
@@ -1865,7 +1866,7 @@ async function fetchCity(k){const ck='geo3.'+k;let rows=store.get(ck,null);
    Object.entries(by).forEach(([n,r])=>rows.push([n,r.map(p=>[+p[0].toFixed(4),+p[1].toFixed(4)])]))}
   if(rows.length)store.set(ck,rows)}
  if(!rows.length)return;const D={};
- rows.forEach(([name,ring])=>{const m=CITY_META[k][name]||CITY_DEF2[k];D[name]={key:name,city:k,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}});
+ rows.forEach(([name,ring])=>{const m=CITY_META[k][name]||CITY_DEF2[k];D[name]={def:!CITY_META[k][name],key:name,city:k,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}});
  CD[k]=D;if(!CITY_KEYS.includes(k))CITY_KEYS.push(k);const I=CITY_INFO[k];if(!CITIES.some(c=>c.k===k))CITIES.push({k,name:I.name,lon:I.lon,lat:I.lat});
  refreshOverlays();renderCountries();renderNow()}
 function loadRemoteCities(){Object.keys(CITY_REMOTE).forEach(k=>fetchCity(k).catch(()=>{}))}
