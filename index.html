@@ -1027,6 +1027,105 @@ ALERTS.push(
 EVENTS.push({alert:'lon-protest', city:'LON', win:'sat', d:{'Westminster':5.6,'Lambeth':3.6,'City of London':3.4}});
 CITIES.push({k:'LON',name:'London',lon:-0.1100,lat:51.5050},{k:'BRU',name:'Brussels',lon:4.3570,lat:50.8460},{k:'NYC',name:'New York',lon:-73.9800,lat:40.7450},{k:'FRA',name:'Frankfurt',lon:8.6750,lat:50.1100});
 
+/* v4: US cities with neighbourhood boundaries loaded live from city open-data portals */
+const CITY_REMOTE = {
+ AUS:[{u:'https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services/Neighborhood_Reporting_Areas/FeatureServer/0',f:'NEIGHNAME',o:0.0007,tc:1}],
+ LAX:[{u:'https://services5.arcgis.com/7nsPwEMP38bSkCjy/arcgis/rest/services/LA_Times_Neighborhoods/FeatureServer/0',f:'name',o:0.0008}],
+ MIA:[{u:'https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Miami_Neighborhoods_Shapefile/FeatureServer/0',f:'LABEL',o:0.0003},
+      {u:'https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/arcgis/rest/services/Municipalitypoly_gdb/FeatureServer/0',f:'NAME',o:0.0006,tc:1,
+       w:"NAME IN ('MIAMI BEACH','CORAL GABLES','KEY BISCAYNE','NORTH BAY VILLAGE','SURFSIDE','DORAL','HIALEAH','MIAMI SPRINGS','NORTH MIAMI','MIAMI SHORES','EL PORTAL','BAL HARBOUR','BAY HARBOR ISLANDS','WEST MIAMI','SOUTH MIAMI','VIRGINIA GARDENS')"}]
+};
+const CITY_REMOTE_SRC = {AUS:'City of Austin open data (neighborhood reporting areas)', LAX:'City of Los Angeles open data (LA Times neighborhoods)', MIA:'City of Miami and Miami-Dade County open data'};
+const CITY_DEF2 = {AUS:[2.8,1.0,0.4,'Residential, low risk.'], LAX:[3.4,1.2,0.5,'Residential.'], MIA:[3.4,1.0,0.5,'Residential.']};
+
+Object.assign(CITY_INFO,{
+ AUS:{name:'Austin', cc:'US', lon:-97.7430, lat:30.2750, z:11.4, sum:'Low risk for business visitors. Late-night violence concentrates on Sixth Street, where the city reopened the street to weekend traffic and opened a police outpost; arrests there fell by a quarter in the first year. Property crime and car break-ins are the most common issues elsewhere.', keys:['Leave Sixth Street by 01:30 on weekend nights, when most assaults happen','Do not leave bags visible in parked cars','Expect big crowds and road closures on UT game days and festival weekends']},
+ LAX:{name:'Los Angeles', cc:'US', lon:-118.3000, lat:34.0500, z:10.2, sum:'A sprawling city where risk varies sharply by neighbourhood. Downtown is the focal point of recurring protests against federal immigration enforcement, with dispersal orders and arrests around the federal buildings. Skid Row and MacArthur Park have open drug markets; most visitor areas on the Westside are low risk.', keys:['Avoid the Civic Center and the Metropolitan Detention Center during protests','Do not walk through Skid Row or MacArthur Park','Smash-and-grab car break-ins are common at tourist sites: leave nothing in the car']},
+ MIA:{name:'Miami', cc:'US', lon:-80.2000, lat:25.7900, z:11.2, sum:'Violent crime fell sharply in early 2026 in line with other large US cities. Visitor risks are theft, drink-spiking and late-night violence in South Beach and Wynwood. Miami Art Week in early December brings heavy traffic, road closures and occasional protests around the Miami Beach Convention Center.', keys:['Watch your drink in South Beach and Wynwood clubs','Allow extra time for the causeways during Art Week','Hurricane season runs June to November']}
+});
+Object.assign(CITY_META,{
+ AUS:{
+  'Downtown':[5.0,2.6,1.4,'Sixth Street entertainment district: late-night assaults and occasional shootings, including at a bar on Halloween weekend. Police outpost at 408 E Sixth.'],
+  'Central East Austin':[4.2,1.6,0.9,'East Sixth nightlife; car break-ins.'],
+  'East Cesar Chavez':[4.0,1.4,0.8,'Bars and new development; car break-ins.'],
+  'West University':[3.8,2.6,0.8,'West Campus: theft, student nightlife and campus protests near UT.'],
+  'North Lamar':[5.0,1.2,0.7,'Rundberg corridor: violent crime above the city average.'],
+  'Georgian Acres':[4.8,1.2,0.7,'Rundberg corridor: violent crime above the city average.'],
+  'Heritage Hills':[4.6,1.2,0.6,'Higher property and violent crime.'],
+  'East Riverside – Oltorf':[4.8,1.2,0.8,'Apartment corridor: higher property and violent crime.'],
+  'Montopolis':[4.2,1.2,0.6,'Higher property crime.'],
+  'North Burnet':[3.4,1.2,0.6,'The Domain: shopping and nightlife; car break-ins.'],
+  'Zilker':[2.8,1.6,0.6,'Zilker Park and Barton Springs; huge crowds on festival weekends.'],
+  'Barton Hills':[2.2,0.8,0.3,'Low risk.'],
+  'Bouldin Creek':[2.8,1.0,0.6,'South Congress shopping; low risk.'],
+  'Hyde Park':[2.6,1.0,0.4,'Low risk.']
+ },
+ LAX:{
+  'Downtown':[6.0,4.8,1.0,'Civic Center, federal buildings and the Metropolitan Detention Center: focal point of anti-ICE protests, with dispersal orders and arrests in 2026. Skid Row: open drug use and high crime.'],
+  'Westlake':[6.2,2.0,1.0,'MacArthur Park: open drug market and frequent violent crime.'],
+  'Hollywood':[5.4,2.2,1.2,'Walk of Fame: theft, scams and late-night violence.'],
+  'Boyle Heights':[5.0,3.4,0.8,'Immigration enforcement operations and community protests.'],
+  'Koreatown':[5.0,1.6,1.0,'Dense nightlife; robbery and theft.'],
+  'Venice':[4.6,1.8,1.0,'Boardwalk: theft and homelessness-related incidents.'],
+  'Westwood':[3.0,3.0,0.5,'UCLA: campus protests; otherwise low risk.'],
+  'Watts':[6.2,1.6,0.9,'High violent crime.'],
+  'Historic South-Central':[6.0,1.6,0.9,'High violent crime.'],
+  'Vermont-Slauson':[6.0,1.4,0.9,'High violent crime.'],
+  'Florence':[5.8,1.6,0.9,'High violent crime.'],
+  'Echo Park':[4.4,1.8,0.9,'Nightlife; theft.'],
+  'Silver Lake':[3.8,1.4,0.8,'Nightlife; car break-ins.'],
+  'Fairfax':[3.8,2.0,0.6,'Melrose and The Grove: theft and smash-and-grab.'],
+  'Westchester':[3.6,1.2,0.4,'LAX airport: theft and unlicensed taxi scams.'],
+  'Bel-Air':[2.0,1.0,0.3,'Affluent; residential burglaries.'],
+  'Pacific Palisades':[2.0,0.8,0.3,'Rebuilding after the January 2025 wildfire; high wildfire risk.'],
+  'Brentwood':[2.2,0.8,0.3,'Affluent; low risk.'],
+  'Beverlywood':[2.4,0.8,0.3,'Low risk.']
+ },
+ MIA:{
+  'CBD':[4.4,3.2,0.8,'Downtown: theft, homelessness and rallies at Government Center.'],
+  'Bayfront':[4.0,3.4,0.9,'Bayfront Park: concerts, festivals and rallies.'],
+  'Government Center':[4.4,3.4,0.6,'County and federal buildings: protests.'],
+  'Brickell Village':[3.4,1.6,0.9,'Brickell nightlife; car break-ins.'],
+  'Brickell Business District':[3.0,1.6,0.6,'Financial district; low risk by day.'],
+  'Wynwood Industrial District':[4.6,1.8,1.2,'Wynwood nightlife: weekend shootings and car break-ins.'],
+  'Midtown':[3.8,1.4,0.8,'Shopping and nightlife; car break-ins.'],
+  'Design District':[3.6,1.4,0.6,'Luxury retail: smash-and-grab and follow-home robberies.'],
+  'Northeast Overtown':[6.0,1.6,0.9,'Overtown: high violent crime.'],
+  'Southeast Overtown':[5.6,1.6,0.9,'Overtown: high violent crime.'],
+  'Town Park':[5.8,1.4,0.9,'High violent crime.'],
+  'Liberty Square':[6.4,1.4,0.9,'Liberty City: highest violent crime in the city.'],
+  'Lemon City/Little Haiti':[5.4,1.6,0.8,'Higher violent crime.'],
+  'East Little Havana':[4.6,2.2,0.7,'Little Havana: Calle Ocho crowds; rallies on Cuba and Venezuela.'],
+  'Latin Quarter':[4.2,2.4,0.7,'Calle Ocho and Domino Park: crowds and rallies.'],
+  'Port of Miami':[3.0,1.2,0.3,'Cruise terminals: luggage theft and taxi scams.'],
+  'Miami Beach':[4.6,3.2,1.2,'South Beach: theft, drink-spiking and late-night violence. Art Week brings road closures and protests at the Convention Center.'],
+  'Coral Gables':[2.4,1.0,0.3,'Low risk.'],
+  'Key Biscayne':[1.8,0.8,0.3,'Low risk.'],
+  'Doral':[2.8,1.0,0.4,'Business district near the airport.'],
+  'Hialeah':[4.0,1.2,0.5,'Residential; property crime.'],
+  'North Miami':[4.8,1.2,0.6,'Higher violent crime.'],
+  'Miami Springs':[2.8,1.0,0.4,'Next to Miami International Airport.']
+ }
+});
+
+ALERTS.push(
+ {id:'lax-ice', city:'LAX', title:'Protests against immigration enforcement downtown', cat:'unrest', place:'Civic Center, Los Angeles', lon:-118.2400, lat:34.0545, win:['now','tonight','thu','sat','sun'], score:5.2, trend:'up', conf:70, status:'Ongoing', when:'Recurring · after raids and on weekends', upd:'2 h ago', tags:[],
+  summary:'Federal immigration raids keep triggering protests in Los Angeles. On 16 November thousands of students walked out of school across the region, with hundreds rallying at City Hall. Earlier mass rallies ended with dispersal orders, less-lethal rounds and dozens of arrests near the Metropolitan Detention Center.',
+  drivers:['Student walkouts on 16 Nov: over 7,000 in LAUSD alone','Dispersal orders and arrests near the detention center at earlier rallies','Raids continue, so protests can form at short notice'],
+  advice:['Avoid the Civic Center, Federal Building and Alameda Street during protests','Follow LAPD tactical alerts; closures can last into the evening'],
+  sources:'Los Angeles Times · CBS Los Angeles · ABC7 · Manukai pattern model'},
+ {id:'aus-sixth', city:'AUS', title:'Late-night violence on Sixth Street', cat:'crime', place:'Sixth Street, Austin', lon:-97.7395, lat:30.2672, win:['tonight','sat','sun'], score:4.6, trend:'flat', conf:78, status:'Forecast', when:'Weekend nights · peak 00:30–02:30', upd:'today', tags:['night'],
+  summary:'Most violent incidents in downtown Austin happen on the 400 to 700 blocks of Sixth Street after midnight. Two people were shot inside a bar there on Halloween weekend. The city’s safety overhaul, with weekend traffic, more lighting and a police outpost, cut arrests by about a quarter in its first year.',
+  drivers:['Bar shooting on Halloween weekend','Assaults cluster at closing time','Big crowds on game days and holiday weekends'],
+  advice:['Leave before closing time and use the marked rideshare zones','Avoid side alleys between Red River and Brazos'],
+  sources:'Austin Police Department · KXAN · CBS Austin · Manukai crime model'},
+ {id:'mia-artweek', city:'MIA', title:'Miami Art Week: crowds, closures and protests', cat:'unrest', place:'Miami Beach Convention Center', lon:-80.1340, lat:25.7955, win:['now','tonight','thu','sat','sun'], score:4.0, trend:'up', conf:66, status:'Forecast', when:'Early December', upd:'today', tags:[],
+  summary:'Art Basel Miami Beach and the satellite fairs draw tens of thousands of visitors in the first week of December. Expect heavy traffic on the causeways, layered security with federal support and the chance of protests: at a previous edition, police arrested protesters at a rally outside the Convention Center.',
+  drivers:['Global VIP crowd and high-value targets','Road closures in South Beach','Pro-Palestine rally with arrests at a previous edition'],
+  advice:['Allow double the usual time to cross to Miami Beach','Keep valuables out of sight at parties and in cars'],
+  sources:'WSVN · Local 10 · Miami Beach Police · Manukai pattern model'}
+);
+
 const GEO_PARIS=`1|444,238|411,194 421,204 501,233 488,269 476,289 448,263 417,252 383,235 399,202 399,197 411,194
 2|469,204|503,227 501,233 484,227 421,204 411,194 458,181 514,197 503,227
 3|537,236|552,208 564,235 570,279 544,270 525,253 498,241 514,197 552,208
@@ -1480,7 +1579,7 @@ $('#countrySort').addEventListener('click',e=>{const b=e.target.closest('[data-c
 function renderTrips(){$('#tripsList').innerHTML=`<button class="btn sec press addtrip" id="addTrip">${ico('plus')}Add trip</button>`+allTrips().map(t=>`<div class="card trip${S.tripOpen===t.id?' open':''}" data-tid="${t.id}"><button class="top" data-topen="${t.id}" aria-expanded="${S.tripOpen===t.id}"><div><h3>${esc(t.title)}</h3><div class="when">${esc(t.purpose)} · ${esc(t.dates)}</div></div>${ring(t.score,62,'trip')}<span class="tchev">${chevSvg}</span></button>
  <div class="tbody"><div class="tin"><div class="brief"><b>${ico('spark')}Forecast briefing</b>${esc(t.brief)}</div>
  <div class="tl">${t.items.map(it=>{const ref=typeof it.ref==='string'?`data-alert="${it.ref}"`:!it.ref?'':it.ref.cityRep?`data-city="${it.ref.cityRep}"`:it.ref.cc?`data-country="${it.ref.cc}"`:`data-dist="${it.ref.city}:${it.ref.d}"`;return`<button class="it" ${ref}><span class="dot" style="background:${col(it.score)}"></span><div><div class="tt">${esc(it.t)}</div><div class="ti">${esc(it.title)}</div><div class="tn">${esc(it.note)}</div></div><div class="sc" style="color:${col(it.score)}">${f1(it.score)}</div></button>`}).join('')}</div>
- <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button>${t.user?`<button class="btn sec press" data-tdel="${t.id}">${ico('trash')}Remove trip</button>`:''}</div></div></div>`).join('')+
+ <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button><button class="btn sec press" data-tdel="${t.id}">${ico('trash')}Remove trip</button></div></div></div>`).join('')+
  `<div class="sec">Safety</div><button class="btn pri press" id="checkin">${ico('check')}Check in: I’m safe</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins and sharing are simulated in this demo.</p>`}
 document.addEventListener('click',e=>{const to=e.target.closest('[data-topen]');if(to){const id=to.dataset.topen;S.tripOpen=S.tripOpen===id?null:id;$$('#tripsList .trip').forEach(c=>{const o=c.dataset.tid===S.tripOpen;c.classList.toggle('open',o);$('.top',c).setAttribute('aria-expanded',o)});if(S.tripOpen)setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${S.tripOpen}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'nearest'})},320);return}
  if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:`Your security team can see you checked in at 15:42 from ${hereInfo().title}.`,tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
@@ -1525,7 +1624,7 @@ function openDistrict(city,key){const d=DIST(city)[key];const v=distScore(city,k
  <div class="sec">Advice</div><div class="card"><ul class="ul adv">${adv.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
  <div style="margin-top:16px"><button class="btn sec press" data-city="${city}">${ico('pin')}${esc(cityName(city))} city report</button><button class="btn sec press" data-fb="District: ${esc(d.full)}">${ico('msg')}Feedback on this view</button></div>
  <p class="src">Based on official crime statistics, city safety reporting and the Manukai crime and unrest models. District scores are illustrative. Boundaries: ${esc(BOUNDS[city])}.</p>`;
- openSheet(city==='PAR'?'Arrondissement':city==='LON'?'Borough':city==='NYC'?(/^(Bronx|Brooklyn|Queens|Staten Island)$/.test(d.name)?'Borough':'Neighbourhood'):city==='BRU'?'Municipality':'District',html)}
+ openSheet(city==='PAR'?'Arrondissement':city==='LON'?'Borough':city==='NYC'?(/^(Bronx|Brooklyn|Queens|Staten Island)$/.test(d.name)?'Borough':'Neighbourhood'):city==='BRU'?'Municipality':CITY_REMOTE[city]?'Neighbourhood':'District',html)}
 const BOUNDS={PAR:'Ville de Paris open data',AMS:'Gemeente Amsterdam open data',LON:'OpenStreetMap contributors',BRU:'OpenStreetMap contributors',NYC:'OpenStreetMap contributors',FRA:'OpenStreetMap contributors'};
 function cityOverall(k,win=S.win){const s=cityScore(k,win);return clamp(s.avg+(s.max-s.avg)*0.45,0,10)}
 function cityRow(k){const v=cityOverall(k);const n=Object.keys(DIST(k)).length;const na=ALERTS.filter(a=>a.city===k).length;return`<button class="arow" data-city="${k}">${badge(v)}<div class="m"><b>${esc(cityName(k))}</b><span>City report · ${n} areas · ${na} alert${na===1?'':'s'}</span></div>${chevSvg}</button>`}
@@ -1600,10 +1699,10 @@ $$('.avatarBtn').forEach(b=>b.addEventListener('click',()=>openSheet('Profile',p
 let fbLog=store.get('feedback',[]);
 function dispInfo(){const cs=getComputedStyle($('#sabProbe'));const sat=getComputedStyle(document.documentElement).getPropertyValue('--sat');const t=document.createElement('div');t.style.cssText='position:fixed;top:0;height:env(safe-area-inset-top);visibility:hidden';document.body.appendChild(t);const st=t.offsetHeight;t.remove();const sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;return`Display: ${innerWidth}×${innerHeight} · screen ${screen.width}×${screen.height} · safe ${st}/${$('#sabProbe').offsetHeight} · ${sa?'home screen':'browser'} · app ${$('#phone').offsetHeight}`}
 function demoHtml(){return`<img src="${LOGO_FULL}" alt="Manukai" style="width:220px;margin:6px 0 16px">
- <h2 style="font:700 24px/1.15 var(--disp);margin:0 0 6px">Aware · interactive demo</h2><p class="p" style="color:var(--ink2)">Personal predictive threat intelligence for people on location. Zoom from the world into Amsterdam, Paris, London, Brussels, New York or Frankfurt, scrub the time windows, change your profile, and open alerts, districts and countries.</p>
+ <h2 style="font:700 24px/1.15 var(--disp);margin:0 0 6px">Aware · interactive demo</h2><p class="p" style="color:var(--ink2)">Personal predictive threat intelligence for people on location. Zoom from the world into Amsterdam, Paris, London, Brussels, Frankfurt, New York, Los Angeles, Miami or Austin, scrub the time windows, change your profile, and open alerts, districts and countries.</p>
  <button class="btn pri press" id="simBtn">${ico('bell')}Simulate a live forecast alert</button>
  <button class="btn sec press" data-fb="General">${ico('msg')}Give feedback</button>
- <button class="btn sec press" id="restartBtn">Restart onboarding</button>
+ <button class="btn sec press" id="restartBtn">Restart onboarding</button>${HIDDEN_TRIPS.length?`<button class="btn sec press" id="restoreTrips">Restore demo trips</button>`:''}
  <div class="sec">Feedback collected on this device<a id="copyFb">${fbLog.length?'Copy all':''}</a></div>
  <div class="card">${fbLog.length?fbLog.slice(-6).reverse().map(f=>`<div class="log"><b>${'★'.repeat(f.stars||0)}</b> ${esc(f.ctx)}${f.tags.length?' · '+esc(f.tags.join(', ')):''}<br>${esc(f.text||'')}${f.who?' · '+esc(f.who):''}</div>`).join(''):'<div class="log" style="border:0">No feedback yet.</div>'}</div>
  <p class="disc" id="dispInfo">${dispInfo()}</p>
@@ -1656,7 +1755,7 @@ ONB.addEventListener('click',e=>{const n=e.target.closest('[data-on]');if(n){if(
  const r=e.target.closest('[data-role]');if(r){P.role=r.dataset.role;$$('[data-role]',ONB).forEach(x=>x.classList.toggle('on',x===r))}
  const w=e.target.closest('[data-sw]');if(w){P[w.dataset.sw]=!P[w.dataset.sw];w.classList.toggle('on',P[w.dataset.sw])}});
 ONB.addEventListener('change',e=>{if(e.target.id==='onat')P.nat=e.target.value});
-function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();setTimeout(()=>{setDetent(0);if(MAP)MAP.resize();notify({title:'Aware is watching your trips',body:'2 upcoming trips · 1 forecast update since yesterday.',tag:'Aware'})},500)}
+function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();setTimeout(()=>{setDetent(0);if(MAP)MAP.resize();notify({title:'Aware is watching your trips',body:`${allTrips().length} upcoming trip${allTrips().length===1?'':'s'} · 1 forecast update since yesterday.`,tag:'Aware'})},500)}
 
 /* ---------- your position: demo, live GPS or pinned by long-press ---------- */
 IC.plus='<path d="M12 5v14M5 12h14"/>';
@@ -1729,7 +1828,7 @@ function buildTrip(u){const D=destOf(u);if(!D)return null;const al=D.alerts.slic
   ...al.slice(0,3).map(a=>({t:a.when,title:a.title,score:sA(a),note:a.place,ref:a.id})),
   {t:fday(pd(u.to)),title:`Return from ${D.name}`,score:D.score,note:`${days} day${days>1?'s':''} on location`,ref:null}];
  return{id:u.id,user:true,title:D.name,purpose:'Added by you',dates:frange(u.from,u.to),from:u.from,score:D.score,trend:'flat',brief,items,fly:{lon:D.lon,lat:D.lat,z:D.z,win:'now'}}}
-function allTrips(){return[...TRIPS,...USER_TRIPS.slice().sort((a,b)=>a.from.localeCompare(b.from)).map(buildTrip).filter(Boolean)]}
+function allTrips(){return[...TRIPS.filter(t=>!HIDDEN_TRIPS.includes(t.id)),...USER_TRIPS.slice().sort((a,b)=>a.from.localeCompare(b.from)).map(buildTrip).filter(Boolean)]}
 function destOptions(q){q=q.trim().toLowerCase();const c=CITY_KEYS.filter(k=>!q||cityName(k).toLowerCase().includes(q)).map(k=>({type:'city',k,name:cityName(k),sub:'City report · '+COUNTRIES.find(x=>x.cc===CITY_INFO[k].cc).name,v:cityOverall(k,'now')}));
  const n=COUNTRIES.filter(x=>!q||x.name.toLowerCase().includes(q)).map(x=>({type:'country',k:x.cc,name:x.name,sub:'Country profile · '+x.region,v:sC(x)}));return q?[...c,...n].slice(0,8):c}
 function openAddTrip(){let sel=null;const t0=new Date();t0.setDate(t0.getDate()+7);const t1=new Date(t0);t1.setDate(t1.getDate()+3);const today=iso(new Date());
@@ -1738,7 +1837,7 @@ function openAddTrip(){let sel=null;const t0=new Date();t0.setDate(t0.getDate()+
  <div class="sec">Dates</div><div class="card"><div class="selrow" style="border:0"><b>Departure</b><input type="date" class="dinp" id="tfrom" min="${today}" value="${iso(t0)}"></div><div class="selrow"><b>Return</b><input type="date" class="dinp" id="tto" min="${today}" value="${iso(t1)}"></div></div>
  <p class="src" id="terr" style="color:#ff9bb7"></p>
  <button class="btn pri press" id="tsave">${ico('plus')}Add trip</button>
- <p class="src">The demo covers 6 cities with district reports and 34 countries.</p>`,sh=>{
+ <p class="src">The demo covers 9 cities with district reports and 34 countries.</p>`,sh=>{
   const inp=$('#tdest',sh),sug=$('#tsug',sh),err=$('#terr',sh);
   const row=o=>`<button class="arow" data-dsel="${o.type}:${o.k}">${badge(o.v)}<div class="m"><b>${esc(o.name)}</b><span>${esc(o.sub)}</span></div>${chevSvg}</button>`;
   const run=()=>{const o=destOptions(inp.value);sug.innerHTML=sel?'':(o.map(row).join('')||'<p class="lede" style="padding:12px 2px;margin:0">Not in the demo set yet. Try a capital city’s country.</p>')};
@@ -1755,13 +1854,33 @@ document.addEventListener('click',e=>{if(e.target.closest('#addTrip')){openAddTr
  const d=e.target.closest('[data-tdel]');if(d){USER_TRIPS=USER_TRIPS.filter(u=>u.id!==d.dataset.tdel);store.set('trips',USER_TRIPS);if(S.tripOpen===d.dataset.tdel)S.tripOpen=null;renderTrips();renderNow()}});
 
 
+/* ---------- v4: remote US cities + deletable demo trips ---------- */
+Object.assign(BOUNDS,CITY_REMOTE_SRC);
+function polyArea(r){let a=0;for(let i=0,j=r.length-1;i<r.length;j=i++)a+=(r[j][0]+r[i][0])*(r[j][1]-r[i][1]);return Math.abs(a/2)}
+const tcase=s=>s.toLowerCase().replace(/--/g,' – ').replace(/\b([a-z])/g,m=>m.toUpperCase()).replace(/\bMlk\b/g,'MLK').replace(/\bLbj\b/g,'LBJ').replace(/\bUt\b/g,'UT').replace(/\bOf\b/g,'of');
+async function fetchCity(k){const ck='geo3.'+k;let rows=store.get(ck,null);
+ if(!rows){rows=[];for(const s of CITY_REMOTE[k]){const url=`${s.u}/query?where=${encodeURIComponent(s.w||'1=1')}&outFields=${s.f}&returnGeometry=true&outSR=4326&geometryPrecision=5&maxAllowableOffset=${s.o}&f=json`;
+   const j=await fetch(url).then(r=>r.json());const by={};
+   for(const f of j.features||[]){let n=(f.attributes[s.f]||'').trim();if(!n||!f.geometry)continue;if(s.tc)n=tcase(n);const r=f.geometry.rings.filter(r=>r.length>3).sort((a,b)=>polyArea(b)-polyArea(a))[0];if(r&&(!by[n]||polyArea(r)>polyArea(by[n])))by[n]=r}
+   Object.entries(by).forEach(([n,r])=>rows.push([n,r.map(p=>[+p[0].toFixed(4),+p[1].toFixed(4)])]))}
+  if(rows.length)store.set(ck,rows)}
+ if(!rows.length)return;const D={};
+ rows.forEach(([name,ring])=>{const m=CITY_META[k][name]||CITY_DEF2[k];D[name]={key:name,city:k,code:name,name,full:name,c:m[0],u:m[1],n:m[2],note:m[3],ring,ctr:ringCtr(ring)}});
+ CD[k]=D;if(!CITY_KEYS.includes(k))CITY_KEYS.push(k);const I=CITY_INFO[k];if(!CITIES.some(c=>c.k===k))CITIES.push({k,name:I.name,lon:I.lon,lat:I.lat});
+ refreshOverlays();renderCountries();renderNow()}
+function loadRemoteCities(){Object.keys(CITY_REMOTE).forEach(k=>fetchCity(k).catch(()=>{}))}
+
+let HIDDEN_TRIPS=store.get('hiddenTrips',[]);
+document.addEventListener('click',e=>{const d=e.target.closest('[data-tdel]');if(d&&TRIPS.some(t=>t.id===d.dataset.tdel)){HIDDEN_TRIPS.push(d.dataset.tdel);store.set('hiddenTrips',HIDDEN_TRIPS);if(S.tripOpen===d.dataset.tdel)S.tripOpen=null;renderTrips();renderNow();return}
+ if(e.target.closest('#restoreTrips')){HIDDEN_TRIPS=[];store.set('hiddenTrips',[]);renderTrips();renderNow();e.target.closest('#restoreTrips').remove();notify({title:'Demo trips restored',body:'Paris and Dubai are back in Trips.',tag:'Aware'})}});
+
 /* ---------- init ---------- */
 document.addEventListener('gesturestart',e=>e.preventDefault());
 ['#phone','#app','#v-now','#modal','#stage'].forEach(q=>{const el=$(q);if(el)el.addEventListener('scroll',()=>{if(el.scrollTop||el.scrollLeft){el.scrollTop=0;el.scrollLeft=0}})});
 renderChips();
 const ro=new ResizeObserver(()=>{layoutSheet();setSeg($('#tabbar'),S.tab,'t')});ro.observe($('#phone'));
 addEventListener('resize',frame);
-frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
+frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();loadRemoteCities();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
 if(!P.done)showOnb(0);
 }
 
