@@ -409,6 +409,21 @@ html,body{background:#0b2530}
 
 #map.zcity .mkc{display:none}
 
+#map{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#locBtn.on{color:var(--cyan)}
+#locBtn.wait svg{animation:pulseo 1s ease-in-out infinite alternate}
+@keyframes pulseo{to{opacity:.35}}
+.lpop{display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.lpc{display:flex;align-items:center;border-radius:22px;padding:4px 4px 4px 6px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.lpb{display:flex;align-items:center;gap:10px;padding:8px 10px;text-align:left;color:var(--ink);font:inherit}
+.lpb svg{width:22px;height:22px;color:var(--cyan);flex:none}
+.lpb b{display:block;font-size:15px}.lpb small{display:block;font-size:11.5px;color:var(--ink3)}
+.lpx{width:36px;height:36px;border-radius:18px;display:grid;place-items:center;color:var(--ink2);background:rgba(255,255,255,.08)}
+.lpx svg{width:16px;height:16px}
+.lpd{width:12px;height:12px;border-radius:50%;background:var(--cyan);border:2px solid #fff;margin-top:6px;box-shadow:0 0 0 6px rgba(92,216,247,.25)}
+.addtrip{margin:0 0 14px}
+.dinp{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.1);border:0;border-radius:12px;padding:8px 12px;font-size:16px;color:var(--ink);color-scheme:dark;min-width:140px;text-align:right}
+
 </style>
 </head>
 <body>
@@ -646,7 +661,7 @@ const AMS_D = {
  GF09:['Sloten',2.2,1.2,0.3,'Quiet residential area.'],
  GF10:['Slotervaart',4.0,2.0,0.5,'Mixed residential. Occasional youth crime.'],
  GK11:['Oud-Zuid',3.2,3.4,0.6,'Museumplein hosts mass demonstrations (Red Line, 200,000+ on 8 Nov). Vondelpark thefts after dark.'],
- GK12:['Zuidas',2.0,1.4,0.3,'Business district with low crime. Visible security at Jewish institutions after the March 2026 attack. You are here.'],
+ GK12:['Zuidas',2.0,1.4,0.3,'Business district with low crime. Visible security at Jewish institutions after the March 2026 attack.'],
  GK13:['De Pijp',3.4,1.6,0.7,'Lively nightlife. Bike and phone theft.'],
  GM14:['Oud-Oost',4.4,2.2,0.6,'Camera zones at Dapperbuurt and Oosterpark. Low-level street crime.'],
  GM15:['Indische Buurt',4.2,2.6,0.6,'Camera zone in the Indische Buurt. New Year’s Eve disorder at Molukkenstraat.'],
@@ -1358,7 +1373,7 @@ function fixAnti(g){const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates
 async function loadCountries(){try{if(!window.topojson)return;const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json');const topo=await r.json();const fc=topojson.feature(topo,topo.objects.countries);
  const want=Object.fromEntries(Object.entries(ISO).map(([k,v])=>[v,k]));
  COUNTRY_GEO=fc.features.filter(f=>want[f.id]).map(f=>{const cc=want[f.id];fixAnti(f.geometry);let mnx=999,mny=999,mxx=-999,mxy=-999;const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;polys.forEach(p=>p[0].forEach(([x,y])=>{mnx=Math.min(mnx,x);mny=Math.min(mny,y);mxx=Math.max(mxx,x);mxy=Math.max(mxy,y)}));return{cc,geometry:f.geometry,polys,bb:[mnx,mny,mxx,mxy]}});
- if(MAPREADY)MAP.getSource('countries').setData(countryFC());onMove()}catch(e){}}
+ if(MAPREADY)MAP.getSource('countries').setData(countryFC());onMove();renderNow()}catch(e){}}
 function refreshOverlays(){if(!MAPREADY)return;const[dF,dL]=distFC();MAP.getSource('districts').setData(dF);MAP.getSource('dlabels').setData(dL);MAP.getSource('countries').setData(countryFC());buildMarkers();onMove()}
 
 function markerEl(cls,html,onClick){const el=document.createElement('div');el.className=cls;el.innerHTML=html;if(onClick)el.addEventListener('click',e=>{e.stopPropagation();onClick()});return el}
@@ -1370,7 +1385,7 @@ function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
   const el=markerEl('mkc glass',`<span class="s" style="background:${col(mx)}">${f1(mx)}</span><div><b>${c.name}</b><br><span>${list.length} alert${list.length===1?'':'s'} · ${esc(winLabel(S.win))}</span></div>`,()=>{if(MAP.getZoom()>=8.5)openCity(c.k);else MAP.flyTo({center:[c.lon,c.lat],zoom:CITY_INFO[c.k].z,duration:1600})});
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
  PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
- const y=markerEl('mky','<i class="p"></i><i class="c"></i>');MARKERS.push(new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP))}
+ const y=markerEl('mky','<i class="p"></i><i class="c"></i>');YOU_MK=new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP);MARKERS.push(YOU_MK)}
 function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zcity',z<6.5);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2)}
 
 /* context: what is under the map centre */
@@ -1383,7 +1398,7 @@ function onMove(){if(!MAP)return;const c=MAP.getCenter();CTX=contextAt(c.lng,c.l
  el.innerHTML=`<span class="t"><b>${esc(CTX.title)}</b><small>${esc(CTX.sub)}</small></span>${CTX.v!=null?`<span class="sc" style="background:${col(CTX.v)}">${f1(CTX.v)}</span>`:''}`;renderInView()}
 $('#legend').addEventListener('click',e=>{e.stopPropagation();$('#legend').classList.toggle('open')});
 $('#ctxBtn').addEventListener('click',()=>{if(!CTX)return;if(CTX.type==='d')openDistrict(CTX.city,CTX.key);else if(CTX.type==='c')openCountry(CTX.cc);else{setDetent(1)}});
-function onMapClick(e){if(!MAPREADY)return;const z=MAP.getZoom();
+function onMapClick(e){if(!MAPREADY)return;if(LP_SUPPRESS){LP_SUPPRESS=false;return}if(LP_MK){hideLP();return}const z=MAP.getZoom();
  if(z>=9){const f=MAP.queryRenderedFeatures(e.point,{layers:['d-fill']})[0];if(f){const p=f.properties;selectDistrict(p.fid);openDistrict(p.city,keyOf(p.city,p.key));return}}
  if(z<7&&S.cLayer){const f=MAP.queryRenderedFeatures(e.point,{layers:['c-fill']})[0];if(f){openCountry(f.properties.cc);return}}}
 function selectDistrict(fid){if(MAPREADY)MAP.setFilter('d-sel',['==',['get','fid'],fid==null?-1:fid])}
@@ -1399,7 +1414,6 @@ $('#layerPop').addEventListener('click',e=>{const b=e.target.closest('button');i
  if(b.dataset.l){S.layer=b.dataset.l;$$('#layerPop [data-l]').forEach(x=>x.classList.toggle('on',x===b))}
  if(b.dataset.cl!=null){S.cLayer=!S.cLayer;b.classList.toggle('on',S.cLayer);if(MAPREADY){['c-fill','c-line'].forEach(l=>MAP.setLayoutProperty(l,'visibility',S.cLayer?'visible':'none'))}}
  $('#layerPop').classList.remove('on');refreshOverlays();renderNow()});
-$('#locBtn').addEventListener('click',()=>flyTo(YOU.lon,YOU.lat+0.01,12.4));
 
 /* ---------- bottom sheet ---------- */
 const BS=$('#bsheet');let detent=0,sheetY=0;
@@ -1415,11 +1429,14 @@ function setDetent(d){detent=clamp(d,0,2);layoutSheet()}
 function aRow(a){const s=sA(a);const st=a.status==='Forecast'?'<span class="pill fc">Forecast</span>':a.status==='Active'?'<span class="pill act">Active</span>':'';
  return`<button class="arow" data-alert="${a.id}">${badge(s)}<div class="m"><b>${esc(a.title)}</b><span>${esc(a.place)} · ${esc(a.when)}</span></div>${st||trendArrow(a.trend)}${chevSvg}</button>`}
 function fbox(a,label){const s=sA(a);return`<button class="fbox press" data-go="${a.id}"><div class="t"><i></i>${esc(label)}</div><div class="s" style="color:${col(s)}">${f1(s)}</div><div class="d">${esc(a.title)}</div></button>`}
-function renderNow(){const v=distScore('AMS','GK12');const ton=distScore('AMS','GA02','tonight','all');
- let h=`<div class="here" id="bhead">${ring(v,64)}<div><h3>Zuidas, Amsterdam</h3><p>You are here. ${band(v)} · ${S.win==='now'?'stable for the next 24 h':esc(winLabel(S.win))+' forecast'}. Nothing forecast within 2 km.</p></div></div>`;
- h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast"><button class="fbox press" data-gowin="tonight" data-ll="4.8975,52.3700,14"><div class="t"><i></i>Tonight · Centrum</div><div class="s" style="color:${col(ton)}">${f1(ton)}</div><div class="d">Nightlife violence and street dealing peak</div></button>${fbox(alertById('paris-bastille'),'Thu · your trip')}${fbox(alertById('paris-sat'),'Sat · your trip')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
+function renderNow(){const hi=hereInfo();const v=hi.v;const na=nearAlerts();
+ const near=na.length?`${na.length} alert${na.length>1?'s':''} within 2 km`:'Nothing forecast within 2 km';
+ const src=P.loc.mode==='gps'?'Live GPS':P.loc.mode==='pin'?'Pinned position':'Demo position';
+ let h=`<div class="here" id="bhead">${v!=null?ring(v,64):`<div class="circle glass" style="width:64px;height:64px;flex:none">${ico('pin')}</div>`}<div><h3>${esc(hi.title)}</h3><p>${esc(src)} · ${v!=null?`${band(v)} · ${S.win==='now'?'stable for the next 24 h':esc(winLabel(S.win))+' forecast'}. `:'No Aware coverage here in the demo. '}${near}.</p></div></div>`;
+ let tonBox='';if(hi.city){const top=Object.values(DIST(hi.city)).map(d=>({d,v:distScore(hi.city,d.key,'tonight','all')})).sort((a,b)=>b.v-a.v)[0];tonBox=`<button class="fbox press" data-gowin="tonight" data-ll="${top.d.ctr[0]},${top.d.ctr[1]},14"><div class="t"><i></i>Tonight · ${esc(top.d.name)}</div><div class="s" style="color:${col(top.v)}">${f1(top.v)}</div><div class="d">${esc(top.d.note)}</div></button>`}
+ h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast">${tonBox}${fbox(alertById('paris-bastille'),'Thu · your trip')}${fbox(alertById('paris-sat'),'Sat · your trip')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
  h+=`<div class="sec"><span id="ivTitle">In view</span><a data-tab="alerts">All alerts</a></div><div class="list" id="inView"></div>`;
- h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${TRIPS.map(t=>`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
+ h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${allTrips().map(t=>`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
  $('#bbody').innerHTML=h;renderInView()}
 function renderInView(){const el=$('#inView');if(!el)return;let list;
  if(MAP&&MAPREADY){const b=MAP.getBounds();list=ALERTS.filter(a=>visibleOnMap(a)&&b.contains([a.lon,a.lat]))}else list=ALERTS.filter(a=>a.city==='AMS'||a.cc==='NL');
@@ -1460,14 +1477,14 @@ $('#cq').addEventListener('input',e=>{S.countryQ=e.target.value;renderCountries(
 $('#countrySort').addEventListener('click',e=>{const b=e.target.closest('[data-cs]');if(b){S.countrySort=b.dataset.cs;renderCountries()}});
 
 /* ---------- trips view ---------- */
-function renderTrips(){$('#tripsList').innerHTML=TRIPS.map(t=>`<div class="card trip${S.tripOpen===t.id?' open':''}" data-tid="${t.id}"><button class="top" data-topen="${t.id}" aria-expanded="${S.tripOpen===t.id}"><div><h3>${esc(t.title)}</h3><div class="when">${esc(t.purpose)} · ${esc(t.dates)}</div></div>${ring(t.score,62,'trip')}<span class="tchev">${chevSvg}</span></button>
+function renderTrips(){$('#tripsList').innerHTML=`<button class="btn sec press addtrip" id="addTrip">${ico('plus')}Add trip</button>`+allTrips().map(t=>`<div class="card trip${S.tripOpen===t.id?' open':''}" data-tid="${t.id}"><button class="top" data-topen="${t.id}" aria-expanded="${S.tripOpen===t.id}"><div><h3>${esc(t.title)}</h3><div class="when">${esc(t.purpose)} · ${esc(t.dates)}</div></div>${ring(t.score,62,'trip')}<span class="tchev">${chevSvg}</span></button>
  <div class="tbody"><div class="tin"><div class="brief"><b>${ico('spark')}Forecast briefing</b>${esc(t.brief)}</div>
- <div class="tl">${t.items.map(it=>{const ref=typeof it.ref==='string'?`data-alert="${it.ref}"`:it.ref?`data-dist="${it.ref.city}:${it.ref.d}"`:'';return`<button class="it" ${ref}><span class="dot" style="background:${col(it.score)}"></span><div><div class="tt">${esc(it.t)}</div><div class="ti">${esc(it.title)}</div><div class="tn">${esc(it.note)}</div></div><div class="sc" style="color:${col(it.score)}">${f1(it.score)}</div></button>`}).join('')}</div>
- <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button></div></div></div>`).join('')+
+ <div class="tl">${t.items.map(it=>{const ref=typeof it.ref==='string'?`data-alert="${it.ref}"`:!it.ref?'':it.ref.cityRep?`data-city="${it.ref.cityRep}"`:it.ref.cc?`data-country="${it.ref.cc}"`:`data-dist="${it.ref.city}:${it.ref.d}"`;return`<button class="it" ${ref}><span class="dot" style="background:${col(it.score)}"></span><div><div class="tt">${esc(it.t)}</div><div class="ti">${esc(it.title)}</div><div class="tn">${esc(it.note)}</div></div><div class="sc" style="color:${col(it.score)}">${f1(it.score)}</div></button>`}).join('')}</div>
+ <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button>${t.user?`<button class="btn sec press" data-tdel="${t.id}">${ico('trash')}Remove trip</button>`:''}</div></div></div>`).join('')+
  `<div class="sec">Safety</div><button class="btn pri press" id="checkin">${ico('check')}Check in: I’m safe</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins and sharing are simulated in this demo.</p>`}
 document.addEventListener('click',e=>{const to=e.target.closest('[data-topen]');if(to){const id=to.dataset.topen;S.tripOpen=S.tripOpen===id?null:id;$$('#tripsList .trip').forEach(c=>{const o=c.dataset.tid===S.tripOpen;c.classList.toggle('open',o);$('.top',c).setAttribute('aria-expanded',o)});if(S.tripOpen)setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${S.tripOpen}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'nearest'})},320);return}
- if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:'Your security team can see you checked in at 15:42 from Zuidas.',tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
- const tb=e.target.closest('[data-trip]');if(tb){const t=TRIPS.find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
+ if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:`Your security team can see you checked in at 15:42 from ${hereInfo().title}.`,tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
+ const tb=e.target.closest('[data-trip]');if(tb){const t=allTrips().find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
 
 /* ---------- modal sheets ---------- */
 const MOD=$('#modal');const stack=[];
@@ -1566,7 +1583,7 @@ $('#searchBtn').addEventListener('click',()=>{openSheet('Search',`<div class="se
 /* ---------- profile sheet ---------- */
 function profileHtml(){return`<div class="hero"><div class="circle glass" style="width:64px;height:64px">${ico('person')}</div><div><h2>Your profile</h2><div class="sub">Personalises every RiskScore you see</div></div></div>
  <div class="sec">Role on location</div><div>${Object.entries(ROLES).map(([k,[t,s,i]])=>`<button class="opt${P.role===k?' on':''}" data-role="${k}"><span class="oi">${ico(i)}</span><span><b>${t}</b><span>${s}</span></span></button>`).join('')}</div>
- <div class="sec">Personal factors</div><div class="card">
+ ${locHtml()}<div class="sec">Personal factors</div><div class="card">
  <div class="selrow"><div><b>Nationality</b></div><select id="pnat">${Object.entries(NATS).map(([k,v])=>`<option value="${k}"${P.nat===k?' selected':''}>${v}</option>`).join('')}</select></div>
  <div class="tog"><div><b>LGBTQ+ considerations</b><span>Weigh legal status and social attitudes in country scores</span></div><button class="sw${P.lgbtq?' on':''}" data-sw="lgbtq" aria-label="LGBTQ+ considerations"></button></div>
  <div class="tog"><div><b>Solo or late-night movement</b><span>Raise night-time crime weighting</span></div><button class="sw${P.solo?' on':''}" data-sw="solo" aria-label="Solo or late-night movement"></button></div>
@@ -1641,13 +1658,110 @@ ONB.addEventListener('click',e=>{const n=e.target.closest('[data-on]');if(n){if(
 ONB.addEventListener('change',e=>{if(e.target.id==='onat')P.nat=e.target.value});
 function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();setTimeout(()=>{setDetent(0);if(MAP)MAP.resize();notify({title:'Aware is watching your trips',body:'2 upcoming trips · 1 forecast update since yesterday.',tag:'Aware'})},500)}
 
+/* ---------- your position: demo, live GPS or pinned by long-press ---------- */
+IC.plus='<path d="M12 5v14M5 12h14"/>';
+IC.trash='<path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/>';
+const DEMO_POS={lon:4.8730,lat:52.3380};
+if(!P.loc)P.loc={mode:'demo'};
+if(P.loc.mode==='pin'&&isFinite(P.loc.lon)){YOU.lon=P.loc.lon;YOU.lat=P.loc.lat}
+let GPS_WATCH=null,GPS_FIRST=false,YOU_MK=null,YOU_NAME=null,GEO_AT=null,LP_MK=null,LP_T=null,LP_P=null,LP_SUPPRESS=false;
+function hav(lo1,la1,lo2,la2){const R=6371,r=Math.PI/180,a=Math.sin((la2-la1)*r/2)**2+Math.cos(la1*r)*Math.cos(la2*r)*Math.sin((lo2-lo1)*r/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
+function hereInfo(){const x=YOU.lon,y=YOU.lat;
+ for(const city of CITY_KEYS)for(const d of Object.values(DIST(city)))if(inRing(x,y,d.ring))return{title:distLabel(d)+', '+cityName(city),v:distScore(city,d.key),city,key:d.key};
+ if(COUNTRY_GEO)for(const g of COUNTRY_GEO){const[a,b,c,e]=g.bb;const xx=x<a&&x+360<=c?x+360:x;if(xx<a||xx>c||y<b||y>e)continue;if(g.polys.some(p=>inRing(xx,y,p[0])&&!p.slice(1).some(h=>inRing(xx,y,h)))){const C=COUNTRIES.find(k=>k.cc===g.cc);return{title:(YOU_NAME?YOU_NAME+', ':'')+C.name,v:sC(C),cc:C.cc}}}
+ return{title:YOU_NAME||'Your position',v:null}}
+function nearAlerts(km=2){return ALERTS.filter(a=>!a.noMap&&visibleOnMap(a)&&hav(YOU.lon,YOU.lat,a.lon,a.lat)<=km)}
+async function reverseName(){const k=YOU.lon.toFixed(3)+','+YOU.lat.toFixed(3);if(GEO_AT===k)return;GEO_AT=k;
+ try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&accept-language=en&lat=${YOU.lat}&lon=${YOU.lon}`);const j=await r.json();const a=j.address||{};
+  YOU_NAME=a.suburb||a.neighbourhood||a.city_district||a.town||a.city||a.village||a.municipality||a.county||null;renderNow()}catch(e){}}
+function setYou(lon,lat,mode){YOU.lon=lon;YOU.lat=lat;P.loc=mode==='demo'?{mode}:{mode,lon,lat};saveP();YOU_NAME=null;
+ if(YOU_MK)YOU_MK.setLngLat([lon,lat]);$('#locBtn').classList.toggle('on',mode==='gps');renderNow();reverseName()}
+function startGPS(fly){if(!navigator.geolocation){notify({title:'Location unavailable',body:'This browser does not share its location. Long-press the map to set your position.',tag:'Aware'});return}
+ stopGPS();GPS_FIRST=!!fly;$('#locBtn').classList.add('wait');
+ GPS_WATCH=navigator.geolocation.watchPosition(p=>{$('#locBtn').classList.remove('wait');const{longitude:lo,latitude:la}=p.coords;
+   const moved=P.loc.mode!=='gps'||hav(YOU.lon,YOU.lat,lo,la)>0.03;if(moved)setYou(lo,la,'gps');
+   if(GPS_FIRST){GPS_FIRST=false;flyTo(lo,la+0.004,14)}},
+  err=>{$('#locBtn').classList.remove('wait');stopGPS();if(P.loc.mode==='gps')setYou(DEMO_POS.lon,DEMO_POS.lat,'demo');
+   notify({title:'Location unavailable',body:err.code===1?'Location access is off for this site. Allow it in Settings, or long-press the map to set your position.':'No GPS fix right now. Long-press the map to set your position.',tag:'Aware'})},
+  {enableHighAccuracy:true,maximumAge:15000,timeout:20000})}
+function stopGPS(){if(GPS_WATCH!=null&&navigator.geolocation)navigator.geolocation.clearWatch(GPS_WATCH);GPS_WATCH=null;$('#locBtn').classList.remove('on','wait')}
+$('#locBtn').addEventListener('click',e=>{e.stopImmediatePropagation();if(P.loc.mode==='gps'&&GPS_WATCH!=null){flyTo(YOU.lon,YOU.lat+0.004,14);return}startGPS(true)},true);
+
+/* long-press (or right-click) on the map to pin your position */
+function lpCancel(){if(LP_T){clearTimeout(LP_T);LP_T=null}}
+function hideLP(){if(LP_MK){LP_MK.remove();LP_MK=null}}
+function showLP(ll){hideLP();LP_SUPPRESS=true;setTimeout(()=>LP_SUPPRESS=false,700);
+ const el=document.createElement('div');el.className='lpop';
+ el.innerHTML=`<div class="lpc glass"><button class="lpb press" data-lp="set">${ico('pin')}<span><b>Set as my position</b><small>${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</small></span></button><button class="lpx" data-lp="x" aria-label="Cancel">${ico('x')}</button></div><i class="lpd"></i>`;
+ el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-lp]');if(!b)return;hideLP();if(b.dataset.lp!=='set')return;
+  stopGPS();setYou(+ll.lng.toFixed(5),+ll.lat.toFixed(5),'pin');buildMarkers();
+  notify({title:'Position set',body:`Aware now scores where you are: ${hereInfo().title}.`,tag:'Aware'})});
+ el.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+ LP_MK=new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat(ll).addTo(MAP)}
+function bindLP(){if(!MAP)return;
+ MAP.on('touchstart',e=>{lpCancel();const t=e.originalEvent.touches;if(t&&t.length>1)return;LP_P=e.point;const ll=e.lngLat;LP_T=setTimeout(()=>{LP_T=null;showLP(ll)},550)});
+ MAP.on('touchmove',e=>{if(LP_P&&Math.hypot(e.point.x-LP_P.x,e.point.y-LP_P.y)>10)lpCancel()});
+ ['touchend','touchcancel','dragstart','zoomstart'].forEach(ev=>MAP.on(ev,lpCancel));
+ MAP.on('contextmenu',e=>showLP(e.lngLat))}
+
+function locHtml(){const m=P.loc.mode;return`<div class="sec">Your position</div><div>
+ <button class="opt${m==='gps'?' on':''}" data-loc="gps"><span class="oi">${ico('target')}</span><span><b>Live GPS</b><span>Follows your phone’s location while Aware is open</span></span></button>
+ ${m==='pin'?`<button class="opt on" data-loc="pin"><span class="oi">${ico('pin')}</span><span><b>Pinned on the map</b><span>${YOU.lat.toFixed(4)}, ${YOU.lon.toFixed(4)}</span></span></button>`:''}
+ <button class="opt${m==='demo'?' on':''}" data-loc="demo"><span class="oi">${ico('brief')}</span><span><b>Demo position</b><span>Zuidas, Amsterdam</span></span></button></div>
+ <p class="src" style="margin-top:0">Tip: long-press anywhere on the map to set your position there.</p>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-loc]');if(!b)return;const m=b.dataset.loc;if(m==='pin')return;
+ if(m==='gps')startGPS(false);else{stopGPS();setYou(DEMO_POS.lon,DEMO_POS.lat,'demo');buildMarkers()}
+ $$('[data-loc]').forEach(x=>x.classList.toggle('on',x===b))});
+
+/* ---------- user trips ---------- */
+let USER_TRIPS=store.get('trips',[]);
+const pd=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const fday=d=>d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+function frange(a,b){const A=pd(a),B=pd(b);const wa=A.toLocaleDateString('en-GB',{weekday:'short'}),wb=B.toLocaleDateString('en-GB',{weekday:'short'});
+ if(A.getMonth()===B.getMonth()&&A.getFullYear()===B.getFullYear())return`${wa} ${A.getDate()} – ${wb} ${B.getDate()} ${B.toLocaleDateString('en-GB',{month:'short'})}`;return`${fday(A)} – ${fday(B)}`}
+function destOf(u){if(u.type==='city'){const I=CITY_INFO[u.k];return I&&{name:I.name,cc:I.cc,lon:I.lon,lat:I.lat,z:I.z,score:cityOverall(u.k,'now'),sum:I.sum,keys:I.keys,alerts:ALERTS.filter(a=>a.city===u.k||(!a.city&&a.cc===I.cc))}}
+ const C=COUNTRIES.find(c=>c.cc===u.k);return C&&{name:C.name,cc:C.cc,lon:C.lon,lat:C.lat,z:{RU:3,US:3.4,CA:3,CN:3.4,BR:3.6}[C.cc]||5,score:sC(C),sum:C.sit,keys:C.keys,alerts:ALERTS.filter(a=>a.cc===C.cc||(a.city&&CITY_INFO[a.city].cc===C.cc))}}
+function buildTrip(u){const D=destOf(u);if(!D)return null;const al=D.alerts.slice().sort((a,b)=>sA(b)-sA(a));const top=al[0];
+ const first=D.sum.split(/(?<=\.)\s/)[0];const days=Math.round((pd(u.to)-pd(u.from))/864e5)+1;
+ const brief=`${first} ${al.length?`${al.length} alert${al.length>1?'s':''} currently cover this destination; the highest is “${top.title}” at ${f1(sA(top))}.`:'No active alerts for this destination right now.'} Aware reassesses daily and sharpens the forecast from 96 hours before departure.`;
+ const items=[{t:fday(pd(u.from)),title:`Arrive in ${D.name}`,score:D.score,note:D.keys[0],ref:u.type==='city'?{cityRep:u.k}:{cc:D.cc}},
+  ...al.slice(0,3).map(a=>({t:a.when,title:a.title,score:sA(a),note:a.place,ref:a.id})),
+  {t:fday(pd(u.to)),title:`Return from ${D.name}`,score:D.score,note:`${days} day${days>1?'s':''} on location`,ref:null}];
+ return{id:u.id,user:true,title:D.name,purpose:'Added by you',dates:frange(u.from,u.to),from:u.from,score:D.score,trend:'flat',brief,items,fly:{lon:D.lon,lat:D.lat,z:D.z,win:'now'}}}
+function allTrips(){return[...TRIPS,...USER_TRIPS.slice().sort((a,b)=>a.from.localeCompare(b.from)).map(buildTrip).filter(Boolean)]}
+function destOptions(q){q=q.trim().toLowerCase();const c=CITY_KEYS.filter(k=>!q||cityName(k).toLowerCase().includes(q)).map(k=>({type:'city',k,name:cityName(k),sub:'City report · '+COUNTRIES.find(x=>x.cc===CITY_INFO[k].cc).name,v:cityOverall(k,'now')}));
+ const n=COUNTRIES.filter(x=>!q||x.name.toLowerCase().includes(q)).map(x=>({type:'country',k:x.cc,name:x.name,sub:'Country profile · '+x.region,v:sC(x)}));return q?[...c,...n].slice(0,8):c}
+function openAddTrip(){let sel=null;const t0=new Date();t0.setDate(t0.getDate()+7);const t1=new Date(t0);t1.setDate(t1.getDate()+3);const today=iso(new Date());
+ openSheet('Add trip',`<p class="p" style="margin-top:0;color:var(--ink2)">Where are you going and when? Aware builds the forecast briefing for you.</p>
+ <div class="sec">Destination</div><div class="search">${ico('search')}<input id="tdest" placeholder="City or country" autocomplete="off" enterkeyhint="done"></div><div class="list" id="tsug"></div>
+ <div class="sec">Dates</div><div class="card"><div class="selrow" style="border:0"><b>Departure</b><input type="date" class="dinp" id="tfrom" min="${today}" value="${iso(t0)}"></div><div class="selrow"><b>Return</b><input type="date" class="dinp" id="tto" min="${today}" value="${iso(t1)}"></div></div>
+ <p class="src" id="terr" style="color:#ff9bb7"></p>
+ <button class="btn pri press" id="tsave">${ico('plus')}Add trip</button>
+ <p class="src">The demo covers 6 cities with district reports and 34 countries.</p>`,sh=>{
+  const inp=$('#tdest',sh),sug=$('#tsug',sh),err=$('#terr',sh);
+  const row=o=>`<button class="arow" data-dsel="${o.type}:${o.k}">${badge(o.v)}<div class="m"><b>${esc(o.name)}</b><span>${esc(o.sub)}</span></div>${chevSvg}</button>`;
+  const run=()=>{const o=destOptions(inp.value);sug.innerHTML=sel?'':(o.map(row).join('')||'<p class="lede" style="padding:12px 2px;margin:0">Not in the demo set yet. Try a capital city’s country.</p>')};
+  inp.addEventListener('input',()=>{sel=null;run()});
+  sug.addEventListener('click',e=>{const b=e.target.closest('[data-dsel]');if(!b)return;e.stopPropagation();const[type,k]=b.dataset.dsel.split(':');sel={type,k};inp.value=type==='city'?cityName(k):COUNTRIES.find(x=>x.cc===k).name;inp.blur();run();err.textContent=''},true);
+  $('#tfrom',sh).addEventListener('change',e=>{const t=$('#tto',sh);t.min=e.target.value;if(t.value<e.target.value)t.value=e.target.value});
+  $('#tsave',sh).addEventListener('click',()=>{const f=$('#tfrom',sh).value,t=$('#tto',sh).value;
+   if(!sel){err.textContent='Choose a destination from the list.';return}if(!f||!t){err.textContent='Enter both dates.';return}if(t<f){err.textContent='Return date is before departure.';return}
+   const u={id:'u'+Date.now(),type:sel.type,k:sel.k,from:f,to:t};USER_TRIPS.push(u);store.set('trips',USER_TRIPS);S.tripOpen=u.id;
+   closeTop();renderTrips();renderNow();const T=buildTrip(u);notify({title:'Trip added',body:`${T.title} · ${T.dates}. Aware is now watching this destination for you.`,tag:'Aware'});
+   setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${u.id}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'center'})},450)});
+  run()})}
+document.addEventListener('click',e=>{if(e.target.closest('#addTrip')){openAddTrip();return}
+ const d=e.target.closest('[data-tdel]');if(d){USER_TRIPS=USER_TRIPS.filter(u=>u.id!==d.dataset.tdel);store.set('trips',USER_TRIPS);if(S.tripOpen===d.dataset.tdel)S.tripOpen=null;renderTrips();renderNow()}});
+
+
 /* ---------- init ---------- */
 document.addEventListener('gesturestart',e=>e.preventDefault());
 ['#phone','#app','#v-now','#modal','#stage'].forEach(q=>{const el=$(q);if(el)el.addEventListener('scroll',()=>{if(el.scrollTop||el.scrollLeft){el.scrollTop=0;el.scrollLeft=0}})});
 renderChips();
 const ro=new ResizeObserver(()=>{layoutSheet();setSeg($('#tabbar'),S.tab,'t')});ro.observe($('#phone'));
 addEventListener('resize',frame);
-frame();initMap();renderNow();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
+frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
 if(!P.done)showOnb(0);
 }
 
