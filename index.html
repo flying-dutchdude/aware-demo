@@ -132,13 +132,13 @@ svg{display:block}
 .tchip i{width:7px;height:7px;border-radius:50%;background:var(--pink);opacity:0;font-style:normal}
 .tchip.fc i{opacity:1}
 .tchip.on{color:#06212c;background:linear-gradient(180deg,#e9fbff,#bfefff);border-color:rgba(255,255,255,.7)}
-.mctl{position:absolute;right:12px;top:calc(var(--sat) + 108px);z-index:28;display:flex;flex-direction:column;border-radius:24px;width:48px;overflow:hidden}
+.mctl{position:absolute;right:12px;top:calc(var(--sat) + 138px);z-index:28;display:flex;flex-direction:column;border-radius:24px;width:48px;overflow:hidden}
 .mctl button{height:48px;display:grid;place-items:center}
 .mctl button+button{border-top:.5px solid rgba(255,255,255,.14)}
 .mctl svg{width:20px;height:20px}
 .legend{position:absolute;left:12px;z-index:27;bottom:260px;height:30px;border-radius:15px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:11.5px;color:var(--ink2);transition:bottom .5s var(--spring),opacity .3s}
 .legend .bar{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--r0),var(--r1),var(--r2),var(--r3),var(--r4))}
-.layerpop{position:absolute;right:68px;top:calc(var(--sat) + 108px);z-index:31;border-radius:22px;padding:6px;display:none;min-width:190px}
+.layerpop{position:absolute;right:68px;top:calc(var(--sat) + 138px);z-index:31;border-radius:22px;padding:6px;display:none;min-width:190px}
 .layerpop.on{display:block;animation:pop .35s var(--spring)}
 .layerpop button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:14px;font-size:15px}
 .layerpop button.on{background:rgba(255,255,255,.12)}
@@ -424,6 +424,54 @@ html,body{background:#0b2530}
 .addtrip{margin:0 0 14px}
 .dinp{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.1);border:0;border-radius:12px;padding:8px 12px;font-size:16px;color:var(--ink);color-scheme:dark;min-width:140px;text-align:right}
 
+/* v5 time slider */
+.tslider{position:absolute;left:10px;right:10px;top:calc(var(--sat) + 60px);z-index:29;border-radius:22px;padding:8px 14px 4px}
+.tsl-top{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden}
+.tsl-top b{font:700 15px var(--disp);color:var(--ink)}
+.tsl-fc{margin-left:auto;color:var(--pink);font-weight:600;font-size:12px}
+.tsl-track{position:relative;height:38px;touch-action:none;cursor:pointer;-webkit-user-select:none;user-select:none}
+.tsl-rail,.tsl-fill{position:absolute;left:5%;top:12px;height:4px;border-radius:2px}
+.tsl-rail{right:5%;background:rgba(255,255,255,.14)}
+.tsl-fill{background:linear-gradient(90deg,rgba(92,216,247,.5),#5cd8f7);transition:width .3s cubic-bezier(.3,1.3,.5,1)}
+.tk{position:absolute;top:0;transform:translateX(-50%);width:40px;height:38px;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.tk i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);margin-top:11px}
+.tk.fc i{background:var(--pink);box-shadow:0 0 0 3px rgba(255,92,138,.22)}
+.tk em{font-style:normal;font-size:11px;font-weight:600;color:var(--ink3);margin-top:7px}
+.tk.on em{color:var(--ink)}
+.tsl-thumb{position:absolute;top:4px;width:30px;height:20px;border-radius:10px;transform:translateX(-50%);background:linear-gradient(180deg,#f4fdff,#c7f1ff);box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 1px 0 #fff;transition:left .3s cubic-bezier(.3,1.3,.5,1),transform .2s}
+.tsl-thumb.drag{transition:transform .2s;transform:translateX(-50%) scale(1.18)}
+/* SOS */
+.sosb{color:#ff6b8a !important;font:800 12.5px/1 var(--ui);letter-spacing:.04em}
+.sos-hero{display:flex;gap:14px;align-items:center;margin:4px 0 16px}
+.sos-hero h2{margin:0;font:700 24px/1.1 var(--disp)}.sos-hero .sub{color:var(--ink3);font-size:13px;margin-top:3px}
+.sos-ic{width:64px;height:64px;border-radius:32px;display:grid;place-items:center;font:800 17px var(--ui);color:#fff;background:radial-gradient(circle at 35% 30%,#ff8aa3,#e0244f);box-shadow:0 0 0 6px rgba(224,36,79,.22)}
+.btn.sos-call,.btn.sos-btn{background:linear-gradient(180deg,#ff5b7f,#d81f4b);color:#fff;border:0;box-shadow:0 6px 20px rgba(216,31,75,.35)}
+.btn.sos-btn{font-weight:800;letter-spacing:.03em}
+.kvr{display:flex;flex-direction:column;gap:2px;padding:4px 0}.kvr span{color:var(--ink2);font-size:13.5px}.kvr b{font-size:18px}
+/* check-in */
+.ci{margin-bottom:12px}.ci-h b{display:block;font-size:15.5px}.ci-h span{display:block;font-size:13px;color:var(--ink3);margin-top:2px}
+.ci-row{display:flex;gap:12px;align-items:center}.ci-dot{width:12px;height:12px;border-radius:6px;background:#5cd8f7;box-shadow:0 0 0 5px rgba(92,216,247,.2);flex:none;animation:pulseo 1.6s ease-in-out infinite alternate}
+.ci.miss{border-color:rgba(255,92,138,.6);background:rgba(255,92,138,.12)}.ci.miss .ci-dot{background:#ff5c8a;box-shadow:0 0 0 5px rgba(255,92,138,.25)}
+.ci-btns{display:flex;gap:8px;margin-top:12px}.ci-btns .btn{margin:0;flex:1}.ci-btns .btn.sec{flex:0 0 110px}
+.chip.on{background:rgba(92,216,247,.18);border-color:rgba(92,216,247,.6);color:var(--ink)}
+/* briefing + places */
+.brf-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin:14px 0 2px;border-radius:20px;background:linear-gradient(135deg,rgba(92,216,247,.16),rgba(255,255,255,.05));border:.5px solid rgba(92,216,247,.35);text-align:left;color:var(--ink)}
+.brf-row b{display:block;font-size:15px}.brf-row small{display:block;font-size:12.5px;color:var(--ink3);margin-top:1px}.brf-row>span:nth-child(2){flex:1}
+.brf-ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(92,216,247,.18);color:#5cd8f7}.brf-ic svg{width:20px;height:20px}
+.brf-h small{color:var(--ink3);font-size:13px}.brf-h h2{margin:2px 0 14px;font:700 28px/1.1 var(--disp)}
+.brf-you{display:flex;gap:14px;align-items:center}.brf-you b{display:block;font-size:16px}.brf-you span{display:block;color:var(--ink2);font-size:13.5px;margin-top:2px}
+.ptag{font-size:11px;font-weight:700;color:#ffb36b;background:rgba(255,179,107,.14);border-radius:8px;padding:3px 7px;white-space:nowrap}
+.card.warn{border-color:rgba(255,179,107,.5);background:rgba(255,179,107,.1);color:#ffd6ad;font-size:14px;margin-bottom:6px}
+.mypl{display:flex;align-items:center;gap:6px;cursor:pointer}
+.mypl i{width:26px;height:26px;border-radius:13px;display:grid;place-items:center;background:#0b2530;border:2px solid #5cd8f7;color:#5cd8f7;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.mypl i svg{width:14px;height:14px}
+.mypl span{font:700 12px var(--ui);color:#eaf6fa;text-shadow:0 1px 3px #021219,0 0 6px #021219}
+#map.zlo .mypl span{display:none}
+.lpc{flex-direction:column;align-items:stretch;padding:4px;position:relative}
+.lpc .lpx{position:absolute;top:6px;right:6px;width:30px;height:30px}
+.lpc .lpb+.lpb{border-top:.5px solid var(--line2)}
+.lpc .lpb{padding-right:44px}
+
 </style>
 </head>
 <body>
@@ -448,7 +496,7 @@ html,body{background:#0b2530}
      <button class="glass circle press avatarBtn" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.8 4.2-5.7 7.5-5.7s6.1 1.9 7.5 5.7"/></svg></button>
     </div>
     <div class="tchips" id="tchips"></div>
-    <div class="mctl glass" id="mctl"><button id="layerBtn" aria-label="Map layers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 9l9 5 9-5-9-5zM3 13.5l9 5 9-5"/></svg></button><button id="locBtn" aria-label="Go to my location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4 4 11l7 2 2 7 7-16z"/></svg></button></div>
+    <div class="mctl glass" id="mctl"><button id="layerBtn" aria-label="Map layers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 9l9 5 9-5-9-5zM3 13.5l9 5 9-5"/></svg></button><button id="locBtn" aria-label="Go to my location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4 4 11l7 2 2 7 7-16z"/></svg></button><button id="sosBtn" class="sosb" aria-label="Emergency">SOS</button></div>
     <div class="layerpop glass reg" id="layerPop"><button data-l="all" class="on">All risks</button><button data-l="crime">Crime</button><button data-l="unrest">Civil unrest</button><div class="lp-sep"></div><button data-cl class="on">Country risk</button></div>
     <div class="legend glass press" id="legend" role="button" aria-label="Map legend and credits"><span class="li">i</span><div class="lx"><div class="lr"><span>RiskScore</span><span>0</span><span class="bar"></span><span>10</span></div><div class="attr">© OpenFreeMap · © OpenMapTiles · © OpenStreetMap contributors</div></div></div>
     <div id="chin"></div><div id="bsheet" class="glass reg"><div class="grab"><i></i></div><div id="bbody"></div></div>
@@ -1126,6 +1174,34 @@ ALERTS.push(
   sources:'WSVN · Local 10 · Miami Beach Police · Manukai pattern model'}
 );
 
+/* v5: time slider with detents up to +10 days */
+WINDOWS.splice(0,WINDOWS.length,
+ {k:'now',label:'Now',sub:'Thu 26 Nov · today',tick:'Now'},
+ {k:'tonight',label:'Tonight',sub:'Thu 26 · 22:00–04:00',tick:'Tonight'},
+ {k:'d1',label:'Tomorrow',sub:'Fri 27 Nov',tick:'+1'},
+ {k:'d2',label:'Sat 28 Nov',sub:'in 2 days',tick:'+2'},
+ {k:'d3',label:'Sun 29 Nov',sub:'in 3 days',tick:'+3'},
+ {k:'d5',label:'Tue 1 Dec',sub:'in 5 days',tick:'+5'},
+ {k:'d10',label:'Sun 6 Dec',sub:'in 10 days',tick:'+10'});
+(function(){const W={thu:'now',sat:'d2',sun:'d3'},OLD=['now','tonight','thu','sat','sun'],ALL=WINDOWS.map(w=>w.k);
+ ALERTS.forEach(a=>{if(!a.win)return;a.win=OLD.every(k=>a.win.includes(k))?ALL.slice():[...new Set(a.win.map(k=>W[k]||k))]});
+ EVENTS.forEach(e=>{e.win=W[e.win]||e.win})})();
+ALERTS.find(a=>a.id==='mia-artweek').win=['d5','d10'];
+ALERTS.push(
+ {id:'paris-strike', city:'PAR', title:'National strike day: march and transport disruption', cat:'unrest', place:'Place d’Italie to Nation, Paris', lon:2.3556, lat:48.8311, win:['d5'], score:5.6, trend:'up', conf:66, status:'Forecast', when:'Tue 1 Dec · 11:00–19:00', upd:'today', tags:['trip'],
+  summary:'The next national day of action against the 2027 budget falls on 1 December. Our model expects a Paris march on the usual south-east route, reduced metro and RER service, and knock-on rail disruption into Wednesday morning, when your Paris trip starts.',
+  drivers:['Recurring national strike days this autumn','Unions mobilising against the budget vote','Rail disruption typically spills into the next morning'],
+  advice:['Avoid the 13e, 5e and 12e during the march','Check your Wednesday train the evening before'],
+  sources:'Union announcements · French media · Manukai pattern model'},
+ {id:'nyc-bf', city:'NYC', title:'Black Friday crowds and theft in Midtown', cat:'crime', place:'Herald Square, New York', lon:-73.9881, lat:40.7505, win:['d1'], score:4.2, trend:'flat', conf:74, status:'Forecast', when:'Fri 27 Nov · 06:00–20:00', upd:'today', tags:[],
+  summary:'Black Friday brings the year’s densest shopping crowds to Herald Square and Fifth Avenue. Pickpocketing, bag snatching and crowd crushes at store openings are the main risks.',
+  drivers:['Peak shopping day of the year','Store openings draw dense queues','Theft rises with crowd density'],
+  advice:['Keep phones and wallets in front pockets','Avoid store openings at peak times'],
+  sources:'NYPD advisories · Manukai crime model'}
+);
+EVENTS.push({alert:'paris-strike', city:'PAR', win:'d5', d:{13:5.6,5:5.0,12:4.8,11:4.6,14:4.4}});
+TRIPS.find(t=>t.id==='paris').from='2026-12-02';TRIPS.find(t=>t.id==='dubai').from='2026-12-08';
+
 const GEO_PARIS=`1|444,238|411,194 421,204 501,233 488,269 476,289 448,263 417,252 383,235 399,202 399,197 411,194
 2|469,204|503,227 501,233 484,227 421,204 411,194 458,181 514,197 503,227
 3|537,236|552,208 564,235 570,279 544,270 525,253 498,241 514,197 552,208
@@ -1417,7 +1493,7 @@ function inRing(x,y,r){let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){co
 /* ---------- state ---------- */
 const S={tab:'now',win:'now',layer:'all',cLayer:true,sel:null,alertFilter:'you',countrySort:'risk',countryQ:''};
 function distScore(city,key,win=S.win,layer=S.layer){const D=DIST(city)[key];
- let c=D.c+(win==='tonight'?D.n:(win==='sat'||win==='sun')?D.n*.35:0)+(P.solo&&win==='tonight'?0.4:0);
+ let c=D.c+(win==='tonight'?D.n:(win==='d2'||win==='d3'||win==='d10')?D.n*.35:0)+(P.solo&&win==='tonight'?0.4:0);
  let u=D.u;EVENTS.forEach(e=>{if(e.city===city&&e.win===win&&e.d[key]!=null)u=Math.max(u,e.d[key])});
  c=clamp(c,0,10);u=clamp(u,0,10);return layer==='crime'?c:layer==='unrest'?u:Math.max(c,u)}
 const winLabel=k=>WINDOWS.find(w=>w.k===k).label;
@@ -1483,7 +1559,7 @@ function buildMarkers(){MARKERS.splice(0).forEach(m=>m.remove());if(!MAP)return;
  CITIES.forEach(c=>{const list=ALERTS.filter(a=>a.city===c.k&&visibleOnMap(a));const mx=cityScore(c.k).max;
   const el=markerEl('mkc glass',`<span class="s" style="background:${col(mx)}">${f1(mx)}</span><div><b>${c.name}</b><br><span>${list.length} alert${list.length===1?'':'s'} · ${esc(winLabel(S.win))}</span></div>`,()=>{if(MAP.getZoom()>=8.5)openCity(c.k);else MAP.flyTo({center:[c.lon,c.lat],zoom:CITY_INFO[c.k].z,duration:1600})});
   MARKERS.push(new maplibregl.Marker({element:el}).setLngLat([c.lon,c.lat]).addTo(MAP))});
- PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
+ placeMarkers();PLACES.forEach(p=>{const el=markerEl('mkp',`<i></i><span>${esc(p.label)}</span>`);MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))});
  const y=markerEl('mky','<i class="p"></i><i class="c"></i>');YOU_MK=new maplibregl.Marker({element:y}).setLngLat([YOU.lon,YOU.lat]).addTo(MAP);MARKERS.push(YOU_MK)}
 function onZoom(){const z=MAP.getZoom();const m=$('#map');m.classList.toggle('zlo',z<9);m.classList.toggle('zcity',z<6.5);m.classList.toggle('zhi',z>=9);m.classList.toggle('zpl',z>=11.8);m.classList.toggle('zmid',z>=9&&z<12.2);if(MAPREADY&&MAP.getLayer('d-lab')){const lo=z<13.2;if(lo!==LAB_LO){LAB_LO=lo;MAP.setFilter('d-lab',lo?['!=',['get','def'],1]:null)}}}
 let LAB_LO=null;
@@ -1503,12 +1579,10 @@ function onMapClick(e){if(!MAPREADY)return;if(LP_SUPPRESS){LP_SUPPRESS=false;ret
  if(z<7&&S.cLayer){const f=MAP.queryRenderedFeatures(e.point,{layers:['c-fill']})[0];if(f){openCountry(f.properties.cc);return}}}
 function selectDistrict(fid){if(MAPREADY)MAP.setFilter('d-sel',['==',['get','fid'],fid==null?-1:fid])}
 function flyTo(lon,lat,z){if(!MAP)return;MAP.flyTo({center:[lon,lat],zoom:z,duration:1800,essential:true})}
-function applyPadding(){if(!MAP)return;const top=($('#v-now .mtop').offsetTop||0)+96;const vis=BS.offsetHeight-(sheetY||0);MAP.setPadding({top,bottom:Math.max(0,Math.min(vis,BS.offsetHeight*0.5)),left:0,right:0})}
+function applyPadding(){if(!MAP)return;const top=($('#v-now .mtop').offsetTop||0)+124;const vis=BS.offsetHeight-(sheetY||0);MAP.setPadding({top,bottom:Math.max(0,Math.min(vis,BS.offsetHeight*0.5)),left:0,right:0})}
 
 /* ---------- top controls ---------- */
 function setSeg(seg,val,attr){const bs=$$('button',seg);bs.forEach(b=>b.classList.toggle('on',b.dataset[attr]===val));const on=bs.find(b=>b.dataset[attr]===val);const lens=$('.lens',seg);if(on&&lens){lens.style.left=on.offsetLeft+'px';lens.style.width=on.offsetWidth+'px'}}
-function renderChips(){$('#tchips').innerHTML=WINDOWS.map(w=>{const fc=EVENTS.some(e=>e.win===w.k);return`<button class="tchip glass press${S.win===w.k?' on':''}${fc?' fc':''}" data-w="${w.k}"><i></i>${w.label}</button>`}).join('')}
-$('#tchips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.win=b.dataset.w;renderChips();refreshOverlays();renderNow()});
 $('#layerBtn').addEventListener('click',()=>$('#layerPop').classList.toggle('on'));
 $('#layerPop').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  if(b.dataset.l){S.layer=b.dataset.l;$$('#layerPop [data-l]').forEach(x=>x.classList.toggle('on',x===b))}
@@ -1534,7 +1608,8 @@ function renderNow(){const hi=hereInfo();const v=hi.v;const na=nearAlerts();
  const src=P.loc.mode==='gps'?'Live GPS':P.loc.mode==='pin'?'Pinned position':'Demo position';
  let h=`<div class="here" id="bhead">${v!=null?ring(v,64):`<div class="circle glass" style="width:64px;height:64px;flex:none">${ico('pin')}</div>`}<div><h3>${esc(hi.title)}</h3><p>${esc(src)} · ${v!=null?`${band(v)} · ${S.win==='now'?'stable for the next 24 h':esc(winLabel(S.win))+' forecast'}. `:'No Aware coverage here in the demo. '}${near}.</p></div></div>`;
  let tonBox='';if(hi.city){const top=Object.values(DIST(hi.city)).map(d=>({d,v:distScore(hi.city,d.key,'tonight','all')})).sort((a,b)=>b.v-a.v)[0];tonBox=`<button class="fbox press" data-gowin="tonight" data-ll="${top.d.ctr[0]},${top.d.ctr[1]},14"><div class="t"><i></i>Tonight</div><div class="s" style="color:${col(top.v)}">${f1(top.v)}</div><div class="d">${esc(top.d.name)}: ${esc(top.d.note)}</div></button>`}
- h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast">${tonBox}${fbox(alertById('paris-bastille'),'Thu · Paris')}${fbox(alertById('paris-sat'),'Sat · Paris')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
+ h+=`<div class="ci-slot" data-compact="1">${ciHtml(true)}</div><div class="sec">Forecast · next 10 days</div><div class="fcast">${tonBox}${fbox(alertById('paris-bastille'),'Today · Paris')}${fbox(alertById('paris-sat'),'Sat · Paris')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('paris-strike'),'Tue 1 Dec · Paris')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
+ h+=`<button class="brf-row press" data-brief><span class="brf-ic">${ico('spark')}</span><span><b>Daily briefing</b><small>${esc(new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}))} · your position, places and trips</small></span>${chevSvg}</button>`+placesHtml();
  h+=`<div class="sec"><span id="ivTitle">In view</span><a data-tab="alerts">All alerts</a></div><div class="list" id="inView"></div>`;
  h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${allTrips().map(t=>`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
  $('#bbody').innerHTML=h;renderInView()}
@@ -1581,7 +1656,7 @@ function renderTrips(){$('#tripsList').innerHTML=`<button class="btn sec press a
  <div class="tbody"><div class="tin"><div class="brief"><b>${ico('spark')}Forecast briefing</b>${esc(t.brief)}</div>
  <div class="tl">${t.items.map(it=>{const ref=typeof it.ref==='string'?`data-alert="${it.ref}"`:!it.ref?'':it.ref.cityRep?`data-city="${it.ref.cityRep}"`:it.ref.cc?`data-country="${it.ref.cc}"`:`data-dist="${it.ref.city}:${it.ref.d}"`;return`<button class="it" ${ref}><span class="dot" style="background:${col(it.score)}"></span><div><div class="tt">${esc(it.t)}</div><div class="ti">${esc(it.title)}</div><div class="tn">${esc(it.note)}</div></div><div class="sc" style="color:${col(it.score)}">${f1(it.score)}</div></button>`}).join('')}</div>
  <button class="btn sec press" data-trip="${t.id}" style="margin-top:6px">${ico('map')}Show trip on map</button><button class="btn sec press" data-tdel="${t.id}">${ico('trash')}Remove trip</button></div></div></div>`).join('')+
- `<div class="sec">Safety</div><button class="btn pri press" id="checkin">${ico('check')}Check in: I’m safe</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins and sharing are simulated in this demo.</p>`}
+ `<div class="sec">Safety</div><div class="ci-slot" data-compact="0">${ciHtml(false)}</div><button class="btn pri press" id="checkin">${ico('check')}Check in now: I’m safe</button><button class="btn sos-btn press" data-sos>SOS · Emergency</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins, alerts and sharing are simulated in this demo.</p>`}
 document.addEventListener('click',e=>{const to=e.target.closest('[data-topen]');if(to){const id=to.dataset.topen;S.tripOpen=S.tripOpen===id?null:id;$$('#tripsList .trip').forEach(c=>{const o=c.dataset.tid===S.tripOpen;c.classList.toggle('open',o);$('.top',c).setAttribute('aria-expanded',o)});if(S.tripOpen)setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${S.tripOpen}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'nearest'})},320);return}
  if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:`Your security team can see you checked in at 15:42 from ${hereInfo().title}.`,tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
  const tb=e.target.closest('[data-trip]');if(tb){const t=allTrips().find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
@@ -1683,7 +1758,7 @@ $('#searchBtn').addEventListener('click',()=>{openSheet('Search',`<div class="se
 /* ---------- profile sheet ---------- */
 function profileHtml(){return`<div class="hero"><div class="circle glass" style="width:64px;height:64px">${ico('person')}</div><div><h2>Your profile</h2><div class="sub">Personalises every RiskScore you see</div></div></div>
  <div class="sec">Role on location</div><div>${Object.entries(ROLES).map(([k,[t,s,i]])=>`<button class="opt${P.role===k?' on':''}" data-role="${k}"><span class="oi">${ico(i)}</span><span><b>${t}</b><span>${s}</span></span></button>`).join('')}</div>
- ${locHtml()}<div class="sec">Personal factors</div><div class="card">
+ ${locHtml()}<div class="sec">Notifications</div><div class="card"><div class="tog" style="border:0"><div><b>Daily briefing at 07:00</b><span>Your position, places, trips and what is coming up</span></div><button class="sw${P.brief?' on':''}" data-sw="brief" aria-label="Daily briefing"></button></div></div><div class="sec">Personal factors</div><div class="card">
  <div class="selrow"><div><b>Nationality</b></div><select id="pnat">${Object.entries(NATS).map(([k,v])=>`<option value="${k}"${P.nat===k?' selected':''}>${v}</option>`).join('')}</select></div>
  <div class="tog"><div><b>LGBTQ+ considerations</b><span>Weigh legal status and social attitudes in country scores</span></div><button class="sw${P.lgbtq?' on':''}" data-sw="lgbtq" aria-label="LGBTQ+ considerations"></button></div>
  <div class="tog"><div><b>Solo or late-night movement</b><span>Raise night-time crime weighting</span></div><button class="sw${P.solo?' on':''}" data-sw="solo" aria-label="Solo or late-night movement"></button></div>
@@ -1792,8 +1867,8 @@ function lpCancel(){if(LP_T){clearTimeout(LP_T);LP_T=null}}
 function hideLP(){if(LP_MK){LP_MK.remove();LP_MK=null}}
 function showLP(ll){hideLP();LP_SUPPRESS=true;setTimeout(()=>LP_SUPPRESS=false,700);
  const el=document.createElement('div');el.className='lpop';
- el.innerHTML=`<div class="lpc glass"><button class="lpb press" data-lp="set">${ico('pin')}<span><b>Set as my position</b><small>${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</small></span></button><button class="lpx" data-lp="x" aria-label="Cancel">${ico('x')}</button></div><i class="lpd"></i>`;
- el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-lp]');if(!b)return;hideLP();if(b.dataset.lp!=='set')return;
+ el.innerHTML=`<div class="lpc glass"><button class="lpb press" data-lp="set">${ico('pin')}<span><b>Set as my position</b><small>${ll.lat.toFixed(4)}, ${ll.lng.toFixed(4)}</small></span></button><button class="lpb press" data-lp="save">${ico('star')}<span><b>Save as place</b><small>Hotel, office, meeting</small></span></button><button class="lpx" data-lp="x" aria-label="Cancel">${ico('x')}</button></div><i class="lpd"></i>`;
+ el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-lp]');if(!b)return;hideLP();if(b.dataset.lp==='save'){openSavePlace(ll.lng,ll.lat);return}if(b.dataset.lp!=='set')return;
   stopGPS();setYou(+ll.lng.toFixed(5),+ll.lat.toFixed(5),'pin');buildMarkers();
   notify({title:'Position set',body:`Aware now scores where you are: ${hereInfo().title}.`,tag:'Aware'})});
  el.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
@@ -1875,13 +1950,122 @@ let HIDDEN_TRIPS=store.get('hiddenTrips',[]);
 document.addEventListener('click',e=>{const d=e.target.closest('[data-tdel]');if(d&&TRIPS.some(t=>t.id===d.dataset.tdel)){HIDDEN_TRIPS.push(d.dataset.tdel);store.set('hiddenTrips',HIDDEN_TRIPS);if(S.tripOpen===d.dataset.tdel)S.tripOpen=null;renderTrips();renderNow();return}
  if(e.target.closest('#restoreTrips')){HIDDEN_TRIPS=[];store.set('hiddenTrips',[]);renderTrips();renderNow();e.target.closest('#restoreTrips').remove();notify({title:'Demo trips restored',body:'Paris and Dubai are back in Trips.',tag:'Aware'})}});
 
+/* ---------- v5: time slider ---------- */
+let SL_DRAG=false;
+const tpct=j=>5+j*(90/(WINDOWS.length-1));
+function winEvents(k){return EVENTS.filter(e=>e.win===k).length+ALERTS.filter(a=>a.city&&a.win.length<WINDOWS.length&&a.win.includes(k)&&!EVENTS.some(e=>e.alert===a.id&&e.win===k)).length}
+function renderChips(){const el=$('#tchips');const i=Math.max(0,WINDOWS.findIndex(w=>w.k===S.win));const w=WINDOWS[i];
+ if(!el.dataset.built){el.className='tslider glass';el.innerHTML=`<div class="tsl-top"><b id="tslLab"></b><span id="tslSub"></span><span class="tsl-fc" id="tslFc"></span></div><div class="tsl-track" id="tslTrack"><div class="tsl-rail"></div><div class="tsl-fill" id="tslFill"></div>${WINDOWS.map((x,j)=>`<span class="tk" data-j="${j}" style="left:${tpct(j)}%"><i></i><em>${x.tick}</em></span>`).join('')}<div class="tsl-thumb" id="tslThumb"></div></div>`;el.dataset.built=1;bindSlider()}
+ $('#tslLab').textContent=w.label;$('#tslSub').textContent=w.sub;const n=winEvents(w.k);$('#tslFc').textContent=n?`${n} forecast event${n>1?'s':''}`:'';
+ $$('#tslTrack .tk').forEach((t,j)=>{t.classList.toggle('on',j===i);t.classList.toggle('fc',winEvents(WINDOWS[j].k)>0)});
+ if(!SL_DRAG){$('#tslThumb').style.left=tpct(i)+'%';$('#tslFill').style.width=(tpct(i)-tpct(0))+'%'}}
+function bindSlider(){const tr=$('#tslTrack');
+ const at=x=>{const r=tr.getBoundingClientRect();const p=Math.max(tpct(0),Math.min(tpct(WINDOWS.length-1),(x-r.left)/r.width*100));let b=0,bd=1e9;WINDOWS.forEach((w,j)=>{const d=Math.abs(tpct(j)-p);if(d<bd){bd=d;b=j}});return[b,p]};
+ const go2=(x)=>{const[j,p]=at(x);$('#tslThumb').style.left=p+'%';$('#tslFill').style.width=(p-tpct(0))+'%';const k=WINDOWS[j].k;if(k!==S.win){S.win=k;renderChips();refreshOverlays();renderNow()}};
+ tr.addEventListener('pointerdown',e=>{SL_DRAG=true;try{tr.setPointerCapture(e.pointerId)}catch(_){}$('#tslThumb').classList.add('drag');go2(e.clientX);e.preventDefault();e.stopPropagation()});
+ tr.addEventListener('pointermove',e=>{if(SL_DRAG){go2(e.clientX);e.preventDefault()}});
+ const end=()=>{if(!SL_DRAG)return;SL_DRAG=false;$('#tslThumb').classList.remove('drag');renderChips()};
+ tr.addEventListener('pointerup',end);tr.addEventListener('pointercancel',end);
+ ['touchstart','touchmove','mousedown','wheel'].forEach(ev=>$('#tchips').addEventListener(ev,e=>e.stopPropagation(),{passive:true}))}
+
+/* ---------- v5: place info for any coordinate ---------- */
+function infoAt(x,y){for(const city of CITY_KEYS)for(const d of Object.values(DIST(city)))if(inRing(x,y,d.ring))return{title:distLabel(d)+', '+cityName(city),v:distScore(city,d.key),city,key:d.key,cc:CITY_INFO[city].cc};
+ if(COUNTRY_GEO)for(const g of COUNTRY_GEO){const[a,b,c,e]=g.bb;const xx=x<a&&x+360<=c?x+360:x;if(xx<a||xx>c||y<b||y>e)continue;if(g.polys.some(p=>inRing(xx,y,p[0])&&!p.slice(1).some(h=>inRing(xx,y,h)))){const C=COUNTRIES.find(k=>k.cc===g.cc);return{title:C.name,v:sC(C),cc:C.cc,country:true}}}
+ return{title:null,v:null}}
+function nearCC(x,y){const i=infoAt(x,y);if(i.cc)return i.cc;let best=null,bd=1e9;COUNTRIES.forEach(c=>{const d=hav(x,y,c.lon,c.lat);if(d<bd){bd=d;best=c}});return bd<1200?best.cc:null}
+const hm=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+/* ---------- v5: SOS ---------- */
+const HOTLINE={NL:['Netherlands · Ministry of Foreign Affairs 24/7','+31 247 247 247'],US:['United States · State Department, overseas citizens','+1 202 501 4444'],GB:['United Kingdom · FCDO 24/7','+44 20 7008 5000']};
+function openSOS(){const cc=nearCC(YOU.lon,YOU.lat);const C=COUNTRIES.find(c=>c.cc===cc);const num=C?(C.emer.match(/\d{2,4}/)||['112'])[0]:'112';const hi=hereInfo();const hl=HOTLINE[P.nat];
+ openSheet('Emergency',`<div class="sos-hero"><div class="sos-ic">SOS</div><div><h2>Get help now</h2><div class="sub">${esc(hi.title)} · ${YOU.lat.toFixed(4)}, ${YOU.lon.toFixed(4)}</div></div></div>
+ <button class="btn sos-call press" id="sosCall">${ico('bell')}Call ${esc(num)}${C?` · ${esc(C.name)}`:''}</button>
+ ${C?`<p class="src" style="margin-top:-4px">All emergency numbers: ${esc(C.emer)}</p>`:''}
+ <button class="btn pri press" id="sosTeam">${ico('shield')}Alert my security team</button>
+ <button class="btn sec press" id="sosShare">${ico('pin')}Share my location</button>
+ <div class="sec">Nearest hospitals</div><div class="list" id="sosHosp"><p class="lede" style="padding:14px;margin:0">Looking up hospitals near you…</p></div>
+ <div class="sec">Your government’s crisis line</div><div class="card">${hl?`<div class="kvr"><span>${esc(hl[0])}</span><b>${esc(hl[1])}</b></div>`:`<div class="kvr"><span>Contact your country’s foreign ministry or nearest embassy.</span></div>`}</div>
+ <p class="src">Demo: the call and security-team alert are simulated. Emergency numbers, crisis lines and hospitals are real.</p>`,sh=>{
+  $('#sosCall',sh).addEventListener('click',()=>notify({title:`Demo: would call ${num}`,body:'Calling is disabled in this demo so prospects cannot reach real emergency services by accident.',tag:'Aware · SOS'}));
+  $('#sosTeam',sh).addEventListener('click',()=>notify({title:'Security team alerted',body:`Your team received an SOS with your position: ${hi.title}. They will call you back within 2 minutes.`,tag:'Aware · SOS'}));
+  $('#sosShare',sh).addEventListener('click',async()=>{const url=`https://maps.apple.com/?ll=${YOU.lat},${YOU.lon}&q=My%20location`;const text=`I need help. My location: ${hi.title} (${YOU.lat.toFixed(5)}, ${YOU.lon.toFixed(5)})`;
+   try{if(navigator.share){await navigator.share({title:'My location',text,url});return}}catch(e){return}
+   try{await navigator.clipboard.writeText(text+' '+url);notify({title:'Location copied',body:'Paste it into any message.',tag:'Aware · SOS'})}catch(e){}});
+  loadHospitals($('#sosHosp',sh))})}
+async function loadHospitals(el){const x=YOU.lon,y=YOU.lat;let res=[];
+ for(const s of[0.06,0.2,0.6]){try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&q=hospital&limit=15&bounded=1&accept-language=en&viewbox=${x-s},${y+s*0.75},${x+s},${y-s*0.75}`);const j=await r.json();
+  res=j.filter(h=>h.type==='hospital'||/hospital|hôpital|krankenhaus|ziekenhuis|klinikum/i.test(h.display_name)).map(h=>({n:h.name||h.display_name.split(',')[0],lon:+h.lon,lat:+h.lat,d:hav(x,y,+h.lon,+h.lat)}));if(res.length)break}catch(e){break}}
+ const seen=new Set();res=res.sort((a,b)=>a.d-b.d).filter(h=>!seen.has(h.n)&&seen.add(h.n)).slice(0,3);
+ el.innerHTML=res.length?res.map(h=>`<a class="arow" href="https://maps.apple.com/?daddr=${h.lat},${h.lon}" target="_blank" rel="noopener"><span class="cc">${ico('plus')}</span><div class="m"><b>${esc(h.n)}</b><span>${h.d<1?Math.round(h.d*1000)+' m':h.d.toFixed(1)+' km'} · Directions</span></div>${chevSvg}</a>`).join(''):'<p class="lede" style="padding:14px;margin:0">No hospital found nearby in OpenStreetMap. Call the emergency number.</p>'}
+document.addEventListener('click',e=>{if(e.target.closest('#sosBtn,[data-sos]'))openSOS()});
+
+/* ---------- v5: check-in timer ---------- */
+if(!P.ci)P.ci=null;
+function ciLeft(){if(!P.ci)return null;return P.ci.due-Date.now()}
+function fmtLeft(ms){const m=Math.max(0,Math.round(ms/60000));return m>=60?`${Math.floor(m/60)} h ${m%60} min`:`${m} min`}
+function ciHtml(compact){if(!P.ci){return compact?'':`<div class="card ci"><div class="ci-h"><b>Check-in timer</b><span>If you do not check in on time, your security team is alerted with your last position.</span></div><div class="chips ci-opts" style="margin:10px 0 0;padding:0">${[['30 min',30],['1 h',60],['2 h',120],['Until 23:00','23'],['1 min · demo',1]].map(([l,v])=>`<button class="chip" data-ci="${v}">${l}</button>`).join('')}</div></div>`}
+ const left=ciLeft(),due=new Date(P.ci.due),missed=left<=0;
+ return`<div class="card ci${missed?' miss':''}"><div class="ci-row"><span class="ci-dot"></span><div class="ci-h"><b class="ci-live">${missed?'Missed check-in · team alerted':`Check in by ${hm(due)}`}</b><span class="ci-left">${missed?`Due ${hm(due)}. Your security team has your last position.`:`in ${fmtLeft(left)}`}</span></div></div>
+  <div class="ci-btns"><button class="btn pri press" data-cidone>${ico('check')}I’m safe</button>${missed?'':`<button class="btn sec press" data-ciext>+30 min</button>`}</div></div>`}
+function ciRefresh(){$$('.ci-slot').forEach(s=>s.innerHTML=ciHtml(s.dataset.compact==='1'))}
+function ciSet(v){const d=new Date();let due;if(v==='23'){due=new Date();due.setHours(23,0,0,0);if(due<=d)due.setDate(due.getDate()+1)}else due=new Date(d.getTime()+(+v)*60000);P.ci={due:+due,missed:false};saveP();ciRefresh();
+ notify({title:'Check-in timer set',body:`Check in by ${hm(due)}. Your security team is only alerted if you miss it.`,tag:'Aware · Safety'})}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-ci]');if(c){ciSet(c.dataset.ci);return}
+ if(e.target.closest('[data-cidone]')){P.ci=null;saveP();ciRefresh();notify({title:'Check-in sent',body:`You checked in safe at ${hm(new Date())} from ${hereInfo().title}.`,tag:'Aware · Safety'});return}
+ if(e.target.closest('[data-ciext]')&&P.ci){P.ci.due+=30*60000;saveP();ciRefresh()}});
+setInterval(()=>{if(!P.ci)return;if(ciLeft()<=0&&!P.ci.missed){P.ci.missed=true;saveP();notify({title:'Missed check-in',body:`No check-in by ${hm(new Date(P.ci.due))}. Your security team has been alerted with your last position: ${hereInfo().title}.`,tag:'Aware · Safety'})}ciRefresh()},10000);
+
+/* ---------- v5: my places ---------- */
+if(!P.places)P.places=[];
+const PTYPES={hotel:['Hotel','brief'],office:['Office','shield'],meeting:['Meeting','msg'],home:['Home','pin'],other:['Place','star']};
+function placeScore(p){const i=infoAt(p.lon,p.lat);const na=ALERTS.filter(a=>!a.noMap&&visibleOnMap(a)&&hav(p.lon,p.lat,a.lon,a.lat)<=2);const top=na.reduce((m,a)=>Math.max(m,sA(a)),0);return{i,v:i.v!=null?Math.max(i.v,top*0.9):top||null,na}}
+function placeRow(p){const s=placeScore(p);const over=s.v!=null&&s.v>=P.thr;return`<button class="arow" data-place="${p.id}">${s.v!=null?badge(s.v):`<span class="cc">${ico(PTYPES[p.type][1])}</span>`}<div class="m"><b>${esc(p.name)}</b><span>${esc(PTYPES[p.type][0])}${s.i.title?' · '+esc(s.i.title):''}${s.na.length?` · ${s.na.length} alert${s.na.length>1?'s':''} within 2 km`:''}</span></div>${over?'<span class="ptag">Above threshold</span>':''}${chevSvg}</button>`}
+function placesHtml(){return`<div class="sec">My places<a data-addplace>Add</a></div>${P.places.length?`<div class="list">${P.places.map(placeRow).join('')}</div>`:`<p class="lede" style="margin:0 2px 8px">Long-press the map to save your hotel, office or meeting places. Aware warns you when risk there passes your threshold.</p>`}`}
+function openSavePlace(lon,lat){let type='hotel';const g=infoAt(lon,lat);
+ openSheet('Save place',`<p class="p" style="margin-top:0;color:var(--ink2)">${esc(g.title||'Selected location')} · ${lat.toFixed(4)}, ${lon.toFixed(4)}</p>
+ <div class="sec">Name</div><div class="search"><input id="plname" placeholder="e.g. Hotel Opéra" autocomplete="off" maxlength="40" enterkeyhint="done"></div>
+ <div class="sec">Type</div><div class="chips" style="margin:0 0 14px;padding:0">${Object.entries(PTYPES).map(([k,[l]])=>`<button class="chip${k===type?' on':''}" data-pt="${k}">${l}</button>`).join('')}</div>
+ <button class="btn pri press" id="plsave">${ico('star')}Save place</button>`,sh=>{
+  sh.addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(b){type=b.dataset.pt;$$('[data-pt]',sh).forEach(x=>x.classList.toggle('on',x===b))}});
+  $('#plsave',sh).addEventListener('click',()=>{const n=$('#plname',sh).value.trim()||PTYPES[type][0];P.places.push({id:'p'+Date.now(),name:n,type,lon:+lon.toFixed(5),lat:+lat.toFixed(5)});saveP();closeTop();buildMarkers();renderNow();
+   notify({title:'Place saved',body:`${n} is now on your watch list.`,tag:'Aware'})});setTimeout(()=>$('#plname',sh).focus(),350)})}
+function openPlace(id){const p=P.places.find(x=>x.id===id);if(!p)return;const s=placeScore(p);
+ openSheet(PTYPES[p.type][0],`<div class="hero">${s.v!=null?ring(s.v,84,band(s.v)):`<div class="circle glass" style="width:84px;height:84px">${ico('star')}</div>`}<div><h2>${esc(p.name)}</h2><div class="sub">${esc(s.i.title||'Saved place')} · ${esc(winLabel(S.win))}</div></div></div>
+ ${s.v!=null&&s.v>=P.thr?`<div class="card warn">Above your alert threshold of ${f1(P.thr)}. You will get a notification when this changes.</div>`:''}
+ ${s.na.length?`<div class="sec">Alerts within 2 km</div><div class="list">${s.na.map(aRow).join('')}</div>`:'<p class="lede">No alerts within 2 km for this time window.</p>'}
+ <div style="margin-top:16px"><button class="btn pri press" data-plfly="${p.id}">${ico('map')}Show on map</button>${s.i.city?`<button class="btn sec press" data-city="${s.i.city}">${esc(cityName(s.i.city))} city report</button>`:''}<button class="btn sec press" data-pldel="${p.id}">${ico('trash')}Remove place</button></div>`)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-place]');if(a){openPlace(a.dataset.place);return}
+ if(e.target.closest('[data-addplace]')){openSavePlace(YOU.lon,YOU.lat);return}
+ const f=e.target.closest('[data-plfly]');if(f){const p=P.places.find(x=>x.id===f.dataset.plfly);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(p.lon,p.lat,14.5),380);return}
+ const d=e.target.closest('[data-pldel]');if(d){P.places=P.places.filter(x=>x.id!==d.dataset.pldel);saveP();closeTop();buildMarkers();renderNow()}});
+function placeMarkers(){P.places.forEach(p=>{const el=markerEl('mypl',`<i>${ico(PTYPES[p.type][1])}</i><span>${esc(p.name)}</span>`);el.addEventListener('click',e=>{e.stopPropagation();openPlace(p.id)});MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-13,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))})}
+
+/* ---------- v5: daily briefing ---------- */
+if(P.brief==null)P.brief=true;
+function tripFrom(t){return t.from?Math.round((pd(t.from)-new Date(new Date().toDateString()))/864e5):null}
+function relevantCities(){const s=new Set();const hi=hereInfo();if(hi.city)s.add(hi.city);allTrips().forEach(t=>{const k=CITY_KEYS.find(k=>cityName(k)===t.title);if(k)s.add(k)});P.places.forEach(p=>{const i=infoAt(p.lon,p.lat);if(i.city)s.add(i.city)});return s}
+function openBriefing(){const now=new Date();const h=now.getHours();const greet=h<12?'Good morning':h<18?'Good afternoon':'Good evening';const hi=hereInfo();const rc=relevantCities();
+ const ahead=WINDOWS.slice(1).map(w=>{const al=ALERTS.filter(a=>a.city&&a.win.length<WINDOWS.length&&a.win.includes(w.k)&&(rc.has(a.city)||forYou(a))).sort((a,b)=>sA(b)-sA(a));return{w,a:al[0]}}).filter(x=>x.a);
+ const glob=ALERTS.filter(a=>!a.city).sort((a,b)=>sA(b)-sA(a)).slice(0,3);const pl=P.places.map(p=>({p,s:placeScore(p)})).filter(x=>x.s.v!=null&&x.s.v>=P.thr);
+ openSheet('Daily briefing',`<div class="brf-h"><small>${now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</small><h2>${greet}</h2></div>
+ <div class="card brf-you">${hi.v!=null?ring(hi.v,56):''}<div><b>${esc(hi.title)}</b><span>${hi.v!=null?`${band(hi.v)} where you are. `:''}${nearAlerts().length?`${nearAlerts().length} alert(s) within 2 km.`:'Nothing forecast within 2 km.'}</span></div></div>
+ ${P.ci?`<div class="sec">Safety</div><div class="ci-slot" data-compact="0">${ciHtml(false)}</div>`:''}
+ ${pl.length?`<div class="sec">Watch: your places</div><div class="list">${pl.map(x=>placeRow(x.p)).join('')}</div>`:''}
+ ${ahead.length?`<div class="sec">Coming up · next 10 days</div><div class="list brf-tl">${ahead.map(({w,a})=>`<button class="arow" data-alert="${a.id}">${badge(sA(a))}<div class="m"><b>${esc(w.label)} · ${esc(a.title)}</b><span>${esc(a.place)}</span></div>${chevSvg}</button>`).join('')}</div>`:''}
+ <div class="sec">Your trips</div><div class="list">${allTrips().map(t=>{const d=tripFrom(t);return`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)}${d!=null?` · ${d<=0?'now':d===1?'tomorrow':'in '+d+' days'}`:''}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`}).join('')||'<p class="lede" style="padding:14px;margin:0">No trips planned.</p>'}</div>
+ <div class="sec">Global developments</div><div class="list">${glob.map(aRow).join('')}</div>
+ <p class="src">Delivered every morning at 07:00 local time${P.brief?'':' (currently off in your profile)'}. Built from your position, places, trips and profile.</p>`)}
+document.addEventListener('click',e=>{if(e.target.closest('[data-brief]'))openBriefing()});
+function maybeBriefNotify(){if(!P.done||!P.brief)return;const d=new Date().toDateString();if(store.get('briefDay','')===d)return;store.set('briefDay',d);
+ setTimeout(()=>notify({title:'Your daily briefing is ready',body:`${hereInfo().title} · ${allTrips().length} trip${allTrips().length===1?'':'s'} ahead. Tap to read.`,tag:'Aware · Briefing',act:openBriefing}),2500)}
+
 /* ---------- init ---------- */
 document.addEventListener('gesturestart',e=>e.preventDefault());
 ['#phone','#app','#v-now','#modal','#stage'].forEach(q=>{const el=$(q);if(el)el.addEventListener('scroll',()=>{if(el.scrollTop||el.scrollLeft){el.scrollTop=0;el.scrollLeft=0}})});
 renderChips();
 const ro=new ResizeObserver(()=>{layoutSheet();setSeg($('#tabbar'),S.tab,'t')});ro.observe($('#phone'));
 addEventListener('resize',frame);
-frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();loadRemoteCities();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
+frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();loadRemoteCities();maybeBriefNotify();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
 if(!P.done)showOnb(0);
 }
 
