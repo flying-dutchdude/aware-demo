@@ -567,12 +567,12 @@ const ALERTS = [
   drivers:['National action days on 5, 10 and 17 Nov','MPs rejected the first part of the 2027 budget','Saturday gilets jaunes protests since 17 Oct'],
   advice:['Expect rail, metro and school disruption on action days','Stay away from the head of marches, where clashes occur','Aircrew: watch for air traffic control strike notices'],
   sources:'Euronews · Sortiraparis · Connexion · Manukai model'},
- {id:'paris-bastille', city:'PAR', title:'Student and higher-education march', cat:'unrest', place:'Place de la Bastille, Paris', lon:2.3692, lat:48.8532, win:['thu'], score:5.6, trend:'up', conf:72, status:'Forecast', when:'Thu 26 Nov · 13:30–18:00', upd:'18 min ago', tags:['trip'],
+ {id:'paris-bastille', city:'PAR', title:'Student and higher-education march', cat:'unrest', place:'Place de la Bastille, Paris', lon:2.3692, lat:48.8532, win:['thu'], score:5.6, trend:'up', conf:72, status:'Forecast', when:'Thu 26 Nov · 13:30–18:00', upd:'18 min ago', tags:[],
   summary:'The higher-education unions have called a national day of action. In Paris, students gather at Place de la Bastille at 14:00. Recent youth marches saw clashes at the head of the procession and short-notice metro closures.',
   drivers:['Organiser call for 14:00 at Bastille','Youth-led marches turned confrontational in early November','Bastille–Nation axis used for marches all autumn'],
   advice:['Avoid Bastille, Nation and Boulevard Voltaire from 13:30 to 18:00','Expect closures on metro lines 1, 5 and 8 at Bastille','Your 14:00 meeting in the 8e is unaffected: walk from Opéra'],
   sources:'Organiser calls · Préfecture de Police route notices · Manukai model'},
- {id:'paris-sat', city:'PAR', title:'Marches against gender-based violence', cat:'unrest', place:'République & Panthéon, Paris', lon:2.3631, lat:48.8675, win:['sat'], score:4.3, trend:'flat', conf:76, status:'Forecast', when:'Sat 28 Nov · 14:00–18:00', upd:'40 min ago', tags:['trip'],
+ {id:'paris-sat', city:'PAR', title:'Marches against gender-based violence', cat:'unrest', place:'République & Panthéon, Paris', lon:2.3631, lat:48.8675, win:['sat'], score:4.3, trend:'flat', conf:76, status:'Forecast', when:'Sat 28 Nov · 14:00–18:00', upd:'40 min ago', tags:[],
   summary:'NousToutes marches from Place de la République and a union march leaves from the Panthéon. These marches are usually peaceful but large, with road closures around République.',
   drivers:['Two declared marches at 14:00','Annual mobilisation with large turnout','Overlaps your departure from Gare du Nord'],
   advice:['Be at Gare du Nord before 13:30 or avoid metro line 5 through République','Expect road closures in the 3e, 10e and 11e'],
@@ -699,22 +699,22 @@ const CITIES = [
 ];
 
 const TRIPS = [
- {id:'paris', title:'Paris', fly:{lon:2.345, lat:48.866, z:12.2, win:'thu'}, purpose:'Client visit', dates:'Thu 26 – Sat 28 Nov', score:4.6, trend:'up',
-  brief:'Two forecast protest events overlap your stay, and you arrive at Europe’s busiest station during the morning theft peak. None of your meetings sit inside a forecast unrest zone. Main exposure: Thursday afternoon east of the Marais and Saturday around République.',
+ {id:'paris', title:'Paris', fly:{lon:2.345, lat:48.866, z:12.2, win:'now'}, purpose:'Client visit', dates:'Wed 2 – Sat 5 Dec', score:4.6, trend:'up',
+  brief:'Your stay starts the day after a national strike day, so expect knock-on rail and metro disruption on Wednesday morning. You also arrive at Europe’s busiest station during the morning theft peak. No forecast unrest overlaps your meetings yet; the weekend forecast firms up from Wednesday.',
   items:[
-   {t:'Thu 26 · 07:16', title:'Train Amsterdam Centraal to Paris Gare du Nord', score:3.0, note:'No rail disruption forecast on this route for Thursday.', ref:null},
-   {t:'Thu 26 · 10:35', title:'Arrive Gare du Nord', score:5.8, note:'Theft peak until 11:00. Use the official taxi rank.', ref:'paris-gdn'},
-   {t:'Thu 26 · 11:30', title:'Hotel check-in, Opéra (9e)', score:3.8, note:'Department-store pickpocketing nearby.', ref:{city:'PAR', d:9}},
-   {t:'Thu 26 · 14:00', title:'Client meeting, Saint-Lazare (8e)', score:3.4, note:'Bastille march at the same time, 3 km east. Route unaffected.', ref:'paris-bastille'},
-   {t:'Fri 27 · 19:30', title:'Dinner, Haut-Marais (3e)', score:4.0, note:'Return by taxi after 23:00; avoid the République metro hub.', ref:{city:'PAR', d:3}},
-   {t:'Sat 28 · 12:30', title:'Train Paris Gare du Nord to Amsterdam', score:5.2, note:'Marches start 14:00 at République. Leave the hotel by 11:45.', ref:'paris-sat'}
+   {t:'Wed 2 · 07:16', title:'Train Amsterdam Centraal to Paris Gare du Nord', score:4.2, note:'Day after the 1 Dec strike: check for knock-on cancellations before you leave.', ref:'france-strikes'},
+   {t:'Wed 2 · 10:35', title:'Arrive Gare du Nord', score:5.8, note:'Theft peak until 11:00. Use the official taxi rank.', ref:'paris-gdn'},
+   {t:'Wed 2 · 11:30', title:'Hotel check-in, Opéra (9e)', score:3.8, note:'Department-store pickpocketing nearby.', ref:{city:'PAR', d:9}},
+   {t:'Thu 3 · 14:00', title:'Client meeting, Saint-Lazare (8e)', score:3.4, note:'No forecast unrest near the venue.', ref:{city:'PAR', d:8}},
+   {t:'Fri 4 · 19:30', title:'Dinner, Haut-Marais (3e)', score:4.0, note:'Return by taxi after 23:00; avoid the République metro hub.', ref:{city:'PAR', d:3}},
+   {t:'Sat 5 · 12:30', title:'Train Paris Gare du Nord to Amsterdam', score:4.4, note:'Saturday marches have been frequent this autumn. Leave the hotel by 11:45.', ref:null}
   ]},
- {id:'dubai', title:'Dubai', fly:{lon:54.2, lat:25.6, z:5.6, win:'now'}, purpose:'Partner meetings', dates:'Wed 2 – Fri 4 Dec', score:6.4, trend:'up',
+ {id:'dubai', title:'Dubai', fly:{lon:54.2, lat:25.6, z:5.6, win:'now'}, purpose:'Partner meetings', dates:'Tue 8 – Sat 12 Dec', score:6.4, trend:'up',
   brief:'UAE airspace is open but the Gulf strike cycle has restarted. Expect short-notice schedule changes and keep a shelter plan. We will reassess 72 hours before departure.',
   items:[
-   {t:'Wed 2 · 09:50', title:'Flight Amsterdam to Dubai', score:6.6, note:'Carrier schedules volatile on Gulf routes.', ref:'gulf-aviation'},
-   {t:'Wed 2 · 19:40', title:'Hotel, Dubai Marina', score:5.8, note:'Identify shelter areas on arrival.', ref:'gulf-strikes'},
-   {t:'Fri 4 · 23:55', title:'Flight Dubai to Amsterdam', score:6.4, note:'Reassessed on 1 Dec.', ref:'gulf-aviation'}
+   {t:'Tue 8 · 09:50', title:'Flight Amsterdam to Dubai', score:6.6, note:'Carrier schedules volatile on Gulf routes.', ref:'gulf-aviation'},
+   {t:'Tue 8 · 19:40', title:'Hotel, Dubai Marina', score:5.8, note:'Identify shelter areas on arrival.', ref:'gulf-strikes'},
+   {t:'Sat 12 · 14:20', title:'Flight Dubai to Amsterdam', score:6.4, note:'Reassessed on 9 Dec.', ref:'gulf-aviation'}
   ]}
 ];
 
@@ -1434,7 +1434,7 @@ function renderNow(){const hi=hereInfo();const v=hi.v;const na=nearAlerts();
  const src=P.loc.mode==='gps'?'Live GPS':P.loc.mode==='pin'?'Pinned position':'Demo position';
  let h=`<div class="here" id="bhead">${v!=null?ring(v,64):`<div class="circle glass" style="width:64px;height:64px;flex:none">${ico('pin')}</div>`}<div><h3>${esc(hi.title)}</h3><p>${esc(src)} · ${v!=null?`${band(v)} · ${S.win==='now'?'stable for the next 24 h':esc(winLabel(S.win))+' forecast'}. `:'No Aware coverage here in the demo. '}${near}.</p></div></div>`;
  let tonBox='';if(hi.city){const top=Object.values(DIST(hi.city)).map(d=>({d,v:distScore(hi.city,d.key,'tonight','all')})).sort((a,b)=>b.v-a.v)[0];tonBox=`<button class="fbox press" data-gowin="tonight" data-ll="${top.d.ctr[0]},${top.d.ctr[1]},14"><div class="t"><i></i>Tonight</div><div class="s" style="color:${col(top.v)}">${f1(top.v)}</div><div class="d">${esc(top.d.name)}: ${esc(top.d.note)}</div></button>`}
- h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast">${tonBox}${fbox(alertById('paris-bastille'),'Thu · your trip')}${fbox(alertById('paris-sat'),'Sat · your trip')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
+ h+=`<div class="sec">Forecast · next 96 hours</div><div class="fcast">${tonBox}${fbox(alertById('paris-bastille'),'Thu · Paris')}${fbox(alertById('paris-sat'),'Sat · Paris')}${fbox(alertById('ams-dam'),'Sun · Dam')}${fbox(alertById('gulf-strikes'),'Next 72 h · Gulf')}</div>`;
  h+=`<div class="sec"><span id="ivTitle">In view</span><a data-tab="alerts">All alerts</a></div><div class="list" id="inView"></div>`;
  h+=`<div class="sec">Upcoming trips<a data-tab="trips">Open</a></div><div class="list">${allTrips().map(t=>`<button class="arow" data-tab="trips" data-tripsel="${t.id}">${badge(t.score)}<div class="m"><b>${esc(t.title)} · ${esc(t.purpose)}</b><span>${esc(t.dates)}</span></div>${trendArrow(t.trend)}${chevSvg}</button>`).join('')}</div>`;
  $('#bbody').innerHTML=h;renderInView()}
@@ -1630,7 +1630,7 @@ function notify({title,body,tag,act}){const t=$('#toast');t.innerHTML=`<img src=
 $('#toast').addEventListener('click',()=>{$('#toast').classList.remove('on');if(tAct)tAct()});
 let simDone=false;
 function simulate(){const a=alertById('paris-bastille');if(!simDone){a.score=6.3;a.trend='up';a.conf=81;a.upd='just now';a.drivers.unshift('Live: crowd build-up signals around Bastille from 12:40, ahead of the declared start');a.advice.unshift('Updated: leave the 4e and 11e by 13:00 on Thursday');EVENTS[0].d[11]=6.3;EVENTS[0].d[4]=5.8;simDone=true}
- changed();notify({title:'Forecast update · Paris 11e',body:'RiskScore for Thursday’s Bastille march rises to 6.3. Your route to Saint-Lazare is unaffected.',tag:'Aware · Forecast',act:()=>openAlert('paris-bastille')})}
+ changed();notify({title:'Forecast update · Paris 11e',body:'RiskScore for Thursday’s Bastille march rises to 6.3. Avoid Bastille and the 11e this afternoon.',tag:'Aware · Forecast',act:()=>openAlert('paris-bastille')})}
 
 /* ---------- tabs ---------- */
 function go(tab){S.tab=tab;$$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+tab));setSeg($('#tabbar'),tab,'t');$('#tabbar').classList.remove('mini');$('#searchBtn').classList.remove('mini');
