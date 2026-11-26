@@ -472,6 +472,8 @@ html,body{background:#0b2530}
 .lpc .lpb+.lpb{border-top:.5px solid var(--line2)}
 .lpc .lpb{padding-right:44px}
 
+a.arow{color:inherit;text-decoration:none}
+
 </style>
 </head>
 <body>
@@ -2002,7 +2004,7 @@ document.addEventListener('click',e=>{if(e.target.closest('#sosBtn,[data-sos]'))
 /* ---------- v5: check-in timer ---------- */
 if(!P.ci)P.ci=null;
 function ciLeft(){if(!P.ci)return null;return P.ci.due-Date.now()}
-function fmtLeft(ms){const m=Math.max(0,Math.round(ms/60000));return m>=60?`${Math.floor(m/60)} h ${m%60} min`:`${m} min`}
+function fmtLeft(ms){const m=Math.max(0,Math.round(ms/60000));return m>=60?`${Math.floor(m/60)} h${m%60?` ${m%60} min`:''}`:`${m} min`}
 function ciHtml(compact){if(!P.ci){return compact?'':`<div class="card ci"><div class="ci-h"><b>Check-in timer</b><span>If you do not check in on time, your security team is alerted with your last position.</span></div><div class="chips ci-opts" style="margin:10px 0 0;padding:0">${[['30 min',30],['1 h',60],['2 h',120],['Until 23:00','23'],['1 min · demo',1]].map(([l,v])=>`<button class="chip" data-ci="${v}">${l}</button>`).join('')}</div></div>`}
  const left=ciLeft(),due=new Date(P.ci.due),missed=left<=0;
  return`<div class="card ci${missed?' miss':''}"><div class="ci-row"><span class="ci-dot"></span><div class="ci-h"><b class="ci-live">${missed?'Missed check-in · team alerted':`Check in by ${hm(due)}`}</b><span class="ci-left">${missed?`Due ${hm(due)}. Your security team has your last position.`:`in ${fmtLeft(left)}`}</span></div></div>
