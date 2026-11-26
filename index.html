@@ -397,7 +397,7 @@ html.standalone #stage:not(.framed) #phone{bottom:auto;height:var(--appH)}
 #stage:not(.framed) #topband{display:block;position:fixed;top:0;left:0;right:0;height:max(1px,env(safe-area-inset-top));background:#0b2530;z-index:95;pointer-events:none}
 #stage:not(.framed) #topband::after{content:"";position:absolute;left:0;right:0;top:100%;height:22px;background:linear-gradient(#0b2530,rgba(11,37,48,0))}
 #chin{display:none}
-#stage:not(.framed) #chin{display:block;position:absolute;left:0;right:0;bottom:0;height:calc(var(--sab) + 30px);background:linear-gradient(rgba(11,37,48,0),#0b2530 85%);z-index:45;pointer-events:none}
+#stage:not(.framed) #chin{display:none;position:absolute;left:0;right:0;bottom:0;height:calc(var(--sab) + 30px);background:linear-gradient(rgba(11,37,48,0),#0b2530 85%);z-index:45;pointer-events:none}
 html,body{background:#0b2530}
 /* collapsible legend */
 .legend{padding:0;width:30px;height:30px;border-radius:15px;justify-content:center;align-items:center;cursor:pointer;transition:bottom .5s var(--spring),width .35s var(--spring),height .35s var(--spring),border-radius .35s}
@@ -478,6 +478,13 @@ a.arow{color:inherit;text-decoration:none}
 #bsheet .grab,#bhead{touch-action:none}
 #bsheet.full #bbody{touch-action:pan-y}
 
+/* bottom dock: matte glass + dark fade behind the tab bar so content underneath is not legible */
+#dock{position:absolute;left:0;right:0;bottom:0;height:calc(var(--sab) + 104px);z-index:55;pointer-events:none;
+ background:linear-gradient(180deg,rgba(7,24,31,0) 0%,rgba(7,24,31,.72) 38%,rgba(7,24,31,.94) 70%,#07181f 100%);
+ -webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);
+ -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 34px);mask-image:linear-gradient(180deg,transparent 0,#000 34px)}
+#stage.framed #dock{border-radius:0 0 46px 46px}
+
 </style>
 </head>
 <body>
@@ -532,7 +539,7 @@ a.arow{color:inherit;text-decoration:none}
     </div></div>
    </section>
   </main>
-  <nav id="tabbar" class="glass" aria-label="Main">
+  <div id="dock"></div><nav id="tabbar" class="glass" aria-label="Main">
    <div class="lens"></div>
    <button data-t="now" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg><span>Map</span></button>
    <button data-t="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.6 2H4.4L6 16zM10 20.5a2 2 0 0 0 4 0"/></svg><span>Alerts</span><em class="nb" id="abadge" style="font-style:normal">0</em></button>
@@ -1579,7 +1586,7 @@ function contextAt(lng,lat,z){if(z>=9){for(const city of CITY_KEYS)for(const d o
 function onMove(){if(!MAP)return;const c=MAP.getCenter();CTX=contextAt(c.lng,c.lat,MAP.getZoom());const el=$('#ctxBtn');
  el.innerHTML=`<span class="t"><b>${esc(CTX.title)}</b><small>${esc(CTX.sub)}</small></span>${CTX.v!=null?`<span class="sc" style="background:${col(CTX.v)}">${f1(CTX.v)}</span>`:''}`;renderInView()}
 $('#legend').addEventListener('click',e=>{e.stopPropagation();$('#legend').classList.toggle('open')});
-$('#ctxBtn').addEventListener('click',()=>{if(!CTX)return;if(CTX.type==='d')openDistrict(CTX.city,CTX.key);else if(CTX.type==='c')openCountry(CTX.cc);else{setDetent(1)}});
+$('#ctxBtn').addEventListener('click',()=>{if(!CTX)return;if(CTX.type==='d')openDistrict(CTX.city,CTX.key);else if(CTX.type==='c')openCountry(CTX.cc);else{setDetent(2)}});
 function onMapClick(e){if(!MAPREADY)return;if(LP_SUPPRESS){LP_SUPPRESS=false;return}if(LP_MK){hideLP();return}const z=MAP.getZoom();
  if(z>=9){const f=MAP.queryRenderedFeatures(e.point,{layers:['d-fill']})[0];if(f){const p=f.properties;selectDistrict(p.fid);openDistrict(p.city,keyOf(p.city,p.key));return}}
  if(z<7&&S.cLayer){const f=MAP.queryRenderedFeatures(e.point,{layers:['c-fill']})[0];if(f){openCountry(f.properties.cc);return}}}
@@ -1596,19 +1603,19 @@ $('#layerPop').addEventListener('click',e=>{const b=e.target.closest('button');i
  $('#layerPop').classList.remove('on');refreshOverlays();renderNow()});
 
 /* ---------- bottom sheet ---------- */
-const BS=$('#bsheet');let detent=0,sheetY=0;
-const peekPx=()=>238+($('#sabProbe').offsetHeight||0);
-function layoutSheet(){const H=BS.offsetHeight;const ys=[H-peekPx(),H*0.44,0];sheetY=ys[detent];BS.style.transform=`translateY(${sheetY}px)`;BS.classList.toggle('full',detent===2);$('#legend').style.bottom=(H-sheetY+10)+'px';$('#legend').style.visibility=detent===2?'hidden':'';applyPadding()}
-function setDetent(d){detent=clamp(d,0,2);if(detent<2)$('#bbody').scrollTop=0;layoutSheet()}
+const BS=$('#bsheet');let detent=1,sheetY=0;
+const peekPx=()=>182+($('#sabProbe').offsetHeight||0);const miniPx=()=>118+($('#sabProbe').offsetHeight||0);
+function layoutSheet(){const H=BS.offsetHeight;const ys=[H-miniPx(),H-peekPx(),H*0.44,0];sheetY=ys[detent];BS.style.transform=`translateY(${sheetY}px)`;BS.classList.toggle('full',detent===3);$('#legend').style.bottom=(H-sheetY+10)+'px';$('#legend').style.visibility=detent===3?'hidden':'';applyPadding()}
+function setDetent(d){detent=clamp(d,0,3);if(detent<3)$('#bbody').scrollTop=0;layoutSheet()}
 (()=>{let st=null,dragged=false;const BB=$('#bbody');
  BS.addEventListener('pointerdown',e=>{const onGrab=!!e.target.closest('.grab,#bhead');const inBody=!!e.target.closest('#bbody');
-  if(detent===2&&!onGrab&&!(inBody&&BB.scrollTop<=0))return;
+  if(detent===3&&!onGrab&&!(inBody&&BB.scrollTop<=0))return;
   st={y:e.clientY,t:Date.now(),y0:sheetY,tap:onGrab&&!e.target.closest('button'),body:!onGrab};dragged=false});
  addEventListener('pointermove',e=>{if(!st)return;const dy=e.clientY-st.y;
-  if(!dragged){if(Math.abs(dy)<8)return;if(st.body&&detent===2&&dy<0){st=null;return}dragged=true;BS.classList.add('dragging')}
+  if(!dragged){if(Math.abs(dy)<8)return;if(st.body&&detent===3&&dy<0){st=null;return}dragged=true;BS.classList.add('dragging')}
   BS.style.transform=`translateY(${Math.max(0,st.y0+dy)}px)`;e.preventDefault()},{passive:false});
  const up=e=>{if(!st)return;const dy=e.clientY-st.y;const v=dy/Math.max(1,Date.now()-st.t);BS.classList.remove('dragging');
-  if(!dragged){if(st.tap&&e.type==='pointerup')setDetent(detent===0?1:detent===1?2:0);st=null;return}
+  if(!dragged){if(st.tap&&e.type==='pointerup')setDetent(detent===0?1:detent===1?2:detent===2?3:1);st=null;return}
   if(v<-.4||dy<-50)setDetent(detent+1);else if(v>.4||dy>50)setDetent(detent-1);else layoutSheet();st=null;setTimeout(()=>dragged=false,50)};
  addEventListener('pointerup',up);addEventListener('pointercancel',up);
  BS.addEventListener('click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true)})();
@@ -1631,14 +1638,14 @@ function renderInView(){const el=$('#inView');if(!el)return;let list;
  list.sort((a,b)=>sA(b)-sA(a));$('#ivTitle').textContent=list.length?`In view · ${list.length}`:'In view';
  el.innerHTML=list.slice(0,8).map(aRow).join('')||`<p class="lede" style="padding:14px;margin:0">No alerts in this part of the map for ${esc(winLabel(S.win).toLowerCase())}. Zoom out or change the time window.</p>`}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-alert],[data-go],[data-gowin],[data-country],[data-dist],[data-city]');if(!t)return;
- if(t.dataset.gowin){S.win=t.dataset.gowin;renderChips();refreshOverlays();renderNow();const[lo,la,z]=t.dataset.ll.split(',').map(Number);setDetent(0);flyTo(lo,la,z);return}
+ if(t.dataset.gowin){S.win=t.dataset.gowin;renderChips();refreshOverlays();renderNow();const[lo,la,z]=t.dataset.ll.split(',').map(Number);setDetent(1);flyTo(lo,la,z);return}
  if(t.dataset.go){showOnMap(t.dataset.go);return}
  if(t.dataset.tab){if(t.dataset.tripsel){S.tripOpen=t.dataset.tripsel;renderTrips()}closeAll();go(t.dataset.tab);return}
  if(t.dataset.alert)openAlert(t.dataset.alert);
  else if(t.dataset.country)openCountry(t.dataset.country);
  else if(t.dataset.dist){const[c,k]=t.dataset.dist.split(':');openDistrict(c,keyOf(c,k))}
  else if(t.dataset.city)openCity(t.dataset.city)});
-function showOnMap(id){const a=alertById(id);if(!a)return;closeAll();go('now');if(a.city&&!a.win.includes(S.win)){S.win=a.win[0];renderChips();refreshOverlays();renderNow()}setDetent(0);setTimeout(()=>flyTo(a.lon,a.lat,a.city?14:5.2),380)}
+function showOnMap(id){const a=alertById(id);if(!a)return;closeAll();go('now');if(a.city&&!a.win.includes(S.win)){S.win=a.win[0];renderChips();refreshOverlays();renderNow()}setDetent(1);setTimeout(()=>flyTo(a.lon,a.lat,a.city?14:5.2),380)}
 
 /* ---------- alerts view ---------- */
 const AF=[['you','For you'],['trip','My trips'],['city','Cities'],['global','Global'],['all','All']];
@@ -1672,7 +1679,7 @@ function renderTrips(){$('#tripsList').innerHTML=`<button class="btn sec press a
  `<div class="sec">Safety</div><div class="ci-slot" data-compact="0">${ciHtml(false)}</div><button class="btn pri press" id="checkin">${ico('check')}Check in now: I’m safe</button><button class="btn sos-btn press" data-sos>SOS · Emergency</button><button class="btn sec press" id="shareIt">Share itinerary with security team</button><p class="src">Check-ins, alerts and sharing are simulated in this demo.</p>`}
 document.addEventListener('click',e=>{const to=e.target.closest('[data-topen]');if(to){const id=to.dataset.topen;S.tripOpen=S.tripOpen===id?null:id;$$('#tripsList .trip').forEach(c=>{const o=c.dataset.tid===S.tripOpen;c.classList.toggle('open',o);$('.top',c).setAttribute('aria-expanded',o)});if(S.tripOpen)setTimeout(()=>{const c=$(`#tripsList .trip[data-tid="${S.tripOpen}"]`);c&&c.scrollIntoView({behavior:'smooth',block:'nearest'})},320);return}
  if(e.target.closest('#checkin'))notify({title:'Check-in sent',body:`Your security team can see you checked in at 15:42 from ${hereInfo().title}.`,tag:'Aware'});if(e.target.closest('#shareIt'))notify({title:'Itinerary shared',body:'Paris and Dubai trips shared with your organisation’s Birdseye portal.',tag:'Aware'});
- const tb=e.target.closest('[data-trip]');if(tb){const t=allTrips().find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(0);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
+ const tb=e.target.closest('[data-trip]');if(tb){const t=allTrips().find(x=>x.id===tb.dataset.trip);S.win=t.fly.win;renderChips();refreshOverlays();renderNow();go('now');setDetent(1);setTimeout(()=>flyTo(t.fly.lon,t.fly.lat,t.fly.z),380)}});
 
 /* ---------- modal sheets ---------- */
 const MOD=$('#modal');const stack=[];
@@ -1731,7 +1738,7 @@ function openCity(k){const I=CITY_INFO[k];if(!I)return;const v=cityOverall(k);co
  <div style="margin-top:16px"><button class="btn pri press" data-cfly="${k}">${ico('map')}Show on map</button>${C?`<button class="btn sec press" data-country="${C.cc}">${esc(C.name)} country profile</button>`:''}<button class="btn sec press" data-fb="City: ${esc(I.name)}">${ico('msg')}Feedback on this report</button></div>
  <p class="src">City RiskScore weighs the average and the highest-risk areas for the selected time window. Based on police and city reporting and the Manukai crime and unrest models. Scores are illustrative demo values.</p>`;
  openSheet('City report',html)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-cfly]');if(!b)return;const I=CITY_INFO[b.dataset.cfly];closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(I.lon,I.lat,I.z),380)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cfly]');if(!b)return;const I=CITY_INFO[b.dataset.cfly];closeAll();go('now');setDetent(1);setTimeout(()=>flyTo(I.lon,I.lat,I.z),380)});
 
 
 function openCountry(cc){const c=COUNTRIES.find(x=>x.cc===cc);if(!c)return;const o=adjC(c);
@@ -1753,7 +1760,7 @@ function openCountry(cc){const c=COUNTRIES.find(x=>x.cc===cc);if(!c)return;const
  <div style="margin-top:16px"><button class="btn pri press" data-cmap="${c.cc}">${ico('map')}Show on map</button><button class="btn sec press" data-fb="Country: ${esc(c.name)}">${ico('msg')}Feedback on this profile</button></div>
  <p class="src">Indices: ${esc(INDEX_SOURCES)}.<br>Overall RiskScore and sub-scores: Manukai assessment, illustrative demo values.</p>`;
  openSheet('Country profile',html)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-cmap]');if(!b)return;const cc=b.dataset.cmap;const c=COUNTRIES.find(x=>x.cc===cc);closeAll();go('now');setDetent(0);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cmap]');if(!b)return;const cc=b.dataset.cmap;const c=COUNTRIES.find(x=>x.cc===cc);closeAll();go('now');setDetent(1);
  const g=COUNTRY_GEO&&COUNTRY_GEO.find(x=>x.cc===cc);setTimeout(()=>{if(g&&MAP&&g.bb[2]-g.bb[0]<90)MAP.fitBounds([[g.bb[0],g.bb[1]],[g.bb[2],g.bb[3]]],{padding:40,duration:1800,maxZoom:8});else flyTo(cc==='RU'?90:c.lon,cc==='RU'?60:c.lat,({US:3.2,RU:2.2,CN:3}[cc]||5))},380)});
 
 /* ---------- search ---------- */
@@ -1766,7 +1773,7 @@ $('#searchBtn').addEventListener('click',()=>{openSheet('Search',`<div class="se
   res.innerHTML=(cs2.length?`<div class="sec">City reports</div><div class="list">${cs2.map(cityRow).join('')}</div>`:'')+(pl.length?`<div class="sec">Places</div><div class="list">${pl.map(p=>`<button class="arow" data-fly="${p[1]},${p[2]},${p[3]}"><span class="cc">${ico('pin')}</span><div class="m"><b>${esc(p[0])}</b><span>Fly to on map</span></div>${chevSvg}</button>`).join('')}</div>`:'')
   +(cs.length?`<div class="sec">Countries</div><div class="list">${cs.map(cRow).join('')}</div>`:'')+(as.length?`<div class="sec">Alerts</div><div class="list">${as.map(aRow).join('')}</div>`:'')
   +(ds.length?`<div class="sec">Districts</div><div class="list">${ds.slice(0,8).map(d=>{const v=distScore(d.city,d.key);return`<button class="arow" data-dist="${d.city}:${d.key}">${badge(v)}<div class="m"><b>${esc(d.full)}</b><span>${esc(cityName(d.city))}</span></div>${chevSvg}</button>`}).join('')}</div>`:'')||'<p class="lede" style="padding:14px 2px">No results in the demo data.</p>'};
- inp.addEventListener('input',run);res.addEventListener('click',e=>{const b=e.target.closest('[data-sq]');if(b){inp.value=b.dataset.sq;run()}const f=e.target.closest('[data-fly]');if(f){const[lo,la,z]=f.dataset.fly.split(',').map(Number);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(lo,la,z),380)}});run();setTimeout(()=>inp.focus(),350)})});
+ inp.addEventListener('input',run);res.addEventListener('click',e=>{const b=e.target.closest('[data-sq]');if(b){inp.value=b.dataset.sq;run()}const f=e.target.closest('[data-fly]');if(f){const[lo,la,z]=f.dataset.fly.split(',').map(Number);closeAll();go('now');setDetent(1);setTimeout(()=>flyTo(lo,la,z),380)}});run();setTimeout(()=>inp.focus(),350)})});
 
 /* ---------- profile sheet ---------- */
 function profileHtml(){return`<div class="hero"><div class="circle glass" style="width:64px;height:64px">${ico('person')}</div><div><h2>Your profile</h2><div class="sub">Personalises every RiskScore you see</div></div></div>
@@ -1844,7 +1851,7 @@ ONB.addEventListener('click',e=>{const n=e.target.closest('[data-on]');if(n){if(
  const r=e.target.closest('[data-role]');if(r){P.role=r.dataset.role;$$('[data-role]',ONB).forEach(x=>x.classList.toggle('on',x===r))}
  const w=e.target.closest('[data-sw]');if(w){P[w.dataset.sw]=!P[w.dataset.sw];w.classList.toggle('on',P[w.dataset.sw])}});
 ONB.addEventListener('change',e=>{if(e.target.id==='onat')P.nat=e.target.value});
-function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();setTimeout(()=>{setDetent(0);if(MAP)MAP.resize();notify({title:'Aware is watching your trips',body:`${allTrips().length} upcoming trip${allTrips().length===1?'':'s'} · 1 forecast update since yesterday.`,tag:'Aware'})},500)}
+function finishOnb(){P.done=true;saveP();ONB.classList.remove('on');changed();setTimeout(()=>{setDetent(1);if(MAP)MAP.resize();notify({title:'Aware is watching your trips',body:`${allTrips().length} upcoming trip${allTrips().length===1?'':'s'} · 1 forecast update since yesterday.`,tag:'Aware'})},500)}
 
 /* ---------- your position: demo, live GPS or pinned by long-press ---------- */
 IC.plus='<path d="M12 5v14M5 12h14"/>';
@@ -2049,7 +2056,7 @@ function openPlace(id){const p=P.places.find(x=>x.id===id);if(!p)return;const s=
  <div style="margin-top:16px"><button class="btn pri press" data-plfly="${p.id}">${ico('map')}Show on map</button>${s.i.city?`<button class="btn sec press" data-city="${s.i.city}">${esc(cityName(s.i.city))} city report</button>`:''}<button class="btn sec press" data-pldel="${p.id}">${ico('trash')}Remove place</button></div>`)}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-place]');if(a){openPlace(a.dataset.place);return}
  if(e.target.closest('[data-addplace]')){openSavePlace(YOU.lon,YOU.lat);return}
- const f=e.target.closest('[data-plfly]');if(f){const p=P.places.find(x=>x.id===f.dataset.plfly);closeAll();go('now');setDetent(0);setTimeout(()=>flyTo(p.lon,p.lat,14.5),380);return}
+ const f=e.target.closest('[data-plfly]');if(f){const p=P.places.find(x=>x.id===f.dataset.plfly);closeAll();go('now');setDetent(1);setTimeout(()=>flyTo(p.lon,p.lat,14.5),380);return}
  const d=e.target.closest('[data-pldel]');if(d){P.places=P.places.filter(x=>x.id!==d.dataset.pldel);saveP();closeTop();buildMarkers();renderNow()}});
 function placeMarkers(){P.places.forEach(p=>{const el=markerEl('mypl',`<i>${ico(PTYPES[p.type][1])}</i><span>${esc(p.name)}</span>`);el.addEventListener('click',e=>{e.stopPropagation();openPlace(p.id)});MARKERS.push(new maplibregl.Marker({element:el,anchor:'left',offset:[-13,0]}).setLngLat([p.lon,p.lat]).addTo(MAP))})}
 
@@ -2078,7 +2085,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault());
 renderChips();
 const ro=new ResizeObserver(()=>{layoutSheet();setSeg($('#tabbar'),S.tab,'t')});ro.observe($('#phone'));
 addEventListener('resize',frame);
-frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();loadRemoteCities();maybeBriefNotify();renderAlerts();renderCountries();renderTrips();go('now');setDetent(0);
+frame();initMap();bindLP();if(P.loc.mode==='gps')startGPS(false);renderNow();reverseName();loadRemoteCities();maybeBriefNotify();renderAlerts();renderCountries();renderTrips();go('now');setDetent(1);
 if(!P.done)showOnb(0);
 }
 
