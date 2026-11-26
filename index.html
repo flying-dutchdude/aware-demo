@@ -117,7 +117,7 @@ svg{display:block}
 @keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
 
 /* map overlays */
-.mtop{position:absolute;left:12px;right:12px;top:calc(var(--sat) + 8px);display:flex;gap:8px;align-items:center;z-index:30}
+.mtop{position:absolute;left:12px;right:12px;top:calc(var(--sat) + 22px);display:flex;gap:8px;align-items:center;z-index:30}
 .brandcap{height:44px;border-radius:22px;display:flex;align-items:center;gap:8px;padding:0 14px 0 8px}
 .brandcap img{width:28px;height:27px}
 .brandcap b{font:700 17px var(--disp);letter-spacing:.01em}
@@ -132,13 +132,13 @@ svg{display:block}
 .tchip i{width:7px;height:7px;border-radius:50%;background:var(--pink);opacity:0;font-style:normal}
 .tchip.fc i{opacity:1}
 .tchip.on{color:#06212c;background:linear-gradient(180deg,#e9fbff,#bfefff);border-color:rgba(255,255,255,.7)}
-.mctl{position:absolute;right:12px;top:calc(var(--sat) + 138px);z-index:28;display:flex;flex-direction:column;border-radius:24px;width:48px;overflow:hidden}
+.mctl{position:absolute;right:12px;top:calc(var(--sat) + 152px);z-index:28;display:flex;flex-direction:column;border-radius:24px;width:48px;overflow:hidden}
 .mctl button{height:48px;display:grid;place-items:center}
 .mctl button+button{border-top:.5px solid rgba(255,255,255,.14)}
 .mctl svg{width:20px;height:20px}
 .legend{position:absolute;left:12px;z-index:27;bottom:260px;height:30px;border-radius:15px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:11.5px;color:var(--ink2);transition:bottom .5s var(--spring),opacity .3s}
 .legend .bar{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--r0),var(--r1),var(--r2),var(--r3),var(--r4))}
-.layerpop{position:absolute;right:68px;top:calc(var(--sat) + 138px);z-index:31;border-radius:22px;padding:6px;display:none;min-width:190px}
+.layerpop{position:absolute;right:68px;top:calc(var(--sat) + 152px);z-index:31;border-radius:22px;padding:6px;display:none;min-width:190px}
 .layerpop.on{display:block;animation:pop .35s var(--spring)}
 .layerpop button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:14px;font-size:15px}
 .layerpop button.on{background:rgba(255,255,255,.12)}
@@ -425,7 +425,7 @@ html,body{background:#0b2530}
 .dinp{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.1);border:0;border-radius:12px;padding:8px 12px;font-size:16px;color:var(--ink);color-scheme:dark;min-width:140px;text-align:right}
 
 /* v5 time slider */
-.tslider{position:absolute;left:10px;right:10px;top:calc(var(--sat) + 60px);z-index:29;border-radius:22px;padding:8px 14px 4px}
+.tslider{position:absolute;left:10px;right:10px;top:calc(var(--sat) + 74px);z-index:29;border-radius:22px;padding:8px 14px 4px}
 .tsl-top{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden}
 .tsl-top b{font:700 15px var(--disp);color:var(--ink)}
 .tsl-fc{margin-left:auto;color:var(--pink);font-weight:600;font-size:12px}
@@ -473,6 +473,10 @@ html,body{background:#0b2530}
 .lpc .lpb{padding-right:44px}
 
 a.arow{color:inherit;text-decoration:none}
+
+#bsheet:not(.full) #bbody{overflow:hidden;touch-action:pan-x}
+#bsheet .grab,#bhead{touch-action:none}
+#bsheet.full #bbody{touch-action:pan-y}
 
 </style>
 </head>
@@ -1595,12 +1599,19 @@ $('#layerPop').addEventListener('click',e=>{const b=e.target.closest('button');i
 const BS=$('#bsheet');let detent=0,sheetY=0;
 const peekPx=()=>238+($('#sabProbe').offsetHeight||0);
 function layoutSheet(){const H=BS.offsetHeight;const ys=[H-peekPx(),H*0.44,0];sheetY=ys[detent];BS.style.transform=`translateY(${sheetY}px)`;BS.classList.toggle('full',detent===2);$('#legend').style.bottom=(H-sheetY+10)+'px';$('#legend').style.visibility=detent===2?'hidden':'';applyPadding()}
-function setDetent(d){detent=clamp(d,0,2);layoutSheet()}
-(()=>{let st=null;
- BS.addEventListener('pointerdown',e=>{if(!e.target.closest('.grab,#bhead')||e.target.closest('button'))return;st={y:e.clientY,t:Date.now(),y0:sheetY};BS.classList.add('dragging');e.preventDefault()});
- addEventListener('pointermove',e=>{if(!st)return;BS.style.transform=`translateY(${Math.max(0,st.y0+e.clientY-st.y)}px)`});
- addEventListener('pointerup',e=>{if(!st)return;BS.classList.remove('dragging');const dy=e.clientY-st.y;const v=dy/(Date.now()-st.t);
-  if(Math.abs(dy)<6)setDetent(detent===0?1:detent===1?2:0);else if(v<-.5||dy<-60)setDetent(detent+1);else if(v>.5||dy>60)setDetent(detent-1);else layoutSheet();st=null})})();
+function setDetent(d){detent=clamp(d,0,2);if(detent<2)$('#bbody').scrollTop=0;layoutSheet()}
+(()=>{let st=null,dragged=false;const BB=$('#bbody');
+ BS.addEventListener('pointerdown',e=>{const onGrab=!!e.target.closest('.grab,#bhead');const inBody=!!e.target.closest('#bbody');
+  if(detent===2&&!onGrab&&!(inBody&&BB.scrollTop<=0))return;
+  st={y:e.clientY,t:Date.now(),y0:sheetY,tap:onGrab&&!e.target.closest('button'),body:!onGrab};dragged=false});
+ addEventListener('pointermove',e=>{if(!st)return;const dy=e.clientY-st.y;
+  if(!dragged){if(Math.abs(dy)<8)return;if(st.body&&detent===2&&dy<0){st=null;return}dragged=true;BS.classList.add('dragging')}
+  BS.style.transform=`translateY(${Math.max(0,st.y0+dy)}px)`;e.preventDefault()},{passive:false});
+ const up=e=>{if(!st)return;const dy=e.clientY-st.y;const v=dy/Math.max(1,Date.now()-st.t);BS.classList.remove('dragging');
+  if(!dragged){if(st.tap&&e.type==='pointerup')setDetent(detent===0?1:detent===1?2:0);st=null;return}
+  if(v<-.4||dy<-50)setDetent(detent+1);else if(v>.4||dy>50)setDetent(detent-1);else layoutSheet();st=null;setTimeout(()=>dragged=false,50)};
+ addEventListener('pointerup',up);addEventListener('pointercancel',up);
+ BS.addEventListener('click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true)})();
 
 function aRow(a){const s=sA(a);const st=a.status==='Forecast'?'<span class="pill fc">Forecast</span>':a.status==='Active'?'<span class="pill act">Active</span>':'';
  return`<button class="arow" data-alert="${a.id}">${badge(s)}<div class="m"><b>${esc(a.title)}</b><span>${esc(a.place)} · ${esc(a.when)}</span></div>${st||trendArrow(a.trend)}${chevSvg}</button>`}
