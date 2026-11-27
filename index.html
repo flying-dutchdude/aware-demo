@@ -526,7 +526,7 @@ a.arow{color:inherit;text-decoration:none}
      <h1 class="big">Countries</h1>
      <p class="lede">Risk beyond the travel advice: security, crime, stability, democracy and rights. Tap a country or city.</p>
      <div id="wmini"></div>
-     <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cq" placeholder="Search the 37 demo countries" autocomplete="off"></div>
+     <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cq" placeholder="Search the 100 demo countries" autocomplete="off"></div>
      <div class="chips" id="countrySort"><button class="chip on" data-cs="risk">Highest risk</button><button class="chip" data-cs="az">A–Z</button></div>
      <div id="citiesList"></div><div class="list" id="countriesList"></div>
      <p class="src">Overall scores are Manukai assessments (illustrative). Indices from Freedom House, EIU, IEP, Transparency International and ILGA-Europe.</p>
@@ -1298,6 +1298,144 @@ ALERTS.push(
   sources:'bianet · AP · Manukai pattern model'}
 );
 
+/* v7: all countries over 10 million people in Europe, Africa, South America and Asia.
+   Index sources: Freedom House 2026, IEP Global Peace Index 2026, TI CPI 2025, ILGA-Europe Rainbow Map 2026.
+   EIU Democracy Index 2025 country scores were not available to us for these countries, so they are left out. */
+const V = 'Varies locally: save your embassy and hotel numbers';
+[
+ ['ES','724','Spain','Southern Europe',-3.70,40.42,2.6,'flat',[3.8,3.4,2.8,1.0,1.0,4.2,1.6,0.6],91,'Free',27,55,89,'Same-sex marriage since 2005; first on the Rainbow Map.','112',
+  'Stable democracy and a major business and tourism destination. Pickpocketing is the main risk in Barcelona and Madrid; the jihadist threat level is elevated.',['Bag and phone theft on the Barcelona metro and Las Ramblas','Heatwaves and wildfires in summer','Strikes and regional protests can disrupt transport']],
+ ['PT','620','Portugal','Southern Europe',-9.14,38.72,1.8,'flat',[1.6,2.4,1.6,1.0,1.0,3.6,1.2,1.0],96,'Free',7,56,67,'Same-sex marriage since 2010.','112',
+  'One of the most peaceful countries in the world (7th on the Global Peace Index). Petty theft in Lisbon and Porto is the main issue for visitors.',['Pickpocketing on Lisbon tram 28','Summer wildfires inland','Low violent crime']],
+ ['CZ','203','Czechia','Central Europe',14.42,50.08,1.8,'flat',[1.8,2.0,1.6,1.4,1.0,1.4,2.4,2.4],95,'Free',13,59,37,'Registered partnerships; no same-sex marriage.','112',
+  'Very safe and stable. The main issues are pickpocketing and taxi overcharging in central Prague, plus Russian-linked sabotage attempts seen across the region.',['Use ride-hailing or official taxis in Prague','Currency-exchange scams in the old town','Very low violent crime']],
+ ['RO','642','Romania','Eastern Europe',26.10,44.43,2.6,'flat',[1.8,2.6,2.8,2.6,2.0,2.6,3.2,4.6],83,'Free',45,45,19,'No legal recognition of same-sex couples; lowest-ranked EU country on the Rainbow Map.','112',
+  'Stable NATO member bordering Ukraine; Russian drone debris has fallen near the Danube border. Petty crime and corruption are the everyday issues.',['Avoid the Danube border area near Ukraine','Use official taxis in Bucharest','Earthquake risk in Bucharest']],
+
+ ['DZ','012','Algeria','North Africa',3.06,36.75,4.6,'flat',[5.4,3.4,3.8,3.2,3.0,3.0,6.8,8.6],31,'Not Free',91,34,null,'Same-sex relations are criminalised.','17 police · 14 ambulance',
+  'Authoritarian but stable in the north; terrorism risk persists in remote areas and border zones with Mali, Niger and Libya. Foreign visitors draw police attention.',['Avoid border regions in the south and east','Expect police checks and escorts outside cities','Journalism and political activity are tightly restricted']],
+ ['AO','024','Angola','Southern Africa',13.23,-8.84,5.2,'flat',[2.0,6.6,4.8,2.6,5.6,2.4,4.4,3.2],28,'Not Free',78,32,null,'Legal since 2021; anti-discrimination protections.',V,
+  'Stable but with high violent crime in Luanda, including armed robbery and express kidnapping. Fuel-price protests in 2025 turned deadly.',['Use a vetted driver in Luanda','Do not resist in a robbery','Malaria and cholera risk']],
+ ['BJ','204','Benin','West Africa',2.63,6.50,5.6,'up',[6.8,4.0,3.6,5.6,5.0,2.0,4.8,4.0],61,'Partly Free',122,45,null,'Legal; no recognition of same-sex couples.',V,
+  'The south is relatively calm, but jihadist groups linked to the Sahel insurgency attack the north, including army posts near the borders with Burkina Faso and Niger.',['Avoid the northern border regions and national parks','Road crime on highways at night','Malaria risk']],
+ ['BF','854','Burkina Faso','Sahel',-1.52,12.37,8.6,'up',[9.4,6.0,5.6,9.2,6.6,2.4,7.4,7.6],20,'Not Free',149,40,null,'Same-sex relations criminalised since 2025.',V,
+  'Military junta fighting a jihadist insurgency that controls or contests much of the country. Kidnapping and attacks reach main roads; most governments advise against all travel.',['Do not travel outside Ouagadougou','Risk of kidnapping of foreigners','Coups and arbitrary detention possible']],
+ ['BI','108','Burundi','East Africa',29.92,-3.38,6.6,'flat',[3.8,5.4,5.2,6.4,6.8,3.2,7.6,7.8],13,'Not Free',129,17,null,'Same-sex relations are criminalised.',V,
+  'Authoritarian and very poor, with tension along the border with the eastern DR Congo conflict. Political repression is severe.',['Avoid the provinces bordering eastern Congo','Fuel and foreign-currency shortages','Do not discuss politics in public']],
+ ['CM','120','Cameroon','Central Africa',11.52,3.85,7.0,'flat',[7.4,5.8,6.2,7.2,5.8,2.4,6.4,8.4],15,'Not Free',137,26,null,'Same-sex relations are criminalised.',V,
+  'Separatist conflict in the two English-speaking regions and Boko Haram attacks in the Far North. Post-election protests in 2025 were met with force.',['Avoid the North-West, South-West and Far North regions','Kidnapping risk outside main cities','Carry ID at checkpoints']],
+ ['TD','148','Chad','Sahel',15.04,12.13,7.4,'flat',[7.8,5.6,5.4,7.6,7.2,4.0,6.8,8.2],15,'Not Free',145,22,null,'Same-sex relations are criminalised.',V,
+  'Hosts large numbers of refugees from Sudan’s war in the east; Boko Haram is active around Lake Chad. Political tension is high and security forces are heavy-handed.',['Avoid the Lake Chad area and the Sudan border','Travel outside N’Djamena only with security support','Banditry on roads']],
+ ['CD','180','DR Congo','Central Africa',15.27,-4.32,8.4,'up',[6.4,7.4,6.8,9.2,8.0,3.2,6.6,6.0],18,'Not Free',161,20,null,'Not criminalised, but strong social hostility.',V,
+  'Armed conflict in the east, where the M23 rebel group holds Goma and Bukavu, and armed robbery in Kinshasa. Ebola and cholera outbreaks recur.',['Do not travel to North and South Kivu or Ituri','Armed robbery in Kinshasa, including fake police','Health risks: Ebola, cholera, malaria']],
+ ['CI','384','Côte d’Ivoire','West Africa',-4.03,5.36,4.8,'flat',[5.2,4.6,4.4,3.8,5.0,2.2,4.6,4.2],46,'Partly Free',93,43,null,'Legal; no recognition of same-sex couples.',V,
+  'Stable economic hub of West Africa. Jihadist spillover from Burkina Faso and Mali threatens the far north; Abidjan has street crime and occasional political tension.',['Avoid the northern border areas','Theft and scams in Abidjan','Malaria risk']],
+ ['ET','231','Ethiopia','East Africa',38.75,9.03,7.6,'up',[5.6,4.8,7.0,8.6,6.6,4.4,8.4,8.2],18,'Not Free',138,38,null,'Same-sex relations are criminalised.',V,
+  'Armed conflict in Amhara and Oromia and tension with Eritrea; roads outside Addis Ababa can close at short notice. Internet shutdowns are frequent.',['Travel outside Addis Ababa only with current local advice','Expect internet and phone shutdowns','Arbitrary detention under emergency laws']],
+ ['GH','288','Ghana','West Africa',-0.19,5.60,4.0,'flat',[3.2,4.4,3.4,2.4,5.0,2.4,3.8,7.8],80,'Free',76,43,null,'Same-sex relations are criminalised.','191 police · 193 ambulance',
+  'One of West Africa’s most stable democracies. Street crime and fraud are the main risks in Accra; there is localised conflict in the north-east.',['Card and online fraud are common','Avoid the Bawku area in the north-east','Malaria risk']],
+ ['GN','324','Guinea','West Africa',-13.71,9.51,6.0,'flat',[3.6,5.2,6.6,3.6,6.6,2.8,6.8,7.8],28,'Not Free',116,26,null,'Same-sex relations are criminalised.',V,
+  'Ruled by the military since 2021; opposition protests in Conakry are often violently dispersed. Street crime is common.',['Avoid protests on the Route Le Prince in Conakry','Armed robbery at night','Health care is limited']],
+ ['MG','450','Madagascar','Indian Ocean',47.52,-18.88,5.4,'up',[1.8,5.8,6.4,2.4,6.4,6.6,4.6,4.0],50,'Partly Free',59,25,null,'Legal; no recognition of same-sex couples.',V,
+  'The military took power in October 2025 after youth-led protests. Street crime and cattle-rustler violence are serious; cyclones hit between January and March.',['Avoid demonstrations in Antananarivo','Do not travel by road at night','Cyclone season from January to March']],
+ ['MW','454','Malawi','Southern Africa',33.79,-13.96,4.6,'flat',[1.4,5.0,4.4,1.0,6.4,4.6,3.6,7.6],68,'Free',83,34,null,'Same-sex relations are criminalised.','997 police · 998 ambulance',
+  'Peaceful democracy with frequent fuel and foreign-currency shortages. Opportunistic crime is the main risk.',['Fuel shortages can disrupt road travel','Theft in Lilongwe and Blantyre','Cholera and malaria risk']],
+ ['ML','466','Mali','Sahel',-8.00,12.64,8.8,'up',[9.6,6.4,6.2,9.4,7.0,2.6,7.6,8.4],21,'Not Free',154,28,null,'Same-sex relations criminalised since 2024.','17 police · 15 ambulance',
+  'The al-Qaeda-linked JNIM imposed a fuel blockade on Bamako in 2025 and declared a full blockade of the capital in April 2026. Kidnapping of foreigners is a high risk; Western governments urge their citizens to leave.',['Do not travel to Mali','Kidnapping risk even in Bamako','Fuel and power shortages']],
+ ['MA','504','Morocco','North Africa',-6.84,34.02,3.8,'flat',[4.2,3.6,3.6,1.4,2.6,3.6,5.2,8.4],37,'Partly Free',65,39,null,'Same-sex relations are criminalised.','19 police · 15 ambulance',
+  'Stable and popular with visitors. Youth-led ‘GenZ 212’ protests over services turned violent in 2025; the terrorism threat is low but present.',['Harassment and scams in medinas','Avoid political protests','Earthquake risk in the Atlas']],
+ ['MZ','508','Mozambique','Southern Africa',32.57,-25.97,6.6,'flat',[7.2,6.2,6.0,6.6,6.2,6.0,5.0,3.6],42,'Partly Free',126,21,null,'Legal since 2015.',V,
+  'An Islamic State insurgency continues in Cabo Delgado in the north. Post-election unrest in 2024–25 killed hundreds; kidnappings for ransom target business people in Maputo.',['Do not travel to Cabo Delgado','Kidnap-for-ransom risk for business people','Cyclones between November and April']],
+ ['NE','562','Niger','Sahel',2.11,13.51,8.2,'flat',[9.2,5.6,5.4,8.6,7.2,4.0,7.2,7.4],27,'Not Free',146,31,null,'Legal; strong social hostility.','17 police · 15 ambulance',
+  'Military junta since 2023, facing jihadist attacks in the west and south-east. Foreigners have been kidnapped in Niamey; most governments advise against all travel.',['Do not travel outside Niamey','Kidnapping risk for foreigners','Borders and airspace can close suddenly']],
+ ['RW','646','Rwanda','East Africa',30.06,-1.95,4.0,'flat',[2.4,2.0,2.2,4.4,4.4,2.4,7.4,6.0],21,'Not Free',114,58,null,'Legal; no recognition of same-sex couples.','112',
+  'Very orderly and low in crime, but authoritarian and accused of backing the M23 rebels in eastern Congo. Avoid the border with DR Congo.',['Avoid the Congo border near Gisenyi','Strict laws on criticism of the government','Very low street crime']],
+ ['SN','686','Senegal','West Africa',-17.44,14.69,3.8,'flat',[3.6,3.8,4.2,1.6,4.6,2.6,4.2,8.4],70,'Free',75,46,null,'Same-sex relations are criminalised.','17 police · 15 ambulance',
+  'One of West Africa’s more stable democracies after the peaceful transfer of power in 2024. Petty crime in Dakar is the main risk.',['Pickpocketing and bag snatching in Dakar','Political protests can turn violent','Avoid the Casamance border areas at night']],
+ ['SO','706','Somalia','Horn of Africa',45.32,2.05,9.2,'flat',[9.6,7.6,6.4,9.4,8.2,6.4,6.8,9.6],8,'Not Free',153,9,null,'Same-sex relations are criminalised; the death penalty may apply under Islamic law.',V,
+  'Al-Shabaab carries out bombings and assassinations, including in Mogadishu. Only travel with professional security support.',['Do not travel without a security provider','High kidnapping risk','Drought and flooding cycles']],
+ ['SS','728','South Sudan','East Africa',31.58,4.85,9.0,'up',[4.4,7.6,7.8,9.0,8.6,6.6,6.4,8.2],0,'Not Free',158,9,null,'Same-sex relations are criminalised.',V,
+  'Renewed fighting between the government and opposition forces since 2025 threatens a return to civil war. Armed crime is common in Juba.',['Do not travel outside Juba','Curfews and checkpoints','Cholera and malaria']],
+ ['SD','729','Sudan','North-East Africa',32.53,15.59,9.6,'up',[5.6,8.0,7.0,10.0,9.2,5.2,7.8,9.0],1,'Not Free',162,14,null,'Same-sex relations are criminalised.','999',
+  'Civil war between the army and the Rapid Support Forces since April 2023. The RSF took El Fasher in October 2025; famine and mass atrocities are reported, and drone strikes hit infrastructure.',['Do not travel to Sudan','No consular support in most of the country','Famine and disease outbreaks']],
+ ['TZ','834','Tanzania','East Africa',39.28,-6.79,4.8,'up',[3.8,4.6,5.8,1.8,5.6,3.4,6.4,8.4],28,'Not Free',98,40,null,'Same-sex relations are criminalised.','112',
+  'The October 2025 elections were followed by deadly crackdowns on protests and internet shutdowns. Street crime is common in Dar es Salaam and Zanzibar.',['Avoid demonstrations and political gatherings','Bag snatching from motorbikes in Dar es Salaam','Malaria risk']],
+ ['TN','788','Tunisia','North Africa',10.18,36.81,4.2,'flat',[4.6,3.0,4.2,1.8,2.6,3.0,6.6,8.2],42,'Partly Free',77,39,null,'Same-sex relations are criminalised.','197 police · 190 ambulance',
+  'Stable for visitors, but increasingly authoritarian, with arrests of critics and journalists. The terrorism threat persists near the borders with Algeria and Libya.',['Avoid the Libyan and Algerian border zones','Do not criticise the president online','Harassment in tourist areas']],
+ ['UG','800','Uganda','East Africa',32.58,0.35,5.6,'flat',[5.2,5.0,5.0,3.2,6.2,3.2,7.0,9.4],33,'Not Free',130,25,null,'Same-sex relations are criminalised under the 2023 Anti-Homosexuality Act, with severe penalties.','999 · 112',
+  'Stable but authoritarian; elections in January 2026 were tightly controlled. Islamist ADF militants have carried out attacks, and LGBTQ+ people face severe legal risk.',['LGBTQ+ travellers face serious legal risk','Avoid the Congo border areas','Street crime in Kampala']],
+ ['ZM','894','Zambia','Southern Africa',28.28,-15.42,4.2,'flat',[1.4,4.6,3.6,1.0,5.4,3.6,4.8,8.0],53,'Partly Free',82,37,null,'Same-sex relations are criminalised.','999 police · 991 ambulance',
+  'Peaceful, with elections due in 2026. Opportunistic crime in Lusaka and long power cuts are the main issues.',['Power cuts of many hours a day','Theft from vehicles in Lusaka','Cholera outbreaks in the rainy season']],
+ ['ZW','716','Zimbabwe','Southern Africa',31.05,-17.83,5.4,'flat',[1.4,5.2,5.0,1.4,6.2,3.6,6.4,7.8],25,'Not Free',90,22,null,'Same-sex relations between men are criminalised.','999 · 995 police',
+  'Stable but repressive, with chronic economic crisis and cash shortages. Political gatherings are restricted and journalists face arrest.',['Carry small US dollar notes','Avoid political gatherings','Power and water cuts']],
+
+ ['AR','032','Argentina','South America',-58.38,-34.60,4.0,'flat',[2.4,5.6,5.2,1.0,2.4,2.6,2.8,1.6],85,'Free',72,36,null,'Same-sex marriage since 2010.','911 · 107 ambulance',
+  'Stable democracy under economic reform, with frequent union strikes and protests in Buenos Aires. Street crime is common in the capital and Rosario.',['Phone snatching in Buenos Aires','General strikes stop transport','Drug-gang violence in Rosario']],
+ ['BO','068','Bolivia','South America',-68.15,-16.50,5.2,'flat',[1.6,5.0,6.8,1.4,4.6,4.6,4.0,3.6],69,'Free',92,28,null,'Legal; same-sex unions recognised by court ruling.','110 police · 118 ambulance',
+  'A new government took office in November 2025 amid fuel shortages and economic crisis. Road blockades by protesters can cut cities off for days.',['Road blockades can last days','Altitude sickness in La Paz','Express kidnappings in taxis']],
+ ['CL','152','Chile','South America',-70.65,-33.45,4.0,'flat',[2.0,5.0,4.6,1.0,2.0,5.6,2.4,1.6],95,'Free',52,63,null,'Same-sex marriage since 2022.','133 police · 131 ambulance',
+  'Stable democracy, but violent crime and organised crime have risen sharply in Santiago. Earthquake and wildfire risk is high.',['Express kidnappings and armed robbery in Santiago','Strong earthquakes: follow building evacuation plans','Wildfires in summer']],
+ ['CO','170','Colombia','South America',-74.07,4.71,6.2,'up',[5.8,7.4,5.8,6.0,4.0,4.6,4.4,2.6],69,'Free',141,37,null,'Same-sex marriage since 2016.','123',
+  'Rising violence by armed groups ahead of the 2026 elections, including assassinations and bombings. Drugging and robbery via dating apps targets foreigners in Medellín and Bogotá.',['Never accept drinks or meet dating-app contacts alone','Use ride-hailing, not street taxis','Avoid Catatumbo, Cauca and border regions']],
+ ['EC','218','Ecuador','South America',-78.47,-0.18,6.8,'flat',[6.0,8.6,5.8,4.4,4.0,5.2,4.0,2.8],64,'Partly Free',135,33,null,'Same-sex marriage since 2019.','911',
+  'Gang violence has made Ecuador one of the most violent countries in Latin America, especially Guayaquil, Durán and the coast. A state of emergency applies in several provinces.',['Avoid Guayaquil’s southern districts and Durán','Express kidnapping and extortion','Curfews may apply in emergency zones']],
+ ['PE','604','Peru','South America',-77.04,-12.05,5.4,'flat',[2.2,6.4,6.4,1.4,3.6,5.6,3.6,3.8],66,'Partly Free',107,30,null,'Legal; no recognition of same-sex couples.','105 police · 106 ambulance',
+  'Political instability is chronic, with frequent changes of president and youth protests in Lima. Extortion by gangs has driven strikes by transport workers.',['Protests in central Lima can turn violent','Use registered taxis','Earthquake risk']],
+ ['VE','862','Venezuela','South America',-66.90,10.49,7.6,'flat',[3.0,8.4,6.4,5.2,7.0,3.4,7.8,4.6],13,'Not Free',133,10,null,'Legal; no recognition of same-sex couples.','911',
+  'US forces captured Nicolás Maduro in January 2026; an acting government led by Delcy Rodríguez is holding US-backed talks with the opposition. Violent crime, arbitrary detention and shortages remain serious.',['Risk of arbitrary detention of foreigners','Very high violent crime in Caracas','Power, water and fuel shortages']],
+
+ ['AF','004','Afghanistan','South Asia',69.17,34.53,9.2,'flat',[9.0,6.8,4.6,8.4,8.6,6.0,9.4,10.0],8,'Not Free',157,16,null,'Same-sex relations are criminalised with severe penalties under Taliban rule.',V,
+  'Ruled by the Taliban. Pakistan and Afghanistan have traded airstrikes and border clashes since early 2026, and Islamic State attacks continue. Foreigners risk detention.',['Do not travel to Afghanistan','Risk of detention and kidnapping','No Western embassies operating']],
+ ['AZ','031','Azerbaijan','South Caucasus',49.87,40.41,4.6,'flat',[3.0,2.2,3.0,4.6,3.6,3.0,8.6,8.4],6,'Not Free',110,30,null,'Legal; strong official and social hostility.','112 · 102 police · 103 ambulance',
+  'Authoritarian but stable. Critics, journalists and some foreigners have been jailed; relations with Russia are tense.',['Do not criticise the government in public or online','Avoid the Armenian border area','Low street crime in Baku']],
+ ['BD','050','Bangladesh','South Asia',90.41,23.81,6.0,'flat',[5.6,5.0,7.0,2.2,6.6,7.4,5.4,8.2],44,'Partly Free',117,24,null,'Same-sex relations are criminalised.','999',
+  'Elections in February 2026 followed the 2024 uprising; political rallies and general strikes (hartals) remain frequent and can turn violent. Floods and cyclones are a major hazard.',['Avoid hartal days and political rallies','Traffic accidents are a leading risk','Cyclones and floods in monsoon season']],
+ ['KH','116','Cambodia','Southeast Asia',104.92,11.56,4.4,'flat',[1.4,4.4,3.4,4.6,4.8,4.0,7.0,3.4],22,'Not Free',96,20,null,'Legal; no recognition of same-sex couples.','117 police · 119 ambulance',
+  'Border fighting with Thailand flared in 2025. Online scam compounds run by criminal networks traffic foreigners lured with fake job offers.',['Avoid the Thai border area','Be wary of job offers: scam compounds','Bag snatching in Phnom Penh']],
+ ['ID','360','Indonesia','Southeast Asia',106.85,-6.21,4.6,'flat',[4.8,3.6,5.4,1.6,4.0,7.2,5.0,7.2],56,'Partly Free',69,34,null,'Legal nationally, but prohibited in Aceh; the new criminal code bans sex outside marriage.','112 · 110 police',
+  'Large protests against parliamentary perks turned deadly in August 2025. Earthquakes, volcanic eruptions and floods are frequent; terrorism risk is low but present.',['Avoid protests near parliament in Jakarta','Check volcano alerts before travel to Bali, Java and Sumatra','Strict drug laws, including the death penalty']],
+ ['IR','364','Iran','Middle East',51.39,35.69,8.8,'flat',[6.6,4.0,7.6,8.6,5.6,5.0,9.8,10.0],10,'Not Free',144,23,null,'Same-sex relations are criminalised; the death penalty may apply.','110 police · 115 ambulance',
+  'A US–Israeli war with Iran in early 2026 killed Supreme Leader Khamenei; an interim deal has since been reached, but the situation is volatile, with protests, internet shutdowns and arbitrary detention of foreigners. Western governments advise against all travel.',['Do not travel to Iran','High risk of arbitrary detention of foreign and dual nationals','Internet and phone shutdowns']],
+ ['IQ','368','Iraq','Middle East',44.36,33.31,7.8,'flat',[7.6,5.4,6.6,7.4,6.0,4.2,7.4,9.2],31,'Not Free',140,28,null,'Same-sex relations criminalised since 2024.',V,
+  'Iran-aligned militias and Islamic State remnants remain active, and regional escalations bring rocket and drone attacks. The Kurdistan region is more stable.',['Travel only with a security provider outside Erbil','Kidnapping risk','Avoid demonstrations in Baghdad and Basra']],
+ ['JO','400','Jordan','Middle East',35.93,31.95,4.6,'flat',[4.8,2.6,4.2,4.4,2.6,2.4,6.0,6.8],34,'Partly Free',68,50,null,'Legal; no recognition and strong social hostility.','911',
+  'Stable and well policed, but exposed to regional conflict: missiles and drones crossed its airspace during the Iran–Israel wars. Protests about Gaza are frequent.',['Avoid border areas with Syria and Iraq','Expect demonstrations near the Israeli embassy','Low street crime']],
+ ['KZ','398','Kazakhstan','Central Asia',71.43,51.13,3.8,'flat',[2.6,3.4,3.2,1.6,3.6,3.0,7.4,8.0],23,'Not Free',44,38,null,'Legal; strong restrictions on LGBTQ+ expression.','112 · 102 police · 103 ambulance',
+  'Stable and business-friendly, but protests are restricted and the 2022 unrest was put down with lethal force.',['Avoid unauthorised protests','Register with migration police if required','Severe winter cold in Astana']],
+ ['MY','458','Malaysia','Southeast Asia',101.69,3.14,3.4,'flat',[3.0,3.4,2.6,1.0,3.0,3.8,4.6,8.6],53,'Partly Free',12,52,null,'Same-sex relations are criminalised.','999',
+  'Stable and well policed (12th on the Global Peace Index). Snatch theft in Kuala Lumpur and kidnapping risk off eastern Sabah are the main concerns.',['Snatch theft from motorbikes','Avoid islands off eastern Sabah','Strict drug laws']],
+ ['MM','104','Myanmar','Southeast Asia',96.08,19.76,9.0,'flat',[5.6,6.0,6.8,9.4,8.0,6.2,9.0,7.6],4,'Not Free',151,16,null,'Same-sex relations are criminalised.','199 police · 192 ambulance',
+  'Civil war since the 2021 coup. The junta held staged elections in 2025–26 while fighting armed resistance groups across the country; airstrikes and conscription continue.',['Do not travel outside Yangon and Naypyidaw','Arbitrary detention of foreigners','Scam compounds on the Thai border']],
+ ['NP','524','Nepal','South Asia',85.32,27.71,4.6,'flat',[2.0,3.2,5.6,1.0,4.6,7.2,4.4,3.0],59,'Partly Free',111,34,null,'Legal; interim recognition of same-sex marriage since 2023.','100 police · 102 ambulance',
+  'Youth-led protests toppled the government in September 2025; elections followed in March 2026. Earthquakes, landslides and trekking accidents are the main physical risks.',['Avoid protests in Kathmandu','Monsoon landslides close roads','Use licensed trekking guides']],
+ ['KP','408','North Korea','East Asia',125.75,39.03,9.4,'flat',[2.0,2.0,2.0,8.0,7.6,4.0,10.0,9.0],3,'Not Free',147,15,null,'No legal recognition; strong state hostility.',V,
+  'Totalitarian state. Tourist access is extremely limited and foreigners risk long-term detention for minor acts.',['Do not travel to North Korea','Risk of long-term detention','No independent communication']],
+ ['PK','586','Pakistan','South Asia',73.05,33.68,8.0,'up',[8.6,6.2,6.4,8.0,6.4,6.4,7.4,8.6],32,'Partly Free',152,28,null,'Same-sex relations are criminalised.','15 police · 1122 rescue',
+  'Pakistan declared ‘open war’ with Afghanistan in February 2026 and border clashes continue; the Pakistani Taliban attack police and soldiers in Khyber Pakhtunkhwa, and Baloch separatists attack Chinese and state targets.',['Avoid Khyber Pakhtunkhwa and Balochistan','Kidnapping risk for foreigners','Large rallies can turn violent']],
+ ['PH','608','Philippines','Southeast Asia',120.98,14.60,5.4,'flat',[6.0,5.0,4.0,4.8,4.0,7.8,4.6,1.6],58,'Partly Free',102,32,null,'Legal; no national recognition of same-sex couples.','911',
+  'Generally stable, with insurgent and kidnapping risks in western Mindanao and the Sulu archipelago. Typhoons and earthquakes are frequent.',['Avoid the Sulu archipelago and western Mindanao','Typhoon season June to November','Petty crime and scams in Manila']],
+ ['SA','682','Saudi Arabia','Gulf',46.68,24.71,5.6,'flat',[5.2,1.6,1.6,6.6,2.4,2.8,8.8,9.8],9,'Not Free',95,57,null,'Same-sex relations are criminalised; the death penalty may apply.','911 · 999 police · 997 ambulance',
+  'Very low street crime, but exposed to Houthi and Iranian missile and drone attacks during regional escalations. Laws on speech, behaviour and religion are strict.',['Do not post criticism of the government','Follow alerts during regional escalations','Extreme summer heat']],
+ ['KR','410','South Korea','East Asia',126.98,37.57,2.4,'flat',[1.8,1.6,3.2,3.4,1.0,2.6,2.0,3.0],83,'Free',57,63,null,'Legal; no recognition of same-sex couples.','112 police · 119 ambulance',
+  'Very low crime and efficient services. Large political rallies in Seoul are frequent but mostly peaceful; tension with North Korea is a background risk.',['Large rallies around Gwanghwamun','Know the nearest civil-defence shelter','Very low street crime']],
+ ['LK','144','Sri Lanka','South Asia',79.86,6.93,4.0,'flat',[3.4,3.4,3.6,1.0,4.0,5.6,4.4,6.0],63,'Partly Free',67,35,null,'Same-sex relations are criminalised, though rarely enforced.','119 police · 1990 ambulance',
+  'Stable after the 2022 economic crisis and the 2024 change of government. Monsoon floods and landslides are the main hazards.',['Monsoon floods and landslides','Tuk-tuk overcharging and gem scams','Dengue risk']],
+ ['SY','760','Syria','Middle East',36.29,33.51,8.8,'flat',[8.4,6.6,6.4,8.4,8.0,4.2,7.4,9.4],10,'Not Free',155,15,null,'Same-sex relations are criminalised.',V,
+  'Transitional government since the fall of Assad in December 2024. Sectarian violence, Islamic State attacks and Israeli strikes continue; most of the country remains unsafe.',['Do not travel to Syria','Sectarian violence in the coast and south','Unexploded ordnance']],
+ ['TW','158','Taiwan','East Asia',121.56,25.04,3.2,'flat',[1.0,1.4,2.4,5.0,1.0,5.6,3.4,1.0],93,'Free',42,68,null,'Same-sex marriage since 2019.','110 police · 119 ambulance',
+  'Very safe democracy. The main risks are Chinese military pressure, including large exercises around the island, and earthquakes and typhoons.',['Follow alerts during Chinese military exercises','Earthquake drills: know your exits','Typhoon season July to October']],
+ ['TJ','762','Tajikistan','Central Asia',68.78,38.56,5.0,'flat',[4.4,3.0,3.6,4.2,5.0,5.0,8.2,8.0],5,'Not Free',47,19,null,'Legal; strong official hostility.','112 · 102 police · 103 ambulance',
+  'Authoritarian and tightly controlled. Border tension with Afghanistan and Kyrgyzstan persists; the regime is wary of foreigners in remote areas.',['Permits needed for Gorno-Badakhshan','Avoid the Afghan border','Earthquake risk']],
+ ['UZ','860','Uzbekistan','Central Asia',69.24,41.30,4.0,'flat',[3.2,2.6,2.8,1.8,4.0,3.6,7.4,8.6],12,'Not Free',37,31,null,'Same-sex relations between men are criminalised.','112 · 102 police · 103 ambulance',
+  'Stable and opening up to business and tourism, but authoritarian. Protests are rare and quickly suppressed.',['Register your accommodation if required','Low street crime','Strict laws on religious material']],
+ ['VN','704','Vietnam','Southeast Asia',105.85,21.03,3.4,'flat',[1.4,3.2,2.0,1.6,3.6,5.6,7.6,2.4],20,'Not Free',41,41,null,'Legal; no recognition of same-sex couples.','113 police · 115 ambulance',
+  'Stable one-party state with low violent crime. Typhoons and floods hit the centre and north; online criticism of the state can lead to arrest.',['Bag snatching from motorbikes in Ho Chi Minh City','Typhoon season July to November','Do not post political criticism']],
+ ['YE','887','Yemen','Middle East',44.21,15.35,9.6,'flat',[9.4,7.2,6.6,9.8,9.4,5.0,8.4,9.8],10,'Not Free',156,13,null,'Same-sex relations are criminalised; the death penalty may apply.',V,
+  'Divided between the Houthis in the north and the internationally recognised government in the south. US and Israeli strikes, Houthi detentions of UN staff and a humanitarian collapse make the country unsafe.',['Do not travel to Yemen','Kidnapping and detention risk','Cholera and famine']]
+].forEach(([cc,iso,name,region,lon,lat,score,trend,s,fh,fhs,gpi,cpi,rb,lgbt,emer,sit,keys])=>{
+  COUNTRIES.push({cc,mk:null,name,region,lon,lat,score,trend,s,fh,fhs,eiu:null,gpi,cpi,rb,lgbt,emer,sit,keys});ISO_EXTRA[cc]=iso});
+COUNTRIES.find(c=>c.cc==='GR').rb=68;
+
 const GEO_PARIS=`1|444,238|411,194 421,204 501,233 488,269 476,289 448,263 417,252 383,235 399,202 399,197 411,194
 2|469,204|503,227 501,233 484,227 421,204 411,194 458,181 514,197 503,227
 3|537,236|552,208 564,235 570,279 544,270 525,253 498,241 514,197 552,208
@@ -1743,7 +1881,7 @@ function renderAlerts(){const all=filtA(S.alertFilter);const shown=S.alertFilter
 $('#alertsPage').addEventListener('click',e=>{const b=e.target.closest('[data-af]');if(b){S.alertFilter=b.dataset.af;renderAlerts()}});
 
 /* ---------- countries view ---------- */
-function cRow(c){const s=sC(c);return`<button class="arow" data-country="${c.cc}"><span class="cc">${c.cc}</span><div class="m"><b>${esc(c.name)}</b><span>${esc((c.eiu?c.eiu[1]:'Not rated by EIU'))} · ${esc(c.region)}</span></div>${badge(s)}${chevSvg}</button>`}
+function cRow(c){const s=sC(c);return`<button class="arow" data-country="${c.cc}"><span class="cc">${c.cc}</span><div class="m"><b>${esc(c.name)}</b><span>${esc((c.eiu?c.eiu[1]:c.fhs?c.fhs+' (Freedom House)':'Not rated by EIU'))} · ${esc(c.region)}</span></div>${badge(s)}${chevSvg}</button>`}
 function worldMini(){let g='';WCELLS.forEach(([c,r,ch])=>{const C=CBYMK[ch];if(r<4||r>58)return;g+=`<circle cx="${c*6+3}" cy="${r*6+3}" r="2.2" fill="${C?col(sC(C)):'#24515f'}"${C?` data-country="${C.cc}"`:''}/>`});
  COUNTRIES.filter(c=>['NL','SG','IL','BE','CH','EE','LV','LT','LB','HK'].includes(c.cc)).forEach(c=>g+=`<circle cx="${wx(c.lon)}" cy="${wy(c.lat)}" r="5" fill="${col(sC(c))}" stroke="#06212c" stroke-width="1.5" data-country="${c.cc}"/>`);
  return`<div class="wmap"><svg viewBox="120 24 900 330">${g}</svg></div>`}
@@ -2017,7 +2155,7 @@ function openAddTrip(){let sel=null;const t0=new Date();t0.setDate(t0.getDate()+
  <div class="sec">Dates</div><div class="card"><div class="selrow" style="border:0"><b>Departure</b><input type="date" class="dinp" id="tfrom" min="${today}" value="${iso(t0)}"></div><div class="selrow"><b>Return</b><input type="date" class="dinp" id="tto" min="${today}" value="${iso(t1)}"></div></div>
  <p class="src" id="terr" style="color:#ff9bb7"></p>
  <button class="btn pri press" id="tsave">${ico('plus')}Add trip</button>
- <p class="src">The demo covers 19 cities with district reports and 37 countries.</p>`,sh=>{
+ <p class="src">The demo covers 19 cities with district reports and 100 countries.</p>`,sh=>{
   const inp=$('#tdest',sh),sug=$('#tsug',sh),err=$('#terr',sh);
   const row=o=>`<button class="arow" data-dsel="${o.type}:${o.k}">${badge(o.v)}<div class="m"><b>${esc(o.name)}</b><span>${esc(o.sub)}</span></div>${chevSvg}</button>`;
   const run=()=>{const o=destOptions(inp.value);sug.innerHTML=sel?'':(o.map(row).join('')||'<p class="lede" style="padding:12px 2px;margin:0">Not in the demo set yet. Try a capital city’s country.</p>')};
@@ -2091,16 +2229,16 @@ const hm=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
 /* ---------- v5: SOS ---------- */
 const HOTLINE={NL:['Netherlands · Ministry of Foreign Affairs 24/7','+31 247 247 247'],US:['United States · State Department, overseas citizens','+1 202 501 4444'],GB:['United Kingdom · FCDO 24/7','+44 20 7008 5000']};
-function openSOS(){const cc=nearCC(YOU.lon,YOU.lat);const C=COUNTRIES.find(c=>c.cc===cc);const num=C?(C.emer.match(/\d{2,4}/)||['112'])[0]:'112';const hi=hereInfo();const hl=HOTLINE[P.nat];
+function openSOS(){const cc=nearCC(YOU.lon,YOU.lat);const C=COUNTRIES.find(c=>c.cc===cc);const num=C?((C.emer.match(/\d{2,4}/)||[null])[0]):'112';const hi=hereInfo();const hl=HOTLINE[P.nat];
  openSheet('Emergency',`<div class="sos-hero"><div class="sos-ic">SOS</div><div><h2>Get help now</h2><div class="sub">${esc(hi.title)} · ${YOU.lat.toFixed(4)}, ${YOU.lon.toFixed(4)}</div></div></div>
- <button class="btn sos-call press" id="sosCall">${ico('bell')}Call ${esc(num)}${C?` · ${esc(C.name)}`:''}</button>
+ <button class="btn sos-call press" id="sosCall">${ico('bell')}${num?`Call ${esc(num)}`:'Call local emergency services'}${C?` · ${esc(C.name)}`:''}</button>
  ${C?`<p class="src" style="margin-top:-4px">All emergency numbers: ${esc(C.emer)}</p>`:''}
  <button class="btn pri press" id="sosTeam">${ico('shield')}Alert my security team</button>
  <button class="btn sec press" id="sosShare">${ico('pin')}Share my location</button>
  <div class="sec">Nearest hospitals</div><div class="list" id="sosHosp"><p class="lede" style="padding:14px;margin:0">Looking up hospitals near you…</p></div>
  <div class="sec">Your government’s crisis line</div><div class="card">${hl?`<div class="kvr"><span>${esc(hl[0])}</span><b>${esc(hl[1])}</b></div>`:`<div class="kvr"><span>Contact your country’s foreign ministry or nearest embassy.</span></div>`}</div>
  <p class="src">Demo: the call and security-team alert are simulated. Emergency numbers, crisis lines and hospitals are real.</p>`,sh=>{
-  $('#sosCall',sh).addEventListener('click',()=>notify({title:`Demo: would call ${num}`,body:'Calling is disabled in this demo so prospects cannot reach real emergency services by accident.',tag:'Aware · SOS'}));
+  $('#sosCall',sh).addEventListener('click',()=>notify({title:`Demo: would call ${num||'local emergency services'}`,body:'Calling is disabled in this demo so prospects cannot reach real emergency services by accident.',tag:'Aware · SOS'}));
   $('#sosTeam',sh).addEventListener('click',()=>notify({title:'Security team alerted',body:`Your team received an SOS with your position: ${hi.title}. They will call you back within 2 minutes.`,tag:'Aware · SOS'}));
   $('#sosShare',sh).addEventListener('click',async()=>{const url=`https://maps.apple.com/?ll=${YOU.lat},${YOU.lon}&q=My%20location`;const text=`I need help. My location: ${hi.title} (${YOU.lat.toFixed(5)}, ${YOU.lon.toFixed(5)})`;
    try{if(navigator.share){await navigator.share({title:'My location',text,url});return}}catch(e){return}
