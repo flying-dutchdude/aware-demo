@@ -1805,7 +1805,7 @@ function openDistrict(city,key){const d=DIST(city)[key];const v=distScore(city,k
  <p class="src">Based on official crime statistics, city safety reporting and the Manukai crime and unrest models. District scores are illustrative. Boundaries: ${esc(BOUNDS[city])}.</p>`;
  openSheet(city==='PAR'?'Arrondissement':city==='LON'?'Borough':city==='NYC'?(/^(Bronx|Brooklyn|Queens|Staten Island)$/.test(d.name)?'Borough':'Neighbourhood'):city==='BRU'?'Municipality':CITY_UNIT[city]||(CITY_REMOTE[city]?'Neighbourhood':'District'),html)}
 const BOUNDS={PAR:'Ville de Paris open data',AMS:'Gemeente Amsterdam open data',LON:'OpenStreetMap contributors',BRU:'OpenStreetMap contributors',NYC:'OpenStreetMap contributors',FRA:'OpenStreetMap contributors'};
-function cityOverall(k,win=S.win){const s=cityScore(k,win);return clamp(s.avg+(s.max-s.avg)*0.45,0,10)}
+function cityOverall(k,win=S.win){const s=cityScore(k,win);const cc=CITY_INFO[k].cc;const al=ALERTS.filter(a=>(a.city===k&&a.win.includes(win))||(!a.city&&a.cc===cc));const top=al.reduce((m,a)=>Math.max(m,sA(a)),0);return clamp(Math.max(s.avg+(s.max-s.avg)*0.45,top*0.85),0,10)}
 function cityRow(k){const v=cityOverall(k);const n=Object.keys(DIST(k)).length;const na=ALERTS.filter(a=>a.city===k).length;return`<button class="arow" data-city="${k}">${badge(v)}<div class="m"><b>${esc(cityName(k))}</b><span>City report · ${n} areas · ${na} alert${na===1?'':'s'}</span></div>${chevSvg}</button>`}
 function openCity(k){const I=CITY_INFO[k];if(!I)return;const v=cityOverall(k);const sc=cityScore(k);
  const ds=Object.values(DIST(k)).map(d=>({d,v:distScore(k,d.key)})).sort((a,b)=>b.v-a.v);
